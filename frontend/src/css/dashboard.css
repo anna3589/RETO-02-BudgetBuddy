@@ -1,0 +1,502 @@
+/* src/css/dashboard.css */
+
+/* --- LAYOUT GENERAL APP --- */
+.app-body {
+    background-color: #ffffff;
+    max-width: 480px; /* Simulamos ancho de móvil en PC */
+    margin: 0 auto;
+    border-right: 1px solid #f0f0f0;
+    border-left: 1px solid #f0f0f0;
+    min-height: 100vh;
+}
+
+.app-content {
+    padding: 0 1.5rem;
+}
+
+/* --- HEADER --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: white;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.brand-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mini-logo {
+    height: 24px;
+}
+
+.logo-text {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #111;
+    letter-spacing: 1px;
+}
+
+.avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #f4f4f4;
+}
+
+/* --- SECCIONES GENERALES --- */
+section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+h1, h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #000;
+}
+
+.date-badge {
+    background-color: #e5e7eb;
+    color: #666;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* --- CREDIT CARD (LA JOYA) --- */
+.credit-card {
+    background: linear-gradient(145deg, #4b5563, #1f2937, #000000);
+    border-radius: 24px;
+    padding: 1.5rem;
+    color: white;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* Logo Mastercard CSS puro */
+.mastercard-logo {
+    display: flex;
+}
+.mastercard-logo .circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+.mastercard-logo .red { background-color: #eb001b; opacity: 0.9; }
+.mastercard-logo .orange { background-color: #f79e1b; margin-left: -12px; opacity: 0.9; }
+
+.card-balance {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 1rem 0;
+}
+
+.card-chip-physical {
+    width: 45px;
+    height: 35px;
+    background: linear-gradient(135deg, #e2e2a8, #bf953f);
+    border-radius: 6px;
+    margin-bottom: auto;
+    opacity: 0.8;
+}
+
+.card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.card-holder, .card-meta > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-meta {
+    display: flex;
+    gap: 15px;
+    text-align: right;
+}
+
+small {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-bottom: 2px;
+}
+
+.card-bottom span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Paginación */
+.pagination-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 1rem;
+}
+
+.dot {
+    width: 20px;
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+}
+.dot.active {
+    background-color: #999;
+}
+
+/* --- TAGS (PAGOS RÁPIDOS) --- */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.add-tag-btn, .delete-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.add-tag-btn { background-color: #e5e7eb; font-size: 1.5rem; font-weight: bold; color: #555; }
+.delete-btn { background-color: transparent; border: 1px solid #eee; margin-left: auto; }
+
+.payment-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: #f3f4f6;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.dot-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.dot-indicator.blue { background-color: #3b82f6; }
+.dot-indicator.green { background-color: #22c55e; }
+.dot-indicator.red { background-color: #ef4444; }
+
+.amount {
+    font-weight: 800;
+    color: #111;
+    margin-left: 4px;
+}
+
+/* --- GOALS (METAS) --- */
+.goals-section {
+    background: white;
+}
+
+.goal-card {
+    border: 1px solid #eee;
+    border-radius: 24px;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 1rem;
+    background: white;
+}
+
+.fading {
+    opacity: 0.5;
+}
+
+/* GRÁFICA CIRCULAR CSS PURO */
+.progress-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    /* TRUCO: Conic Gradient para hacer la gráfica sin JS */
+    background: radial-gradient(closest-side, white 79%, transparent 80% 100%),
+                conic-gradient(var(--color, #facc15) var(--percent), #f3f4f6 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-circle span {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #444;
+}
+
+.goal-details h3 {
+    font-size: 1rem;
+    margin: 0 0 4px 0;
+}
+
+.goal-details p {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.goal-numbers {
+    margin-left: auto;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.goal-numbers .saved { font-weight: 800; font-size: 1rem; }
+.goal-numbers .target { font-size: 0.7rem; color: #f4481b; font-weight: 600; }
+
+.arrow-btn {
+    border: 1px solid #eee;
+    background: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* --- BOTTOM NAV --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 999;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #9ca3af;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+}
+
+.nav-item.active {
+    color: var(--primary); /* Tu verde corporativo */
+}
+/* --- ESTILOS EXTRA PARA ELEMENTOS NUEVOS --- */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notification-btn {
+    position: relative;
+    color: #666;
+    transition: color 0.3s;
+}
+.notification-btn:hover { color: var(--primary); }
+
+.notification-dot {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    border: 1px solid white;
+}
+
+/* Modal styling fix */
+#tag-dialog {
+    border: none;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 400px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#tag-dialog::backdrop { background: rgba(0,0,0,0.5); }
+.tag-dialog-content { display: flex; flex-direction: column; gap: 15px; }
+.dialog-buttons { display: flex; gap: 10px; margin-top: 10px; }
+
+/* =========================================
+   MEDIA QUERIES - DESKTOP MODE (min-width: 1024px)
+   ========================================= */
+
+@media (min-width: 1024px) {
+
+    /* 1. LAYOUT GENERAL: Rejilla Sidebar + Contenido */
+    .app-body {
+        max-width: 100%; /* Rompemos el límite de móvil */
+        margin: 0;
+        display: grid;
+        /* Columna Nav (80px o 250px) | Columna Contenido (Resto) */
+        grid-template-columns: 80px 1fr; 
+        min-height: 100vh;
+        border: none;
+        background-color: #f8fafc; /* Fondo gris claro profesional */
+    }
+
+    /* 2. BARRA DE NAVEGACIÓN (Sidebar Lateral) */
+    .sidebar-nav {
+        grid-column: 1 / 2;
+        background-color: white;
+        border-right: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        padding-top: 2rem;
+        gap: 2rem;
+        position: fixed; /* Fija a la izquierda */
+        height: 100vh;
+        width: 80px;
+        z-index: 100;
+        align-items: center;
+    }
+    
+    /* Ocultar la barra inferior antigua si existe */
+    .bottom-nav { display: none !important; }
+
+    /* Estilos Iconos Sidebar */
+    .nav-item {
+        color: #94a3b8;
+        padding: 10px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        width: 50px;
+        height: 50px;
+        justify-content: center;
+    }
+
+    /* HOVER y ACTIVE solicitados */
+    .nav-item:hover, .nav-item.active {
+        background-color: #f0fdf4; /* Verde muy claro */
+        color: var(--primary);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transform: translateX(5px); /* Pequeño desplazamiento a la derecha */
+    }
+    
+    .nav-item span {
+        display: none; /* Ocultamos texto en sidebar colapsada */
+    }
+
+    /* 3. CONTENIDO PRINCIPAL */
+    .main-layout-wrapper {
+        grid-column: 2 / 3;
+        margin-left: 80px; /* Para no quedar debajo de la nav fixed */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .app-content {
+        padding: 2rem 4rem; /* Más aire en escritorio */
+    }
+
+    /* 4. DASHBOARD GRID (Lo modular que pediste) */
+    .dashboard-grid {
+        display: grid;
+        /* Columna Izq (Tags/Card) ocupa 35% | Columna Der (Metas) ocupa resto */
+        grid-template-columns: 350px 1fr; 
+        gap: 3rem;
+        align-items: start;
+    }
+
+    /* Columna Izquierda */
+    .left-column {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .card-section {
+        width: 100%; /* Ocupa todo el ancho de su columna (el cuarto de pantalla aprox) */
+    }
+
+    .credit-card {
+        height: 240px; /* Un poco más grande en PC */
+    }
+
+    /* Columna Derecha */
+    .right-column {
+        height: 100%;
+    }
+
+    .goals-section {
+        height: 100%;
+        background: transparent;
+        padding: 0;
+        border: none;
+    }
+
+    .goals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .goal-card {
+        margin-bottom: 0;
+        transition: transform 0.2s;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .goal-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary);
+    }
+}

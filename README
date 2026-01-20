@@ -1,0 +1,17 @@
+--- Estado del proyecto ---
+
+Los archivos en la ruta frontend/src/view/home son susceptibles de ser alterados o eliminados
+    Lo mismo aplica a src/css/dashborad y desktop
+
+
+- BASE DE DATOS RAPIDA
+INSERT INTO reviews (usuario, comentario, estrellas, avatar, created_at, updated_at) VALUES 
+('Laura Martínez', 'Llevo usándola un mes y he ahorrado 200€ sin darme cuenta. ¡Top!', 5, 'https://ui-avatars.com/api/?name=Laura+Martinez&background=random', NOW(), NOW()),
+
+('David Broncano', 'La interfaz está guapísima, pero echo de menos poder exportar a PDF.', 4, 'https://ui-avatars.com/api/?name=David+Broncano&background=0D8ABC&color=fff', NOW(), NOW()),
+
+('Ibai Llanos', 'Es una locura de app, chavales. Muy intuitiva.', 5, 'https://ui-avatars.com/api/?name=Ibai+Llanos&background=ffcc00', NOW(), NOW()),
+
+('Marta Díaz', 'Cumple su función, aunque a veces tarda un pelín en cargar.', 3, 'https://ui-avatars.com/api/?name=Marta+Diaz&background=random', NOW(), NOW()),
+
+('Sergio Ramos', 'Clean sheet en mis finanzas. Perfecta.', 5, 'https://ui-avatars.com/api/?name=Sergio+Ramos&background=ef4444&color=fff', NOW(), NOW());

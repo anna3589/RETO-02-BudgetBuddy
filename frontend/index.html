@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/logo_budget.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="./src/css/style.css" />
+		<title>BudgetBuddy | Tu control de gastos</title>
+		<meta
+			name="description"
+			content="Controla tus gastos de manera eficiente con BudgetBuddy."
+		/>
+	</head>
+	<body>
+		<header>
+			<div class="container header-content">
+				<div class="logo-container">
+					<img
+						src="./src/assets/img/logo_budget.png"
+						alt="BudgetBuddy Logo"
+						class="logo-img"
+					/>
+					<span class="logo-text">BudgetBuddy</span>
+				</div>
+				<nav>
+					<ul>
+						<li><a href="#hero">Inicio</a></li>
+						<li><a href="#features">Funcionalidades</a></li>
+						<li><a href="#contact">Contacto</a></li>
+					</ul>
+				</nav>
+				<button id="loginBtn" class="btn-secondary">
+					<a href="/login">Acceder</a>
+				</button>
+			</div>
+		</header>
+
+		<section id="hero">
+			<div class="container hero-grid">
+				<div class="hero-text">
+					<h1>
+						Toma el control de tu <span class="highlight">dinero</span> hoy.
+					</h1>
+					<p>
+						BudgetBuddy es tu compañero inteligente para las finanzas
+						estudiantiles. Controla gastos, planifica presupuestos y alcanza tus
+						metas sin complicaciones.
+					</p>
+					<div class="hero-buttons">
+						<button id="startButton" class="btn-primary">Empezar Gratis</button>
+						<a href="#features" class="link-more">Saber más &darr;</a>
+					</div>
+				</div>
+				<div class="hero-image">
+					<div class="app-img">
+						<img
+							src="./src/assets/img/App-wireframe-removebg-preview.png"
+							alt=""
+						/>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="features">
+			<div class="container">
+				<h2>¿Por qué BudgetBuddy?</h2>
+				<div class="features-grid">
+					<div class="card">
+						<h3>📊 Control Total</h3>
+						<p>
+							Registra cada gasto e ingreso al instante y visualiza a dónde va
+							tu dinero.
+						</p>
+					</div>
+					<div class="card">
+						<h3>🎯 Metas de Ahorro</h3>
+						<p>Establece objetivos reales y sigue tu progreso mes a mes.</p>
+					</div>
+					<div class="card">
+						<h3>⚡ Rápido y Fácil</h3>
+						<p>
+							Diseñado para estudiantes: interfaz intuitiva sin complicaciones
+							bancarias.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Sección de Reseñas cargadas a traves de una API local en Laravel -->
+		<section id="reviews">
+			<h2>Lo que dicen nuestros usuarios</h2>
+			<div class="reviews-grid" id="reviews-container">
+				<p>Cargando opiniones...</p>
+			</div>
+		</section>
+		<!-- Contenido principal del footer -->
+
+		<footer>
+			<div class="container footer-content">
+				<p>&copy; 2024 BudgetBuddy. Todos los derechos reservados.</p>
+			</div>
+		</footer>
+		<script type="module" src="./src/js/main.js"></script>
+	</body>
+</html>
