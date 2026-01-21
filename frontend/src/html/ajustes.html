@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BudgetBuddy | Mi cuenta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/ajustes.css">
+</head>
+<body class="desktop-body">
+    <!-- Top Bar -->
+    <header class="desktop-header">
+        <div class="desktop-brand">
+            <img src="../images/logo_budget2-removebg-preview (1).png" alt="BudgetBuddy Logo">
+        </div>
+        
+        <div class="desktop-header-right">
+            <div class="top-icon" title="Buscar">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="top-icon notification-btn" title="Notificaciones">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="user-profile-top">
+                <div class="user-avatar-top" title="Mi perfil" id="user-avatar-top">JD</div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Мобільна навігаційна панель -->
+    <nav class="mobile-nav">
+        <ul class="mobile-nav-items">
+            <li>
+                <a href="desktop.html" class="mobile-nav-item" data-page="dashboard" title="Panel general">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li>
+                <a href="estadisticas.html" class="mobile-nav-item" data-page="estadisticas" title="Estadísticas">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Estadísticas</span>
+                </a>
+            </li>
+            <li>
+                <a href="misTarjetas.html" class="mobile-nav-item" data-page="cards" title="Mis tarjetas">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Tarjetas</span>
+                </a>
+            </li>
+            <li>
+                <a href="ajustes.html" class="mobile-nav-item active" data-page="profile" title="Mi cuenta">
+                    <i class="fas fa-cog"></i>
+                    <span>Ajustes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">   
+        <div class="nav-menu">
+            <a href="desktop.html" class="nav-item" data-page="dashboard" title="Panel general">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="estadisticas.html" class="nav-item" data-page="estadisticas" title="Estadísticas">
+                <i class="fas fa-chart-line"></i>
+            </a>
+            <a href="misTarjetas.html" class="nav-item" data-page="cards" title="Mis tarjetas">
+                <i class="fas fa-credit-card"></i>
+            </a>
+            <a href="ajustes.html" class="nav-item active" data-page="profile" title="Mi cuenta">
+                <i class="fas fa-cog"></i>
+            </a>
+        </div>
+    </div>
+    
+    <div class="desktop-container">
+        <!-- Main Content -->
+        <main class="desktop-main">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    Mi cuenta
+                    <div class="date-container">28 Abr, 2024</div>
+                </h1>
+            </div>
+            
+            <div class="desktop-grid">
+                <!-- Ліва колонка: Профіль та Налаштування -->
+                <section class="desktop-left-column">
+                    <!-- Профіль -->
+                    <div class="card">
+                        <div class="card-header-compact">
+                            <h2 class="card-title">
+                                <i class="fas fa-user-circle"></i> Perfil
+                            </h2>
+                        </div>
+                        
+                        <div class="profile-section">
+                            <div class="profile-avatar-section">
+                                <div class="profile-avatar-large" id="profile-avatar-large">
+                                    JD
+                                </div>
+                                <div class="avatar-actions">
+                                    <button class="btn btn-secondary" id="change-avatar-btn">
+                                        <i class="fas fa-camera"></i> Cambiar foto
+                                    </button>
+                                    <button class="btn btn-secondary btn-danger" id="remove-avatar-btn">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <form class="profile-form" id="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="first-name">Nombre</label>
+                                        <input type="text" id="first-name" value="John" class="editable-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="last-name">Apellido</label>
+                                        <input type="text" id="last-name" value="Doe" class="editable-input">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email">Correo electrónico</label>
+                                    <input type="email" id="email" value="john.doe@example.com" class="editable-input">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="phone">Teléfono</label>
+                                    <input type="tel" id="phone" value="+34 123 456 789" class="editable-input">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="country">País</label>
+                                    <select id="country" class="editable-input">
+                                        <option value="es">España</option>
+                                        <option value="fr">Francia</option>
+                                        <option value="de">Alemania</option>
+                                        <option value="it">Italia</option>
+                                        <option value="uk">Reino Unido</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary" id="cancel-btn">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="save-btn">
+                                        Guardar cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Права колонка: Налаштування безпеки та Інше -->
+                <section class="desktop-right-column">
+                    <!-- Налаштування безпеки -->
+                    <div class="card">
+                        <div class="card-header-compact">
+                            <h2 class="card-title">
+                                <i class="fas fa-shield-alt"></i> Seguridad
+                            </h2>
+                        </div>
+                        
+                        <div class="security-settings">
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <h4>Cambiar contraseña</h4>
+                                    <p>Actualiza tu contraseña regularmente para mantener tu cuenta segura</p>
+                                </div>
+                                <button class="btn btn-secondary" id="change-password-btn">
+                                    Cambiar
+                                </button>
+                            </div>
+                            
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <h4>Autenticación de dos factores</h4>
+                                    <p>Añade una capa extra de seguridad a tu cuenta</p>
+                                </div>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="two-factor-toggle" class="toggle-input">
+                                    <label for="two-factor-toggle" class="toggle-label"></label>
+                                </div>
+                            </div>
+                            
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <h4>Sesiones activas</h4>
+                                    <p>Revisa y gestiona tus sesiones activas</p>
+                                </div>
+                                <button class="btn btn-secondary" id="view-sessions-btn">
+                                    Ver sesiones
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Налаштування сповіщень -->
+                    <div class="card">
+                        <div class="card-header-compact">
+                            <h2 class="card-title">
+                                <i class="fas fa-bell"></i> Notificaciones
+                            </h2>
+                        </div>
+                        
+                        <div class="notification-settings">
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Notificaciones por email</h4>
+                                    <p>Recibe actualizaciones importantes por correo electrónico</p>
+                                </div>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="email-notifications-toggle" class="toggle-input" checked>
+                                    <label for="email-notifications-toggle" class="toggle-label"></label>
+                                </div>
+                            </div>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Notificaciones push</h4>
+                                    <p>Recibe notificaciones en tu dispositivo</p>
+                                </div>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="push-notifications-toggle" class="toggle-input" checked>
+                                    <label for="push-notifications-toggle" class="toggle-label"></label>
+                                </div>
+                            </div>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Alertas de gastos</h4>
+                                    <p>Recibe alertas cuando tus gastos superen un límite</p>
+                                </div>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="spending-alerts-toggle" class="toggle-input">
+                                    <label for="spending-alerts-toggle" class="toggle-label"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Інші налаштування -->
+                    <div class="card">
+                        <div class="card-header-compact">
+                            <h2 class="card-title">
+                                <i class="fas fa-sliders-h"></i> Más opciones
+                            </h2>
+                        </div>
+                        
+                        <div class="other-settings">
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <h4>Idioma</h4>
+                                    <p>Español</p>
+                                </div>
+                                <button class="btn btn-secondary" id="change-language-btn">
+                                    Cambiar
+                                </button>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <h4>Moneda</h4>
+                                    <p>Euro (€)</p>
+                                </div>
+                                <button class="btn btn-secondary" id="change-currency-btn">
+                                    Cambiar
+                                </button>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <h4>Exportar datos</h4>
+                                    <p>Descarga todos tus datos en formato CSV</p>
+                                </div>
+                                <button class="btn btn-secondary" id="export-data-btn">
+                                    Exportar
+                                </button>
+                            </div>
+                            
+                            <div class="settings-item danger-item">
+                                <div class="settings-info">
+                                    <h4>Eliminar cuenta</h4>
+                                    <p>Elimina permanentemente tu cuenta y todos tus datos</p>
+                                </div>
+                                <button class="btn btn-danger" id="delete-account-btn">
+                                    Eliminar cuenta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальне вікно для зміни паролю -->
+    <div class="modal" id="password-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cambiar contraseña</h3>
+                <button class="close-modal" id="close-password-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="current-password">Contraseña actual</label>
+                        <input type="password" id="current-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Nueva contraseña</label>
+                        <input type="password" id="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmar nueva contraseña</label>
+                        <input type="password" id="confirm-password" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancel-password-btn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar nueva contraseña</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/ajustes.js"></script>
+</body>
+</html>

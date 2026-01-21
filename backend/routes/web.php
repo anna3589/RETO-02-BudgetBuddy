@@ -7,9 +7,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// --- ESTA ES LA CLAVE ---
+// Si Laravel intenta ir a /dashboard, lo forzamos a ir a /desktop
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect('/desktop');
 })->middleware(['auth', 'verified'])->name('dashboard');
+// ------------------------
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

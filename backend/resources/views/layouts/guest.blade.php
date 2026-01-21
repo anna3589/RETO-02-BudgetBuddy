@@ -16,7 +16,7 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
             <div class="mb-6">
                 <a href="/" class="flex flex-col items-center">
-                    <x-application-logo class="w-16 h-16 fill-current text-green-600" />
+                    <img src="{{ asset('logo.png') }}" alt="BudgetBuddy Logo">
                     <span class="text-2xl font-bold text-gray-800 mt-2">BudgetBuddy</span>
                 </a>
             </div>
