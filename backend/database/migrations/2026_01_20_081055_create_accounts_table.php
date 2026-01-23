@@ -13,14 +13,12 @@ return new class extends Migration {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('bank_name');
-            $table->integer('iban')->unique();
-            $table->decimal('current_balance',20,2); 
-            $table->string('color')->nullable();
+            $table->string('bank_name'); // BBVA, Efectivo...
+            $table->string('iban')->unique();
+            $table->decimal('current_balance', 10, 2)->default(0);
+            $table->string('color')->default('#000000');
             $table->timestamps();
         });
-
-        
     }
 
     /**

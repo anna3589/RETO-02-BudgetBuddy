@@ -4,28 +4,28 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('cards', function (Blueprint $table) {
+        Schema::create('envelopes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
-            $table->string('alias');
-            $table->string('last_4_digits', 4);
-            $table->date('expiration_date');
-            $table->enum('type', ['credit', 'debit'])->default('debit');
+            $table->string('name'); // Alquiler, Ahorro...
+            $table->decimal('allocated_amount', 10, 2)->default(0);
+            $table->decimal('target_amount', 10, 2)->nullable();
+            $table->string('icon')->nullable();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('cards');
+        Schema::dropIfExists('envelopes');
     }
 };
