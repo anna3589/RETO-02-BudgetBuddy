@@ -28,7 +28,22 @@ class EnvelopeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'account_id' => 'required|exists:accounts,id',
+            'name' => 'required|string|max:50',
+            'allocated_amount' => 'required|numeric|min:0',
+            'target_amount' => 'required|numeric|min:0',
+            'icon' => 'required|string'
+        ]);
+
+        // Verificar propiedad
+        $account = Account::where('id', $validated['account_id'])
+                          ->where('user_id', Auth::id())
+                          ->firstOrFail();
+
+        $envelope = Envelope::create($validated);
+
+        return response()->json(['message' => 'Sobre creado', 'envelope' => $envelope], 201);
     }
 
     /**

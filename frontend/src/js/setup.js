@@ -1,138 +1,212 @@
-// setup.js - VERSIÓN FINAL CORREGIDA
+// --- LÓGICA DE INTERFAZ Y NAVEGACIÓN ---
 
-// 1. Lógica de selección de color (Visual)
-const colorCircles = document.querySelectorAll('.color-circle');
-const colorInput = document.getElementById('account_color');
+let currentStep = 1;
 
-if (colorCircles.length > 0) {
-    colorCircles.forEach(circle => {
-        circle.addEventListener('click', function() {
-            colorCircles.forEach(c => c.classList.remove('selected'));
-            this.classList.add('selected');
-            colorInput.value = this.dataset.color;
-        });
-    });
+function nextStep(step) {
+	// Validación básica antes de avanzar
+	if (step > currentStep) {
+		if (currentStep === 1) {
+			const bank = document.getElementById("bank_name").value;
+			const balance = document.getElementById("current_balance").value;
+			if (!bank || !balance) {
+				alert("Por favor, rellena los campos obligatorios de la cuenta.");
+				return;
+			}
+		}
+	}
+
+	// Cambiar UI
+	document
+		.querySelectorAll(".step-content")
+		.forEach((el) => el.classList.remove("active"));
+	document.getElementById(`step-${step}`).classList.add("active");
+
+	// Actualizar puntos
+	document.querySelectorAll(".step-dot").forEach((dot, index) => {
+		if (index + 1 <= step) dot.classList.add("active");
+		else dot.classList.remove("active");
+	});
+
+	document.getElementById("step-number").textContent = step;
+	currentStep = step;
 }
 
-// =========================================================
-// 2. LÓGICA QUE FALTABA: MOSTRAR/OCULTAR TARJETA
-// =========================================================
-const checkbox = document.getElementById('has_card');
-const cardFields = document.getElementById('card-fields');
+function toggleSection(type) {
+	const checkbox = document.getElementById(`has_${type}`);
+	const fields = document.getElementById(`${type}-fields`);
+	const container = document.getElementById(`toggle-${type}`);
 
-if (checkbox && cardFields) {
-    checkbox.addEventListener('change', function() {
-        // Mostrar u ocultar el bloque
-        cardFields.style.display = this.checked ? 'block' : 'none';
-        
-        // Hacer obligatorios los campos solo si el checkbox está marcado
-        const requiredInputs = cardFields.querySelectorAll('input:not([type="radio"])');
-        requiredInputs.forEach(input => {
-            input.required = this.checked;
-        });
-    });
+	checkbox.checked = !checkbox.checked;
+
+	if (checkbox.checked) {
+		fields.style.display = "block";
+		container.classList.add("active");
+	} else {
+		fields.style.display = "none";
+		container.classList.remove("active");
+	}
+
+	// Hacer required inputs si está activo
+	const inputs = fields.querySelectorAll(
+		'input:not([type="hidden"]):not([type="radio"])'
+	);
+	inputs.forEach((i) => (i.required = checkbox.checked));
 }
-// =========================================================
 
-// 3. Función Cookie
+// Selectores visuales (Color e Iconos)
+document.querySelectorAll(".color-circle").forEach((c) => {
+	c.addEventListener("click", function () {
+		document
+			.querySelectorAll(".color-circle")
+			.forEach((i) => i.classList.remove("selected"));
+		this.classList.add("selected");
+		document.getElementById("account_color").value = this.dataset.color;
+	});
+});
+
+document.querySelectorAll(".icon-option").forEach((c) => {
+	c.addEventListener("click", function () {
+		document
+			.querySelectorAll(".icon-option")
+			.forEach((i) => i.classList.remove("selected"));
+		this.classList.add("selected");
+		document.getElementById("env_icon").value = this.dataset.icon;
+	});
+});
+
+// --- LÓGICA DE ENVÍO DE DATOS ---
+
 function getCookie(name) {
-    let matches = document.cookie.match(new RegExp(
-        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
+	let matches = document.cookie.match(
+		new RegExp(
+			"(?:^|; )" +
+				name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
+				"=([^;]*)"
+		)
+	);
+	return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-// 4. Envío del Formulario
-const form = document.getElementById('setup-form');
-if (form) {
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const btn = document.getElementById('btn-submit');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+document
+	.getElementById("setup-form")
+	.addEventListener("submit", async function (e) {
+		e.preventDefault();
+		const btn = document.getElementById("btn-submit");
+		const originalText = btn.innerHTML;
+		btn.disabled = true;
+		btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
 
-        try {
-            // Inicializar CSRF
-            await fetch('/sanctum/csrf-cookie', { method: 'GET' });
+		try {
+			// 1. Pedir la cookie CSRF (Seguridad)
+			await fetch("/sanctum/csrf-cookie", { method: "GET" });
 
-            // A. Guardar Cuenta
-            const accountData = {
-                bank_name: document.getElementById('bank_name').value,
-                iban: document.getElementById('iban').value,
-                current_balance: document.getElementById('current_balance').value,
-                color: document.getElementById('account_color').value
-            };
+			// 1. LÓGICA DE CONCATENACIÓN (UNIR PAÍS + NÚMEROS)
+			const country = document.getElementById("iban_country").value; // "ES"
+			let number = document.getElementById("iban_number").value; // "2100..."
 
-            const accResponse = await fetch('/api/accounts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
-                },
-                credentials: 'include',
-                body: JSON.stringify(accountData)
-            });
+			// Limpiar espacios vacíos
+			number = number.replace(/\s+/g, "");
 
-            if (accResponse.status === 401) {
-                alert("Sesión expirada. Redirigiendo al login...");
-                window.location.href = "/login";
-                return;
-            }
+			// Unir todo en un solo string
+			const fullIban = country + number;
 
-            if (!accResponse.ok) {
-                const err = await accResponse.json().catch(() => ({}));
-                throw new Error(err.message || "Error al crear cuenta");
-            }
+			// 2. CREAR EL OBJETO PARA ENVIAR
+			const accountData = {
+				bank_name: document.getElementById("bank_name").value,
 
-            const accResult = await accResponse.json();
-            const accountId = accResult.account.id;
+				// ¡AQUÍ ESTÁ LA CLAVE! Enviamos la llave 'iban', no 'ibanNumber'
+				iban: fullIban,
 
-            // B. Guardar Tarjeta (Solo si el checkbox está marcado)
-            if (checkbox.checked) {
-                // Formatear fecha: de "2025-08" a "2025-08-01"
-                let rawDate = document.getElementById('card_expiration').value; 
-                let formattedDate = rawDate ? rawDate + "-01" : null;
-                
-                // Obtener tipo (radio button)
-                const typeInput = document.querySelector('input[name="card_type"]:checked');
-                const type = typeInput ? typeInput.value : 'debit';
+				current_balance: document.getElementById("current_balance").value,
+				color: document.getElementById("account_color").value,
+			};
 
-                const cardData = {
-                    account_id: accountId,
-                    alias: document.getElementById('card_alias').value,
-                    last_4_digits: document.getElementById('card_digits').value,
-                    expiration_date: formattedDate,
-                    type: type
-                };
+			// 3. ENVIAR AL BACKEND
+			const accRes = await fetch("/api/accounts", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+					"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+				},
+				credentials: "include",
+				body: JSON.stringify(accountData),
+			});
 
-                const cardResponse = await fetch('/api/cards', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify(cardData)
-                });
-                
-                if (!cardResponse.ok) {
-                    console.error("Error guardando tarjeta:", await cardResponse.text());
-                    // No lanzamos error aquí para que al menos redirija al dashboard si la cuenta se creó bien
-                }
-            }
+			if (accRes.status === 401) {
+				window.location.href = "/login";
+				return;
+			}
 
-            // ¡ÉXITO!
-            window.location.href = "/dashboard";
+			// Manejo de errores
+			if (!accRes.ok) {
+				const errorText = await accRes.text();
+				console.error("ERROR DEL SERVIDOR:", errorText);
+				try {
+					const errorJson = JSON.parse(errorText);
+					throw new Error(errorJson.message || "Error guardando la cuenta");
+				} catch (e) {
+					// Si el mensaje del try anterior falla, lanzamos el original
+					if (e.message !== "Error guardando la cuenta") throw e;
+					throw new Error("Error crítico del servidor. Revisa consola.");
+				}
+			}
 
-        } catch (error) {
-            console.error(error);
-            alert("Error: " + error.message);
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
-    });
-}
+			// --- SI LLEGAMOS AQUÍ, LA CUENTA SE CREÓ ---
+			const accResult = await accRes.json();
+			const accountId = accResult.account.id;
+
+			// 2. CREAR TARJETA (Si procede)
+			if (document.getElementById("has_card").checked) {
+				let rawDate = document.getElementById("card_expiration").value;
+				const type = document.querySelector(
+					'input[name="card_type"]:checked'
+				).value;
+
+				await fetch("/api/cards", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/json",
+						"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+					},
+					credentials: "include",
+					body: JSON.stringify({
+						account_id: accountId,
+						alias: document.getElementById("card_alias").value,
+						last_4_digits: document.getElementById("card_digits").value,
+						expiration_date: rawDate ? rawDate + "-01" : null,
+						type: type,
+					}),
+				});
+			}
+
+			// 3. CREAR SOBRE (Si procede)
+			if (document.getElementById("has_envelope").checked) {
+				await fetch("/api/envelopes", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/json",
+						"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+					},
+					credentials: "include",
+					body: JSON.stringify({
+						account_id: accountId,
+						name: document.getElementById("env_name").value,
+						target_amount: document.getElementById("env_target").value,
+						allocated_amount: document.getElementById("env_allocated").value,
+						icon: document.getElementById("env_icon").value,
+					}),
+				});
+			}
+
+			// FIN
+			window.location.href = "/dashboard";
+		} catch (error) {
+			console.error(error);
+			alert("Error: " + error.message);
+			btn.disabled = false;
+			btn.innerHTML = originalText;
+		}
+	});

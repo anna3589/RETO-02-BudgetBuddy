@@ -1,133 +1,431 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Configuración Inicial | BudgetBuddy</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/setup.css" />
-</head>
-<body>
-    <div class="wizard-container">
-        <div class="wizard-header">
-            <img src="../assets/img/logo_budget.png" alt="Logo" />
-            <!--  -->
-            <h2>¡Hola! 👋</h2>
-            <p>Vamos a configurar tu espacio financiero.</p>
-        </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Configuración Inicial | BudgetBuddy</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+		/>
+		<link rel="stylesheet" href="../css/style.css" />
+		<link rel="stylesheet" href="../css/setup.css" />
+		<style>
+			/* Estilos Extra para el Wizard de 3 Pasos */
+			.step-content {
+				display: none;
+				animation: fadeIn 0.4s ease-out;
+			}
+			.step-content.active {
+				display: block;
+			}
 
-        <div class="wizard-body">
-            <div class="step-indicator">
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-            </div>
+			.wizard-buttons {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 25px;
+				gap: 10px;
+			}
+			.btn-outline {
+				background: transparent;
+				border: 1px solid var(--primary);
+				color: var(--primary);
+			}
 
-            <form id="setup-form">
-                <div class="form-group">
-                    <label for="bank_name">Nombre de la Cuenta</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-university"></i>
-                        <input type="text" id="bank_name" placeholder="Ej: BBVA Principal" required />
-                    </div>
-                </div>
+			/* Toggle Switch para saltar pasos */
+			.skip-toggle {
+				background: #f3f4f6;
+				padding: 15px;
+				border-radius: 10px;
+				margin-bottom: 20px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				cursor: pointer;
+				border: 1px solid #e5e7eb;
+			}
+			.skip-toggle.active {
+				background: #ecfdf5;
+				border-color: var(--primary);
+			}
 
-                <div class="form-group">
-                    <label for="iban">IBAN (Opcional)</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-barcode"></i>
-                        <input type="text" id="iban" placeholder="ES21 0000..." />
-                    </div>
-                </div>
+			/* Grid de Iconos para Sobres */
+			.icon-grid {
+				display: grid;
+				grid-template-columns: repeat(5, 1fr);
+				gap: 10px;
+				margin-top: 10px;
+			}
+			.icon-option {
+				height: 40px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border: 1px solid #e5e7eb;
+				border-radius: 8px;
+				cursor: pointer;
+				color: #6b7280;
+				transition: all 0.2s;
+			}
+			.icon-option:hover {
+				background: #f9fafb;
+			}
+			.icon-option.selected {
+				background: var(--primary);
+				color: white;
+				border-color: var(--primary);
+			}
 
-                <div class="form-group">
-                    <label for="current_balance">Saldo Actual (€)</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-euro-sign"></i>
-                        <input type="number" id="current_balance" step="0.01" placeholder="0.00" required />
-                    </div>
-                </div>
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+					transform: translateY(10px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wizard-container">
+			<div class="wizard-header">
+				<img src="../assets/img/logo_budget.png" alt="Logo" />
+				<h2>Configuración</h2>
+				<p>Paso <span id="step-number">1</span> de 3</p>
+			</div>
 
-                <div class="form-group">
-                    <label>Elige un color</label>
-                    <div class="color-picker-container" style="display: flex; gap: 10px; margin-block-start: 10px">
-                        <div class="color-circle selected" data-color="#217A4A" style="background: #217a4a"></div>
-                        <div class="color-circle" data-color="#34d399" style="background: #34d399"></div>
-                        <div class="color-circle" data-color="#60a5fa" style="background: #60a5fa"></div>
-                        <div class="color-circle" data-color="#fbbf24" style="background: #fbbf24"></div>
-                        <div class="color-circle" data-color="#ef4444" style="background: #ef4444"></div>
-                        <div class="color-circle" data-color="#a855f7" style="background: #a855f7"></div>
-                    </div>
-                    <input type="hidden" id="account_color" value="#217A4A" />
-                </div>
-                
-                <style>
-                    .color-circle { inline-size: 30px; block-size: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
-                    .color-circle:hover { transform: scale(1.1); }
-                    .color-circle.selected { border-color: #000; transform: scale(1.1); box-shadow: 0 0 0 2px white inset; }
-                    
-                    /* Estilos para el selector de tipo de tarjeta */
-                    .card-type-selector { display: flex; gap: 15px; margin-block-end: 15px; }
-                    .type-option { flex: 1; position: relative; }
-                    .type-option input { position: absolute; opacity: 0; cursor: pointer; }
-                    .type-label { 
-                        display: block; padding: 10px; text-align: center; border: 1px solid #e5e7eb; 
-                        border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
-                    }
-                    .type-option input:checked + .type-label {
-                        background-color: #e0f2fe; border-color: #0ea5e9; color: #0284c7; font-weight: 600;
-                    }
-                </style>
+			<div class="wizard-body">
+				<div class="step-indicator">
+					<div class="step-dot active" id="dot-1"></div>
+					<div class="step-dot" id="dot-2"></div>
+					<div class="step-dot" id="dot-3"></div>
+				</div>
 
-                <div style="margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb;">
-                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-block-end: 0;">
-                        <input type="checkbox" id="has_card" style="inline-size: auto; margin: 0" />
-                        <span style="font-weight: 600; font-size: 0.9rem">¿Vincular una tarjeta?</span>
-                    </label>
+				<form id="setup-form">
+					<div id="step-1" class="step-content active">
+						<h3 style="margin-bottom: 15px; color: var(--text-main)">
+							1. Tu Cuenta Principal
+						</h3>
 
-                    <div id="card-fields" style="display: none; margin-block-start: 15px">
-                        
-                        <div class="form-group">
-                            <label>Alias</label>
-                            <input type="text" id="card_alias" placeholder="Ej: Visa Oro" />
-                        </div>
+						<div class="form-group">
+							<label>Nombre del Banco</label>
+							<div class="input-wrapper">
+								<i class="fas fa-university"></i>
+								<input
+									type="text"
+									id="bank_name"
+									placeholder="Ej: BBVA Principal"
+									required
+								/>
+							</div>
+						</div>
 
-                        <div class="form-group">
-                            <label>Tipo de Tarjeta</label>
-                            <div class="card-type-selector">
-                                <div class="type-option">
-                                    <input type="radio" name="card_type" id="type_debit" value="debit" checked>
-                                    <label for="type_debit" class="type-label"><i class="fas fa-wallet"></i> Débito</label>
-                                </div>
-                                <div class="type-option">
-                                    <input type="radio" name="card_type" id="type_credit" value="credit">
-                                    <label for="type_credit" class="type-label"><i class="fas fa-credit-card"></i> Crédito</label>
-                                </div>
-                            </div>
-                        </div>
+						<div class="form-group">
+							<label for="iban_number">IBAN</label>
 
-                        <div style="display: flex; gap: 10px;">
-                            <div class="form-group" style="flex: 1;">
-                                <label>Termina en</label>
-                                <input type="text" id="card_digits" maxlength="4" placeholder="1234" pattern="\d{4}" />
-                            </div>
+							<div
+								class="input-wrapper iban-composite"
+								style="display: flex; align-items: stretch"
+							>
+								<i class="fas fa-globe" style="z-index: 2"></i>
 
-                            <div class="form-group" style="flex: 1;">
-                                <label>Caduca</label>
-                                <input type="month" id="card_expiration" placeholder="MM/AA" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+								<select id="iban_country" class="country-select">
+									<option value="ES" selected>🇪🇸 ES</option>
+									<option value="FR">🇫🇷 FR</option>
+									<option value="DE">🇩🇪 DE</option>
+									<option value="IT">🇮🇹 IT</option>
+									<option value="PT">🇵🇹 PT</option>
+									<option value="GB">🇬🇧 GB</option>
+								</select>
 
-                <button type="submit" id="btn-submit" class="btn-primary" style="width: 100%">
-                    <i class="fas fa-rocket" style="margin-right: 8px"></i> Guardar y Entrar
-                </button>
-            </form>
-        </div>
-    </div>
-    <script src="../js/setup.js"></script>
-</body>
+								<input
+									type="text"
+									id="iban_number"
+									placeholder="0000 0000 00..."
+									style="
+										padding-inline-start: 10px !important;
+										border-inline-start: none;
+										border-start-start-radius: 0;
+										border-end-start-radius: 0;
+									" required
+								/>
+							</div>
+
+							<p style="font-size: 0.8rem; color: #6b7280; margin-top: 5px">
+								Selecciona el país y escribe los dígitos.
+							</p>
+						</div>
+
+						<div class="form-group">
+							<label>Saldo Actual (€)</label>
+							<div class="input-wrapper">
+								<i class="fas fa-euro-sign"></i>
+								<input
+									type="number"
+									id="current_balance"
+									step="0.01"
+									placeholder="0.00"
+									required
+								/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Color</label>
+							<div
+								class="color-picker-container"
+								style="display: flex; gap: 10px; margin-block-start: 10px"
+							>
+								<div
+									class="color-circle selected"
+									data-color="#217A4A"
+									style="background: #217a4a"
+								></div>
+								<div
+									class="color-circle"
+									data-color="#34d399"
+									style="background: #34d399"
+								></div>
+								<div
+									class="color-circle"
+									data-color="#60a5fa"
+									style="background: #60a5fa"
+								></div>
+								<div
+									class="color-circle"
+									data-color="#fbbf24"
+									style="background: #fbbf24"
+								></div>
+								<div
+									class="color-circle"
+									data-color="#ef4444"
+									style="background: #ef4444"
+								></div>
+							</div>
+							<input type="hidden" id="account_color" value="#217A4A" />
+						</div>
+
+						<div class="wizard-buttons">
+							<div></div>
+							<button type="button" class="btn-primary" onclick="nextStep(2)">
+								Siguiente <i class="fas fa-arrow-right"></i>
+							</button>
+						</div>
+					</div>
+
+					<div id="step-2" class="step-content">
+						<h3 style="margin-block-end: 15px; color: var(--text-main)">
+							2. Tarjeta Asociada
+						</h3>
+
+						<div
+							class="skip-toggle"
+							id="toggle-card"
+							onclick="toggleSection('card')"
+						>
+							<div>
+								<span style="font-weight: 600">¿Añadir Tarjeta?</span>
+								<p style="font-size: 0.8rem; margin: 0; color: #6b7280">
+									Vincular tarjeta física o virtual
+								</p>
+							</div>
+							<div class="toggle-switch">
+								<input
+									type="checkbox"
+									id="has_card"
+									style="pointer-events: none"
+								/>
+							</div>
+						</div>
+
+						<div id="card-fields" style="display: none">
+							<div class="form-group">
+								<label>Alias</label>
+								<input type="text" id="card_alias" placeholder="Ej: Visa Oro" />
+							</div>
+
+							<div class="form-group">
+								<label>Tipo</label>
+								<div style="display: flex; gap: 10px">
+									<label
+										style="
+											flex: 1;
+											padding: 10px;
+											border: 1px solid #ddd;
+											border-radius: 8px;
+											text-align: center;
+											cursor: pointer;
+										"
+									>
+										<input
+											type="radio"
+											name="card_type"
+											value="debit"
+											checked
+										/>
+										Débito
+									</label>
+									<label
+										style="
+											flex: 1;
+											padding: 10px;
+											border: 1px solid #ddd;
+											border-radius: 8px;
+											text-align: center;
+											cursor: pointer;
+										"
+									>
+										<input type="radio" name="card_type" value="credit" />
+										Crédito
+									</label>
+								</div>
+							</div>
+
+							<div style="display: flex; gap: 10px">
+								<div class="form-group" style="flex: 1">
+									<label>Últimos 4</label>
+									<input
+										type="text"
+										id="card_digits"
+										maxlength="4"
+										placeholder="1234"
+									/>
+								</div>
+								<div class="form-group" style="flex: 1">
+									<label>Caduca</label>
+									<input type="month" id="card_expiration" />
+								</div>
+							</div>
+						</div>
+
+						<div class="wizard-buttons">
+							<button
+								type="button"
+								class="btn-primary btn-outline"
+								onclick="nextStep(1)"
+							>
+								Atrás
+							</button>
+							<button type="button" class="btn-primary" onclick="nextStep(3)">
+								Siguiente <i class="fas fa-arrow-right"></i>
+							</button>
+						</div>
+					</div>
+
+					<div id="step-3" class="step-content">
+						<h3 style="margin-block-end: 15px; color: var(--text-main)">
+							3. Sobre Digital (Presupuesto)
+						</h3>
+
+						<div
+							class="skip-toggle"
+							id="toggle-envelope"
+							onclick="toggleSection('envelope')"
+						>
+							<div>
+								<span style="font-weight: 600">¿Crear primer Sobre?</span>
+								<p style="font-size: 0.8rem; margin: 0; color: #6b7280">
+									Separa dinero para un objetivo
+								</p>
+							</div>
+							<div class="toggle-switch">
+								<input
+									type="checkbox"
+									id="has_envelope"
+									style="pointer-events: none"
+								/>
+							</div>
+						</div>
+
+						<div id="envelope-fields" style="display: none">
+							<div class="form-group">
+								<label>Nombre del Objetivo</label>
+								<input
+									type="text"
+									id="env_name"
+									placeholder="Ej: Ahorro Coche, Vacaciones..."
+								/>
+							</div>
+
+							<div style="display: flex; gap: 10px">
+								<div class="form-group" style="flex: 1">
+									<label>Meta (€)</label>
+									<input type="number" id="env_target" placeholder="1000" />
+								</div>
+								<div class="form-group" style="flex: 1">
+									<label>Apartado (€)</label>
+									<input type="number" id="env_allocated" placeholder="0" />
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label>Icono</label>
+								<div class="icon-grid">
+									<div
+										class="icon-option selected"
+										data-icon="fas fa-piggy-bank"
+									>
+										<i class="fas fa-piggy-bank"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-car">
+										<i class="fas fa-car"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-home">
+										<i class="fas fa-home"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-plane">
+										<i class="fas fa-plane"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-gamepad">
+										<i class="fas fa-gamepad"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-shopping-cart">
+										<i class="fas fa-shopping-cart"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-utensils">
+										<i class="fas fa-utensils"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-mobile-alt">
+										<i class="fas fa-mobile-alt"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-heart">
+										<i class="fas fa-heart"></i>
+									</div>
+									<div class="icon-option" data-icon="fas fa-graduation-cap">
+										<i class="fas fa-graduation-cap"></i>
+									</div>
+								</div>
+								<input type="hidden" id="env_icon" value="fas fa-piggy-bank" />
+							</div>
+						</div>
+
+						<div class="wizard-buttons">
+							<button
+								type="button"
+								class="btn-primary btn-outline"
+								onclick="nextStep(2)"
+							>
+								Atrás
+							</button>
+							<button
+								type="submit"
+								id="btn-submit"
+								class="btn-primary"
+								style="background: #10b981"
+							>
+								<i class="fas fa-check"></i> Finalizar
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script src="../js/setup.js"></script>
+	</body>
 </html>
