@@ -2,68 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Card;
 use Illuminate\Http\Request;
+use App\Models\Card;
+use App\Models\Account;
+use Illuminate\Support\Facades\Auth;
 
 class CardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //necesitamos 4 digitos
-        $request->validate([
-            'last_4_digits' => 'required | integer | size:4'
+        // 1. Validar los datos que vienen del formulario (setup.js)
+        $validated = $request->validate([
+            'account_id' => 'required|exists:accounts,id',
+            'alias' => 'required|string|max:50',
+            'last_4_digits' => 'required|string|size:4',
+            'expiration_date' => 'required|date',      // Espera YYYY-MM-DD
+            'type' => 'required|in:credit,debit',      // Solo permite 'credit' o 'debit'
         ]);
 
-    }
+        // 2. Seguridad extra: Verificar que la cuenta pertenece al usuario logueado
+        // (Para evitar que alguien vincule una tarjeta a la cuenta de otro)
+        $account = Account::where('id', $validated['account_id'])
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Card $card)
-    {
-        //
-    }
+        // 3. Crear la tarjeta
+        $card = Card::create([
+            'account_id' => $account->id,
+            'alias' => $validated['alias'],
+            'last_4_digits' => $validated['last_4_digits'],
+            'expiration_date' => $validated['expiration_date'],
+            'type' => $validated['type']
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Card $card)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Card $card)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Card $card)
-    {
-        //
+        return response()->json([
+            'message' => 'Tarjeta creada con éxito',
+            'card' => $card
+        ], 201);
     }
 }

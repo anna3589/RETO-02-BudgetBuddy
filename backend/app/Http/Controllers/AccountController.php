@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\account;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+
 class AccountController extends Controller
 {
     /**
@@ -28,12 +30,26 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-        // El iban de una cuenta tiene un formato de 2 letras seguido de 22 numeros
-        // ej: ES91 2100 0418 4012 3456 7891
-
-        $request->validate([
-            'iban' => 'required|integer|size:22'
+        $validated = $request->validate([
+            'bank_name' => 'required|string|max:50',
+            'current_balance' => 'required|numeric|min:0',
+            'iban' => 'nullable|string|max:34', // Validamos IBAN
+            'color' => 'required|string|max:7', // Validamos Color Hex
         ]);
+
+        $account = Account::create([
+            'user_id' => Auth::id(),
+            'bank_name' => $validated['bank_name'],
+            'current_balance' => $validated['current_balance'],
+            // Usamos el operador null coalescing (??) por seguridad
+            'iban' => $validated['iban'] ?? null, 
+            'color' => $validated['color'],
+        ]);
+
+        return response()->json([
+            'message' => 'Cuenta creada', 
+            'account' => $account
+        ], 201);
     }
 
     /**

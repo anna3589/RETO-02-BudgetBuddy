@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Configuración Inicial | BudgetBuddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/setup.css" />
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <img src="../assets/img/logo_budget.png" alt="Logo" />
+            <!--  -->
+            <h2>¡Hola! 👋</h2>
+            <p>Vamos a configurar tu espacio financiero.</p>
+        </div>
+
+        <div class="wizard-body">
+            <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+
+            <form id="setup-form">
+                <div class="form-group">
+                    <label for="bank_name">Nombre de la Cuenta</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-university"></i>
+                        <input type="text" id="bank_name" placeholder="Ej: BBVA Principal" required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="iban">IBAN (Opcional)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-barcode"></i>
+                        <input type="text" id="iban" placeholder="ES21 0000..." />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="current_balance">Saldo Actual (€)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-euro-sign"></i>
+                        <input type="number" id="current_balance" step="0.01" placeholder="0.00" required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Elige un color</label>
+                    <div class="color-picker-container" style="display: flex; gap: 10px; margin-block-start: 10px">
+                        <div class="color-circle selected" data-color="#217A4A" style="background: #217a4a"></div>
+                        <div class="color-circle" data-color="#34d399" style="background: #34d399"></div>
+                        <div class="color-circle" data-color="#60a5fa" style="background: #60a5fa"></div>
+                        <div class="color-circle" data-color="#fbbf24" style="background: #fbbf24"></div>
+                        <div class="color-circle" data-color="#ef4444" style="background: #ef4444"></div>
+                        <div class="color-circle" data-color="#a855f7" style="background: #a855f7"></div>
+                    </div>
+                    <input type="hidden" id="account_color" value="#217A4A" />
+                </div>
+                
+                <style>
+                    .color-circle { inline-size: 30px; block-size: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+                    .color-circle:hover { transform: scale(1.1); }
+                    .color-circle.selected { border-color: #000; transform: scale(1.1); box-shadow: 0 0 0 2px white inset; }
+                    
+                    /* Estilos para el selector de tipo de tarjeta */
+                    .card-type-selector { display: flex; gap: 15px; margin-block-end: 15px; }
+                    .type-option { flex: 1; position: relative; }
+                    .type-option input { position: absolute; opacity: 0; cursor: pointer; }
+                    .type-label { 
+                        display: block; padding: 10px; text-align: center; border: 1px solid #e5e7eb; 
+                        border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
+                    }
+                    .type-option input:checked + .type-label {
+                        background-color: #e0f2fe; border-color: #0ea5e9; color: #0284c7; font-weight: 600;
+                    }
+                </style>
+
+                <div style="margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-block-end: 0;">
+                        <input type="checkbox" id="has_card" style="inline-size: auto; margin: 0" />
+                        <span style="font-weight: 600; font-size: 0.9rem">¿Vincular una tarjeta?</span>
+                    </label>
+
+                    <div id="card-fields" style="display: none; margin-block-start: 15px">
+                        
+                        <div class="form-group">
+                            <label>Alias</label>
+                            <input type="text" id="card_alias" placeholder="Ej: Visa Oro" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tipo de Tarjeta</label>
+                            <div class="card-type-selector">
+                                <div class="type-option">
+                                    <input type="radio" name="card_type" id="type_debit" value="debit" checked>
+                                    <label for="type_debit" class="type-label"><i class="fas fa-wallet"></i> Débito</label>
+                                </div>
+                                <div class="type-option">
+                                    <input type="radio" name="card_type" id="type_credit" value="credit">
+                                    <label for="type_credit" class="type-label"><i class="fas fa-credit-card"></i> Crédito</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Termina en</label>
+                                <input type="text" id="card_digits" maxlength="4" placeholder="1234" pattern="\d{4}" />
+                            </div>
+
+                            <div class="form-group" style="flex: 1;">
+                                <label>Caduca</label>
+                                <input type="month" id="card_expiration" placeholder="MM/AA" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-submit" class="btn-primary" style="width: 100%">
+                    <i class="fas fa-rocket" style="margin-right: 8px"></i> Guardar y Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+    <script src="../js/setup.js"></script>
+</body>
+</html>
