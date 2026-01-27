@@ -8,45 +8,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/desktop.css" />
     <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/desktop.css" />
+    <link rel="stylesheet" href="../css/notification.css" />
 </head>
 <body class="desktop-body">
-
-    <!-- Мобільна навігаційна панель -->
-    <nav class="mobile-nav">
-        <ul class="mobile-nav-items">
-            <li>
-                <a href="/desktop" class="mobile-nav-item active" data-page="dashboard" title="Panel general">
-                    <i class="fas fa-home"></i>
-                    <span>Inicio</span>
-                </a>
-            </li>
-            <li>
-                <a href="/api-estadisticas" class="mobile-nav-item" data-page="estadisticas" title="Estadísticas">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Estadísticas</span>
-                </a>
-            </li>
-            <li>
-                <a href="/misTarjetas" class="mobile-nav-item" data-page="cards" title="Mis tarjetas">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Tarjetas</span>
-                </a>
-            </li>
-            <li>
-                <a href="/ajustes" class="mobile-nav-item" data-page="profile" title="Mi cuenta">
-                    <i class="fas fa-cog"></i>
-                    <span>Ajustes</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 
     <!-- Top Bar -->
     <header class="desktop-header">
         <div class="desktop-brand">
-            <img src="../images/logo_budget_expand.png" alt="budgetBuddy Logo" class="desktop-logo" />
+            <img src="../images/logo_budget2-removebg-preview (1).png" alt="">
         </div>
         
         <div class="desktop-header-right">
@@ -62,20 +33,151 @@
             </div>
         </div>
     </header>
+
+    <!-- Попап повідомлень -->
+    <div class="notifications-popup" id="notifications-popup">
+        <div class="notifications-header">
+            <h3><i class="fas fa-bell"></i> Notificaciones</h3>
+            <button class="notifications-close" id="close-notifications">&times;</button>
+        </div>
+        
+        <div class="notifications-list">
+            <!-- Нове повідомлення -->
+            <div class="notification-item new" data-id="1">
+                <div class="notification-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Nuevas funciones de seguridad</h4>
+                    <p>Hemos añadido autenticación de dos factores para mayor protección.</p>
+                    <span class="notification-time">Hace 5 minutos</span>
+                </div>
+                <button class="notification-action" title="Marcar como leído">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+            
+            <!-- Прочитане повідомлення -->
+            <div class="notification-item read" data-id="2">
+                <div class="notification-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Resumen mensual disponible</h4>
+                    <p>Tu informe de gastos de abril está listo para revisar.</p>
+                    <span class="notification-time">Ayer, 15:30</span>
+                </div>
+                <button class="notification-action" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            
+            <!-- Важливе повідомлення -->
+            <div class="notification-item important" data-id="3">
+                <div class="notification-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Límite de gastos alcanzado</h4>
+                    <p>Has alcanzado el 90% de tu presupuesto en "Comida".</p>
+                    <span class="notification-time">28 Abr, 11:45</span>
+                </div>
+                <button class="notification-action" title="Marcar como leído">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+            
+            <!-- Повідомлення про оновлення -->
+            <div class="notification-item" data-id="4">
+                <div class="notification-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Actualización de la aplicación</h4>
+                    <p>Nueva versión 2.1 disponible con mejoras de rendimiento.</p>
+                    <span class="notification-time">27 Abr, 09:20</span>
+                </div>
+                <button class="notification-action" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            
+            <!-- Повідомлення про нову функцію -->
+            <div class="notification-item" data-id="5">
+                <div class="notification-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Nueva función: Exportar datos</h4>
+                    <p>Ahora puedes exportar todos tus datos en diferentes formatos.</p>
+                    <span class="notification-time">26 Abr, 14:15</span>
+                </div>
+                <button class="notification-action" title="Marcar como leído">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+            
+            <!-- Пустий стан (коли немає повідомлень) -->
+            <div class="notifications-empty" id="notifications-empty" style="display: none;">
+                <i class="far fa-bell-slash"></i>
+                <p>No tienes notificaciones nuevas</p>
+                <span>Todas las notificaciones están al día</span>
+            </div>
+        </div>
+        
+        <div class="notifications-footer">
+            <button class="btn btn-secondary" id="mark-all-read">
+                <i class="fas fa-check-double"></i> Marcar todas como leídas
+            </button>
+            <button class="btn btn-secondary" id="clear-all">
+                <i class="fas fa-trash"></i> Limpiar todas
+            </button>
+        </div>
+    </div>
+
+    <!-- Мобільна навігаційна панель -->
+    <nav class="mobile-nav">
+        <ul class="mobile-nav-items">
+            <li>
+                <a href="desktop.html" class="mobile-nav-item active" data-page="dashboard" title="Panel general">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="mobile-nav-item" data-page="estadisticas" title="Estadísticas">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Estadísticas</span>
+                </a>
+            </li>
+            <li>
+                <a href="misTarjetas.html" class="mobile-nav-item" data-page="cards" title="Mis tarjetas">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Tarjetas</span>
+                </a>
+            </li>
+            <li>
+                <a href="ajustes.html" class="mobile-nav-item" data-page="profile" title="Mi cuenta">
+                    <i class="fas fa-cog"></i>
+                    <span>Ajustes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
     
     <!-- Sidebar Navigation -->
     <div class="sidebar">   
         <div class="nav-menu">
-            <a href="/dashboard" class="nav-item active" data-page="dashboard" title="Panel general">
+            <a href="desktop.html" class="nav-item active" data-page="dashboard" title="Panel general">
                 <i class="fas fa-home"></i>
             </a>
-            <a href="/api-estadisticas" class="nav-item" data-page="estadisticas" title="Estadísticas">
+            <a href="#" class="nav-item" data-page="estadisticas" title="Estadísticas">
                 <i class="fas fa-chart-line"></i>
             </a>
-            <a href="/misTarjetas" class="nav-item" data-page="cards" title="Mis tarjetas">
+            <a href="misTarjetas.html" class="nav-item" data-page="cards" title="Mis tarjetas">
                 <i class="fas fa-credit-card"></i>
             </a>
-            <a href="/ajustes" class="nav-item" data-page="profile" title="Mi cuenta">
+            <a href="ajustes.html" class="nav-item" data-page="profile" title="Mi cuenta">
                 <i class="fas fa-cog"></i>
             </a>
         </div>
@@ -88,7 +190,7 @@
             <div class="page-header">
                 <h1 class="page-title">
                     Pagina principal
-                    <div class="date-container">28 Abr, 2028</div>
+                    <div class="date-container">28 Abr, 2024</div>
                 </h1>
             </div>
             
@@ -100,11 +202,11 @@
                         <div class="card-header-compact">
                             <h2 class="card-title" id="card-title">Tarjeta 1</h2>
                             <div class="card-nav">
-                                <button class="card-nav-btn prev-btn" aria-label="Previous card">Previous</button>
+                                <button class="card-nav-btn prev-btn">
                                     <i class="fas fa-chevron-left"></i>
                                 </button>
                                 <span class="card-counter">1/3</span>
-                                <button class="card-nav-btn next-btn" aria-label="Next card">
+                                <button class="card-nav-btn next-btn">
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
@@ -329,7 +431,7 @@
                     </div>
                     
                     <!-- Metas Financieras -->
-                    <div class="card">
+                    <div class="card" style="min-height: 360px;">
                         <div class="card-header-compact">
                             <h2 class="card-title">Metas Financieras</h2>
                             <button class="view-all-btn" style="font-size: 14px;">
@@ -465,8 +567,6 @@
     </dialog>
 
     <script src="../js/desktop.js"></script>
-    
-    <!-- Comentado temporalmente para evitar conflictos
-    <script type="module" src="../js/main.js"></script> -->
+    <script src="../js/notifications.js"></script>
 </body>
 </html>

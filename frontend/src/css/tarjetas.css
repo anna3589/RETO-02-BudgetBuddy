@@ -386,18 +386,21 @@
     grid-template-columns: 1fr 1fr;
     gap: 25px;
     margin-bottom: 30px;
+    align-items: stretch; /* Вирівнюємо висоту колонок */
 }
 
 .desktop-left-column {
     display: flex;
     flex-direction: column;
     gap: 25px;
+    height: 100%; /* Займає всю доступну висоту */
 }
 
 .desktop-right-column {
     display: flex;
     flex-direction: column;
     gap: 25px;
+    height: 100%; /* Займає всю доступну висоту */
 }
 
 /* Cards Styles */
@@ -407,6 +410,8 @@
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
 }
 
 .card-small {
@@ -418,6 +423,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+    flex-shrink: 0; /* Не стискається */
 }
 
 .card-title {
@@ -581,11 +587,14 @@
     border-color: var(--primary);
 }
 
-/* Tabla de transacciones */
+/* Tabla de transacciones ЗІ СКРОЛОМ */
 .transactions-table {
-    margin-top: 15px;
+    flex-grow: 1; /* Займає всю доступну висоту */
     overflow-x: auto;
+    overflow-y: auto; /* Вертикальний скрол */
     -webkit-overflow-scrolling: touch; /* Для плавного скролу на iOS */
+    margin-top: 15px;
+    max-height: 530px; /* Фіксована максимальна висота */
 }
 
 .transactions-table table {
@@ -596,6 +605,10 @@
 
 .transactions-table thead {
     border-bottom: 2px solid var(--gray-light);
+    position: sticky;
+    top: 0;
+    background-color: var(--card-bg);
+    z-index: 1;
 }
 
 .transactions-table th {
@@ -664,6 +677,27 @@
     color: var(--income-green);
 }
 
+/* Стилі для скролбару в транзакціях */
+.transactions-table::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.transactions-table::-webkit-scrollbar-track {
+    background: var(--gray-light);
+    border-radius: 3px;
+}
+
+.transactions-table::-webkit-scrollbar-thumb {
+    background: rgba(33, 122, 74, 0.5);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.transactions-table::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
 /* =========================================== */
 /* ДІАГРАМА ВИТРАТ */
 /* =========================================== */
@@ -695,6 +729,9 @@
 
 .chart-container {
     margin-top: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-wrapper {
@@ -702,6 +739,7 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    flex-grow: 1;
 }
 
 .pie-chart {
@@ -779,6 +817,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex-grow: 1;
+    justify-content: center;
 }
 
 .legend-item {
@@ -827,6 +867,10 @@
     flex-direction: column;
     gap: 12px;
     margin-top: 10px;
+    flex-grow: 1;
+    overflow-y: auto; /* Вертикальний скрол */
+    max-height: 320px; /* Фіксована висота */
+    padding-right: 5px; /* Місце для скролбару */
 }
 
 .invoice-item {
@@ -835,6 +879,7 @@
     align-items: center;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(117, 117, 117, 0.1);
+    flex-shrink: 0; /* Не стискається */
 }
 
 .invoice-item:last-child {
@@ -881,6 +926,7 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text-main);
+    margin-right: 30px;
 }
 
 /* View All Button */
@@ -899,6 +945,26 @@
 
 .view-all-btn:hover {
     text-decoration: underline;
+}
+
+/* Стилі для скролбару в фактурах */
+.invoices-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.invoices-list::-webkit-scrollbar-track {
+    background: var(--gray-light);
+    border-radius: 3px;
+}
+
+.invoices-list::-webkit-scrollbar-thumb {
+    background: rgba(33, 122, 74, 0.5);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.invoices-list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
 }
 
 /* =========================================== */
@@ -1042,6 +1108,7 @@
         margin: 10px -10px;
         padding: 0 10px;
         width: calc(100% + 20px);
+        max-height: 350px;
     }
     
     .transactions-table table {
@@ -1092,6 +1159,10 @@
     
     .view-all-btn {
         font-size: 14px;
+    }
+    
+    .invoices-list {
+        max-height: 280px;
     }
 }
 
@@ -1235,6 +1306,7 @@
         margin: 10px -5px;
         padding: 0 5px;
         width: calc(100% + 10px);
+        max-height: 300px;
     }
     
     .transactions-table table {
@@ -1321,6 +1393,10 @@
     
     .view-all-btn {
         font-size: 12px;
+    }
+    
+    .invoices-list {
+        max-height: 250px;
     }
 }
 
@@ -1411,6 +1487,14 @@
     .chart-total {
         font-size: 16px;
     }
+    
+    .transactions-table {
+        max-height: 280px;
+    }
+    
+    .invoices-list {
+        max-height: 220px;
+    }
 }
 
 /* Fix для горизонтальної прокрутки на мобільних */
@@ -1482,5 +1566,13 @@
     
     .cards-carousel {
         height: 95px;
+    }
+    
+    .transactions-table {
+        max-height: 260px;
+    }
+    
+    .invoices-list {
+        max-height: 200px;
     }
 }

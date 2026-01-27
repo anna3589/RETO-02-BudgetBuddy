@@ -1,4 +1,4 @@
-// tarjetas.js - Оновлена версія
+// tarjetas.js - Оновлена версія зі зміною статистики карток
 
 document.addEventListener('DOMContentLoaded', function() {
     // Навігація між картками (як у panel general)
@@ -8,10 +8,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const cards = document.querySelectorAll('.credit-card-compact');
     const cardsTitle = document.getElementById('cards-title');
     
+    // Елементи статистики
+    const gastosSemanales = document.querySelector('.usage-amount:not(.available)');
+    const disponible = document.querySelector('.usage-amount.available');
+    
     let currentCardIndex = 0;
     const totalCards = cards.length;
     
+    // Дані для кожної картки (тижневі витрати та доступний баланс)
+    const cardData = [
+        {
+            gastosSemanales: '480€',
+            disponible: '1.827€'
+        },
+        {
+            gastosSemanales: '320€',
+            disponible: '1.250€'
+        },
+        {
+            gastosSemanales: '150€',
+            disponible: '2.150€'
+        }
+    ];
+    
     function updateCardNavigation() {
+        // Оновлюємо картки
         cards.forEach(card => {
             card.classList.remove('active');
             card.style.display = 'none';
@@ -20,10 +41,28 @@ document.addEventListener('DOMContentLoaded', function() {
         cards[currentCardIndex].classList.add('active');
         cards[currentCardIndex].style.display = 'block';
         
+        // Оновлюємо лічильник
         cardCounter.textContent = `${currentCardIndex + 1}/${totalCards}`;
         
+        // Оновлюємо заголовок
         if (cardsTitle) {
             cardsTitle.textContent = `Tarjeta ${currentCardIndex + 1}`;
+        }
+        
+        // Оновлюємо статистику витрат
+        updateCardStats();
+    }
+    
+    function updateCardStats() {
+        if (gastosSemanales && disponible) {
+            // Отримуємо дані для поточної картки
+            const data = cardData[currentCardIndex];
+            
+            // Оновлюємо тижневі витрати
+            gastosSemanales.textContent = data.gastosSemanales;
+            
+            // Оновлюємо доступний баланс
+            disponible.textContent = data.disponible;
         }
     }
     
@@ -164,6 +203,46 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    // Додайте цей код в кінець tarjetas.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Обробник для кнопки "Ver todas"
+    const viewAllBtn = document.getElementById('viewAllInvoices');
+    const invoicesModal = document.getElementById('invoicesModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    
+    if (viewAllBtn && invoicesModal) {
+        viewAllBtn.addEventListener('click', function() {
+            invoicesModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Забороняємо скрол сторінки
+        });
+    }
+    
+    if (closeModalBtn && invoicesModal) {
+        closeModalBtn.addEventListener('click', function() {
+            invoicesModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Дозволяємо скрол сторінки
+        });
+    }
+    
+    // Закриття модального вікна при кліку на overlay
+    if (invoicesModal) {
+        invoicesModal.addEventListener('click', function(event) {
+            if (event.target === invoicesModal) {
+                invoicesModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+    
+    // Закриття модального вікна клавішею ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && invoicesModal && invoicesModal.style.display === 'flex') {
+            invoicesModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+});
 
     // Викликаємо при завантаженні та при зміні розміру вікна
     window.addEventListener('load', adaptForMobile);

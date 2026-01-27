@@ -1,7 +1,7 @@
-/* desktop.css - Versión de escritorio para BudgetBuddy */
+/* desktop.css - Версія для BudgetBuddy */
 
 /* =========================================== */
-/* VARIABLES GLOBALES */
+/* ГЛОБАЛЬНІ ЗМІННІ */
 /* =========================================== */
 :root {
     --sidebar-width: 70px;
@@ -45,7 +45,7 @@
 }
 
 /* =========================================== */
-/* RESET Y LAYOUT GENERAL */
+/* RESET ТА ЗАГАЛЬНИЙ LAYOUT */
 /* =========================================== */
 .desktop-body {
     margin: 0;
@@ -69,7 +69,7 @@
 }
 
 /* =========================================== */
-/* HEADER SUPERIOR */
+/* ВЕРХНІЙ HEADER */
 /* =========================================== */
 .desktop-header {
     position: fixed;
@@ -211,9 +211,9 @@
 }
 
 /* =========================================== */
-/* NAVEGACIÓN (SIDEBAR Y MÓVIL) */
+/* НАВІГАЦІЯ (SIDEBAR ТА МОБІЛЬНА) */
 /* =========================================== */
-/* Sidebar para desktop */
+/* Sidebar для десктопу */
 .sidebar {
     width: 70px;
     background-color: white;
@@ -282,7 +282,7 @@
     text-align: center;
 }
 
-/* Navegación móvil */
+/* Мобільна навігація */
 .mobile-nav {
     position: fixed;
     bottom: 0;
@@ -351,9 +351,9 @@
 }
 
 /* =========================================== */
-/* ESTRUCTURA COMÚN PARA PANEL GENERAL */
+/* ЗАГАЛЬНА СТРУКТУРА ДЛЯ ПАНЕЛІ */
 /* =========================================== */
-/* Page Header */
+/* Заголовок сторінки */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -380,7 +380,7 @@
     font-weight: 500;
 }
 
-/* Grid Layout */
+/* Сітка */
 .desktop-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -400,7 +400,7 @@
     gap: 25px;
 }
 
-/* Cards Styles */
+/* Стилі карток */
 .card {
     background-color: var(--card-bg);
     border-radius: 20px;
@@ -429,7 +429,7 @@
     gap: 8px;
 }
 
-/* View All Button */
+/* Кнопка "Переглянути все" */
 .view-all-btn {
     background: none;
     border: none;
@@ -447,9 +447,9 @@
 }
 
 /* =========================================== */
-/* ESTILOS ESPECÍFICOS PARA PANEL GENERAL */
+/* СПЕЦИФІЧНІ СТИЛІ ДЛЯ ПАНЕЛІ */
 /* =========================================== */
-/* Cards Carousel (Panel General) */
+/* Карусель карток (Панель) */
 .cards-carousel {
     position: relative;
     height: 140px;
@@ -513,7 +513,7 @@
     opacity: 0.9;
 }
 
-/* Tags Section */
+/* Секція тегів */
 .tags-card {
     height: fit-content;
 }
@@ -685,7 +685,7 @@
     100% { opacity: 0.7; }
 }
 
-/* Goals Section */
+/* Секція цілей */
 .goals-list {
     display: flex;
     flex-direction: column;
@@ -799,7 +799,7 @@
     color: var(--expense-red);
 }
 
-/* Balance Card */
+/* Картка балансу */
 .balance-card {
     height: fit-content;
 }
@@ -935,7 +935,7 @@
     width: 42%;
 }
 
-/* Transactions List (Panel General) */
+/* Список транзакцій (Панель) */
 .transactions-list {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -1015,7 +1015,7 @@
 }
 
 /* =========================================== */
-/* MODAL (COMÚN) */
+/* МОДАЛЬНЕ ВІКНО (ЗАГАЛЬНЕ) */
 /* =========================================== */
 .tag-modal {
     border: none;
@@ -1200,20 +1200,17 @@
 }
 
 /* =========================================== */
-/* MEDIA QUERIES */
+/* МЕДІА-ЗАПИТИ */
 /* =========================================== */
+
+/* Медіа-запит для 1200px */
 @media (max-width: 1200px) {
     .desktop-grid {
         grid-template-columns: 1fr;
     }
 }
 
-@media (min-width: 993px) {
-    .mobile-nav {
-        display: none !important;
-    }
-}
-
+/* Медіа-запит для 992px */
 @media (max-width: 992px) {
     .desktop-header {
         left: 10px;
@@ -1253,6 +1250,7 @@
     }
 }
 
+/* Медіа-запит для 768px */
 @media (max-width: 768px) {
     .add-tag-btn,
     .view-all-btn {
@@ -1293,6 +1291,7 @@
     }
 }
 
+/* Медіа-запит для 480px (ОБ'ЄДНАНА ВЕРСІЯ) */
 @media (max-width: 480px) {
     .card-title {
         font-size: 25px;
@@ -1311,11 +1310,11 @@
         font-size: 12px;
     }
 
-    .page-title{
+    .page-title {
         margin-top: -25%;
     }
 
-    .credit-card-compact{
+    .credit-card-compact {
         width: 100%;
         left: 0px;
     }
