@@ -31,10 +31,10 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bank_name' => 'required|string|max:50',
-            'current_balance' => 'required|numeric|min:0',
-            'iban' => 'nullable|string|max:34', // Validamos IBAN
-            'color' => 'required|string|max:7', // Validamos Color Hex
+            'bank_name' => 'required|string',
+            'current_balance' => 'required|numeric',
+            'color' => 'required|string',
+            'iban' => 'required|string|unique:accounts,iban'
         ]);
 
         $account = Account::create([
@@ -44,6 +44,7 @@ class AccountController extends Controller
             // Usamos el operador null coalescing (??) por seguridad
             'iban' => $validated['iban'] ?? null, 
             'color' => $validated['color'],
+            'country_code' => $validated['country_code'] ?? null,
         ]);
 
         return response()->json([
