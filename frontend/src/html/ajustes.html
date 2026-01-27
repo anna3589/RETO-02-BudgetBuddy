@@ -14,17 +14,16 @@
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 		/>
-		<link rel="stylesheet" href="../css/style.css" />
+
+		<link rel="stylesheet" href="../css/notification.css" />
 		<link rel="stylesheet" href="../css/ajustes.css" />
+		<link rel="stylesheet" href="../css/style.css" />
 	</head>
 	<body class="desktop-body">
 		<!-- Top Bar -->
 		<header class="desktop-header">
 			<div class="desktop-brand">
-				<img
-					src="../images/logo_budget2-removebg-preview (1).png"
-					alt="BudgetBuddy Logo"
-				/>
+				<img src="./../images/logo_budget_expand.png" alt="BudgetBuddy Logo" />
 			</div>
 
 			<div class="desktop-header-right">
@@ -43,13 +42,122 @@
 			</div>
 		</header>
 
+		<!-- Попап повідомлень -->
+		<div class="notifications-popup" id="notifications-popup">
+			<div class="notifications-header">
+				<h3><i class="fas fa-bell"></i> Notificaciones</h3>
+				<button class="notifications-close" id="close-notifications">
+					&times;
+				</button>
+			</div>
+
+			<div class="notifications-list">
+				<!-- Нове повідомлення -->
+				<div class="notification-item new" data-id="1">
+					<div class="notification-icon">
+						<i class="fas fa-shield-alt"></i>
+					</div>
+					<div class="notification-content">
+						<h4>Nuevas funciones de seguridad</h4>
+						<p>
+							Hemos añadido autenticación de dos factores para mayor protección.
+						</p>
+						<span class="notification-time">Hace 5 minutos</span>
+					</div>
+					<button class="notification-action" title="Marcar como leído">
+						<i class="fas fa-check"></i>
+					</button>
+				</div>
+
+				<!-- Прочитане повідомлення -->
+				<div class="notification-item read" data-id="2">
+					<div class="notification-icon">
+						<i class="fas fa-chart-line"></i>
+					</div>
+					<div class="notification-content">
+						<h4>Resumen mensual disponible</h4>
+						<p>Tu informe de gastos de abril está listo para revisar.</p>
+						<span class="notification-time">Ayer, 15:30</span>
+					</div>
+					<button class="notification-action" title="Eliminar">
+						<i class="fas fa-trash"></i>
+					</button>
+				</div>
+
+				<!-- Важливе повідомлення -->
+				<div class="notification-item important" data-id="3">
+					<div class="notification-icon">
+						<i class="fas fa-exclamation-triangle"></i>
+					</div>
+					<div class="notification-content">
+						<h4>Límite de gastos alcanzado</h4>
+						<p>Has alcanzado el 90% de tu presupuesto en "Comida".</p>
+						<span class="notification-time">28 Abr, 11:45</span>
+					</div>
+					<button class="notification-action" title="Marcar como leído">
+						<i class="fas fa-check"></i>
+					</button>
+				</div>
+
+				<!-- Повідомлення про оновлення -->
+				<div class="notification-item" data-id="4">
+					<div class="notification-icon">
+						<i class="fas fa-sync-alt"></i>
+					</div>
+					<div class="notification-content">
+						<h4>Actualización de la aplicación</h4>
+						<p>Nueva versión 2.1 disponible con mejoras de rendimiento.</p>
+						<span class="notification-time">27 Abr, 09:20</span>
+					</div>
+					<button class="notification-action" title="Eliminar">
+						<i class="fas fa-trash"></i>
+					</button>
+				</div>
+
+				<!-- Повідомлення про нову функцію -->
+				<div class="notification-item" data-id="5">
+					<div class="notification-icon">
+						<i class="fas fa-star"></i>
+					</div>
+					<div class="notification-content">
+						<h4>Nueva función: Exportar datos</h4>
+						<p>Ahora puedes exportar todos tus datos en diferentes formatos.</p>
+						<span class="notification-time">26 Abr, 14:15</span>
+					</div>
+					<button class="notification-action" title="Marcar como leído">
+						<i class="fas fa-check"></i>
+					</button>
+				</div>
+
+				<!-- Пустий стан (коли немає повідомлень) -->
+				<div
+					class="notifications-empty"
+					id="notifications-empty"
+					style="display: none"
+				>
+					<i class="far fa-bell-slash"></i>
+					<p>No tienes notificaciones nuevas</p>
+					<span>Todas las notificaciones están al día</span>
+				</div>
+			</div>
+
+			<div class="notifications-footer">
+				<button class="btn btn-secondary" id="mark-all-read">
+					<i class="fas fa-check-double"></i> Marcar todas como leídas
+				</button>
+				<button class="btn btn-secondary" id="clear-all">
+					<i class="fas fa-trash"></i> Limpiar todas
+				</button>
+			</div>
+		</div>
+
 		<!-- Мобільна навігаційна панель -->
 		<nav class="mobile-nav">
 			<ul class="mobile-nav-items">
 				<li>
 					<a
-						href="/desktop"
-						class="mobile-nav-item active"
+						href="desktop.html"
+						class="mobile-nav-item"
 						data-page="dashboard"
 						title="Panel general"
 					>
@@ -59,7 +167,7 @@
 				</li>
 				<li>
 					<a
-						href="/api-estadisticas"
+						href="estadisticas.html"
 						class="mobile-nav-item"
 						data-page="estadisticas"
 						title="Estadísticas"
@@ -70,7 +178,7 @@
 				</li>
 				<li>
 					<a
-						href="/misTarjetas"
+						href="misTarjetas.html"
 						class="mobile-nav-item"
 						data-page="cards"
 						title="Mis tarjetas"
@@ -81,8 +189,8 @@
 				</li>
 				<li>
 					<a
-						href="/ajustes"
-						class="mobile-nav-item"
+						href="ajustes.html"
+						class="mobile-nav-item active"
 						data-page="profile"
 						title="Mi cuenta"
 					>
@@ -96,19 +204,39 @@
 		<!-- Sidebar Navigation -->
 		<div class="sidebar">
 			<div class="nav-menu">
-                <a href="/dashboard" class="nav-item active" data-page="dashboard" title="Panel general">
-                    <i class="fas fa-home"></i>
-                </a>
-                <a href="/api-estadisticas" class="nav-item" data-page="estadisticas" title="Estadísticas">
-                    <i class="fas fa-chart-line"></i>
-                </a>
-                <a href="/misTarjetas" class="nav-item" data-page="cards" title="Mis tarjetas">
-                    <i class="fas fa-credit-card"></i>
-                </a>
-                <a href="/ajustes" class="nav-item" data-page="profile" title="Mi cuenta">
-                    <i class="fas fa-cog"></i>
-                </a>
-            </div>
+				<a
+					href="/desktop"
+					class="nav-item"
+					data-page="dashboard"
+					title="Panel general"
+				>
+					<i class="fas fa-home"></i>
+				</a>
+				<a
+					href="/estadisticas.html"
+					class="nav-item"
+					data-page="estadisticas"
+					title="Estadísticas"
+				>
+					<i class="fas fa-chart-line"></i>
+				</a>
+				<a
+					href="/misTarjetas"
+					class="nav-item"
+					data-page="cards"
+					title="Mis tarjetas"
+				>
+					<i class="fas fa-credit-card"></i>
+				</a>
+				<a
+					href="/ajustes"
+					class="nav-item active"
+					data-page="profile"
+					title="Mi cuenta"
+				>
+					<i class="fas fa-cog"></i>
+				</a>
+			</div>
 		</div>
 
 		<div class="desktop-container">
@@ -120,22 +248,59 @@
 						Mi cuenta
 						<div class="date-container">28 Abr, 2024</div>
 					</h1>
+					<button class="btn btn-secondary" id="edit-profile-btn">
+						<i class="fas fa-edit"></i> Editar perfil
+					</button>
 				</div>
 
 				<div class="desktop-grid">
-					<!-- Ліва колонка: Профіль та Налаштування -->
+					<!-- Ліва колонка: Профіль та Безпека -->
 					<section class="desktop-left-column">
 						<!-- Профіль -->
 						<div class="card">
 							<div class="card-header-compact">
-								<h2 class="card-title">
-									<i class="fas fa-user-circle"></i> Perfil
-								</h2>
+								<h2 class="card-title">Perfil</h2>
 							</div>
 
-							<div class="profile-section">
+							<!-- РЕЖИМ ПЕРЕГЛЯДУ (ПОЧАТКОВИЙ) -->
+							<div class="profile-view-mode" id="profile-view-mode">
 								<div class="profile-avatar-section">
 									<div class="profile-avatar-large" id="profile-avatar-large">
+										JD
+									</div>
+									<!-- ДОДАЄМО ІМ'Я ТА ПРІЗВИЩЕ -->
+									<div class="profile-name-view">
+										<h3 id="profile-full-name-view">John Doe</h3>
+									</div>
+								</div>
+
+								<div class="profile-info-view">
+									<div class="info-row">
+										<div class="info-label">Correo electrónico</div>
+										<div class="info-value" id="view-email">
+											john.doe@example.com
+										</div>
+									</div>
+									<div class="info-row">
+										<div class="info-label">Teléfono</div>
+										<div class="info-value" id="view-phone">
+											+34 123 456 789
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- РЕЖИМ РЕДАГУВАННЯ (ПРИХОВАНИЙ) -->
+							<div
+								class="profile-edit-mode"
+								id="profile-edit-mode"
+								style="display: none"
+							>
+								<div class="profile-avatar-section">
+									<div
+										class="profile-avatar-large"
+										id="profile-avatar-large-edit"
+									>
 										JD
 									</div>
 									<div class="avatar-actions">
@@ -193,42 +358,30 @@
 										/>
 									</div>
 
-									<div class="form-group">
-										<label for="country">País</label>
-										<select id="country" class="editable-input">
-											<option value="es">España</option>
-											<option value="fr">Francia</option>
-											<option value="de">Alemania</option>
-											<option value="it">Italia</option>
-											<option value="uk">Reino Unido</option>
-										</select>
-									</div>
-
 									<div class="form-actions">
 										<button
 											type="button"
 											class="btn btn-secondary"
-											id="cancel-btn"
+											id="cancel-edit-btn"
 										>
 											Cancelar
 										</button>
-										<button type="submit" class="btn btn-primary" id="save-btn">
+										<button
+											type="submit"
+											class="btn btn-primary"
+											id="save-changes-btn"
+										>
 											Guardar cambios
 										</button>
 									</div>
 								</form>
 							</div>
 						</div>
-					</section>
 
-					<!-- Права колонка: Налаштування безпеки та Інше -->
-					<section class="desktop-right-column">
-						<!-- Налаштування безпеки -->
+						<!-- НАЛАШТУВАННЯ БЕЗПЕКИ (ПЕРЕМІЩЕНО ВНИЗ ПІД ПРОФІЛЬ) -->
 						<div class="card">
 							<div class="card-header-compact">
-								<h2 class="card-title">
-									<i class="fas fa-shield-alt"></i> Seguridad
-								</h2>
+								<h2 class="card-title">Seguridad</h2>
 							</div>
 
 							<div class="security-settings">
@@ -256,7 +409,8 @@
 											id="two-factor-toggle"
 											class="toggle-input"
 										/>
-										<label for="two-factor-toggle" class="toggle-label"></label>
+										<label for="two-factor-toggle" class="toggle-label">
+										</label>
 									</div>
 								</div>
 
@@ -271,13 +425,14 @@
 								</div>
 							</div>
 						</div>
+					</section>
 
+					<!-- Права колонка: Інші налаштування -->
+					<section class="desktop-right-column">
 						<!-- Налаштування сповіщень -->
 						<div class="card">
 							<div class="card-header-compact">
-								<h2 class="card-title">
-									<i class="fas fa-bell"></i> Notificaciones
-								</h2>
+								<h2 class="card-title">Notificaciones</h2>
 							</div>
 
 							<div class="notification-settings">
@@ -344,22 +499,10 @@
 						<!-- Інші налаштування -->
 						<div class="card">
 							<div class="card-header-compact">
-								<h2 class="card-title">
-									<i class="fas fa-sliders-h"></i> Más opciones
-								</h2>
+								<h2 class="card-title">Más opciones</h2>
 							</div>
 
 							<div class="other-settings">
-								<div class="settings-item">
-									<div class="settings-info">
-										<h4>Idioma</h4>
-										<p>Español</p>
-									</div>
-									<button class="btn btn-secondary" id="change-language-btn">
-										Cambiar
-									</button>
-								</div>
-
 								<div class="settings-item">
 									<div class="settings-info">
 										<h4>Moneda</h4>
@@ -380,13 +523,16 @@
 									</button>
 								</div>
 
-								<div class="settings-item danger-item">
+								<!-- ЗМІНЕНО: Замість "Eliminar cuenta" → "Salir de la cuenta" -->
+								<div class="settings-item logout-item">
 									<div class="settings-info">
-										<h4>Eliminar cuenta</h4>
-										<p>Elimina permanentemente tu cuenta y todos tus datos</p>
+										<h4>Salir de la cuenta</h4>
+										<p>
+											Cierra la sesión actual y regresa a la pantalla de inicio
+										</p>
 									</div>
-									<button class="btn btn-danger" id="delete-account-btn">
-										Eliminar cuenta
+									<button class="btn btn-secondary" id="logout-btn">
+										<i class="fas fa-sign-out-alt"></i> Salir
 									</button>
 								</div>
 							</div>
@@ -435,5 +581,6 @@
 		</div>
 
 		<script src="../js/ajustes.js"></script>
+		<script src="../js/notifications.js"></script>
 	</body>
 </html>
