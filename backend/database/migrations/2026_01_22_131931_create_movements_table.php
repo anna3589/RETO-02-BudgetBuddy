@@ -20,7 +20,7 @@ return new class extends Migration {
             // Claves foráneas opcionales (Nullables)
             $table->foreignId('card_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('envelope_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('tag_id')->nullable()->constrained()->onDelete('set null');
+            // $table->foreignId('tag_id')->nullable()->constrained()->onDelete('set null'); // ← ELIMINAR ESTA LÍNEA
 
             $table->decimal('amount', 10, 2); 
             $table->string('description');
