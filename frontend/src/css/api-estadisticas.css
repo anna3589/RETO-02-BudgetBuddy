@@ -640,4 +640,18 @@
     .summary-card {
         padding: 15px;
     }
+
+    .desktop-brand{
+        margin-left: -3%;
+    }
+
+    .desktop-header-right {
+        margin-right: -4%;
+        gap: 10px;
+    }
+    .desktop-header{
+        width: 78%;
+        margin-left: -5%;
+        margin-top: -3%;
+    }
 }

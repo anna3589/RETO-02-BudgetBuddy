@@ -1176,12 +1176,14 @@
         height: 70px;
     }
     
-    .desktop-brand img {
-        height: 45px;
+    .desktop-brand {
+        height: 100px;
+        margin-left: -3%;
     }
     
     .desktop-header-right {
-        width: auto;
+        width: 100%;
+        margin-right: -4%;
         gap: 10px;
     }
     

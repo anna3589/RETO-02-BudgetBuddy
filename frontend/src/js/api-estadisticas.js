@@ -1,54 +1,56 @@
-// api-estadisticas.js - Con datos reales de API y header transparente
+// api-estadisticas.js - Versión corregida sin errores
 
-// Configuración de API
-const API_CONFIG = {
-    alphaVantageKey: 'TU_CLAVE_AQUI',
-    useYahooAsBackup: true,
-    updateInterval: 60000, // Actualizar cada 60 segundos
-    simulateIfNoApi: true
-};
-
-// URLs de API
-const API_URLS = {
-    ibexRealtime: 'https://query1.finance.yahoo.com/v8/finance/chart/%5EIBEX?interval=1m',
-    ibexDaily: 'https://query1.finance.yahoo.com/v8/finance/chart/%5EIBEX?interval=1d&range=1mo',
-    sp500: 'https://query1.finance.yahoo.com/v8/finance/chart/SPY',
-    msciWorld: 'https://query1.finance.yahoo.com/v8/finance/chart/URTH'
-};
-
-// Datos iniciales
-const initialData = {
-    ibex: {
-        precio: 17719.00,
-        cambio: 38.50,
-        cambioPorcentaje: 0.22,
-        max: 17744.60,
-        min: 17680.50,
-        apertura: 17744.60,
-        cierreAnterior: 17680.50
-    },
+// Datos simulados (sin API por CORS)
+const etfData = {
     sp500: {
+        nombre: "SPDR S&P 500 ETF",
+        simbolo: "SPY",
         precio: 451.42,
-        cambio: 0.19,
-        cambioPorcentaje: 0.04
+        cambio: +0.19,
+        cambioPorcentaje: +0.04,
+        color: "#217a4a",
+        historial1D: [450.10, 451.80, 449.50, 452.30, 451.42],
+        max: 452.89,
+        min: 449.67,
+        volumen: "23.4M",
+        mercado: "NYSE"
     },
     msci: {
+        nombre: "iShares MSCI World",
+        simbolo: "URTH",
         precio: 120.45,
         cambio: 0.00,
-        cambioPorcentaje: 0.00
+        cambioPorcentaje: 0.00,
+        color: "#3b82f6",
+        historial1D: [119.20, 120.10, 119.80, 121.20, 120.45],
+        max: 121.80,
+        min: 119.20,
+        volumen: "5.8M",
+        mercado: "NYSE"
+    },
+    ibex: {
+        nombre: "Amundi IBEX 35 ETF",
+        simbolo: "CBIX",
+        precio: 17719.00,
+        cambio: +38.50,
+        cambioPorcentaje: +0.22,
+        color: "#ef4444",
+        historial1D: [17680.50, 17700.00, 17720.00, 17740.00, 17719.00],
+        max: 17744.60,
+        min: 17680.50,
+        volumen: "1.2M",
+        mercado: "BME"
     }
 };
 
-// Variables globales
 let charts = {};
 let currentTimeframe = "1D";
-let marketData = { ...initialData };
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("BudgetBuddy - Cargando estadísticas de mercado...");
+    console.log("✅ BudgetBuddy - Estadísticas cargadas");
     
-    // 1. СУПЕР-ПРОСТИЙ ФІКС ДЛЯ HEADER
-    fixHeaderTransparency();
+    // 1. ФІКС для header (СУПЕР-ПРОСТИЙ)
+    fixHeaderIssue();
     
     // 2. Actualizar fecha
     updateCurrentDate();
@@ -56,291 +58,211 @@ document.addEventListener('DOMContentLoaded', function() {
     // 3. Configurar botones de tiempo
     setupTimeButtons();
     
-    // 4. Cargar datos REALES de la API
-    loadRealMarketData();
+    // 4. Inicializar todos los datos y gráficos
+    initializeEverything();
     
     // 5. Configurar eventos
     setupEventListeners();
     
-    // 6. Iniciar actualización automática
-    startAutoUpdate();
+    // 6. Simular actualización de datos
+    startDataSimulation();
 });
 
-// ============ СУПЕР-ПРОСТИЙ ФІКС ============
-function fixHeaderTransparency() {
+// ============ ФІКС ДЛЯ HEADER ============
+function fixHeaderIssue() {
     const header = document.querySelector('.desktop-header');
-    if (!header) return;
+    if (!header) {
+        console.warn('⚠️ Header no encontrado, pero continuamos...');
+        return;
+    }
     
-    // ВИДАЛИТИ ВСІ inline-стилі
+    console.log('🎯 Aplicando estilos al header...');
+    
+    // ВИДАЛИТИ всі inline-стилі
     header.removeAttribute('style');
     
-    // Просто додати клас "scrolled" з CSS
-    header.classList.add('scrolled');
+    // Примусово застосувати прозорість
+    header.style.cssText = `
+        position: fixed !important;
+        top: 20px !important;
+        left: 30px !important;
+        right: 20px !important;
+        height: 70px !important;
+        background: rgba(255, 255, 255, 0.25) !important;
+        backdrop-filter: blur(40px) saturate(200%) contrast(120%) !important;
+        -webkit-backdrop-filter: blur(40px) saturate(200%) contrast(120%) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0 30px !important;
+        z-index: 1000 !important;
+        border-radius: 50px !important;
+        border: 1px solid #757575 !important;
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.08),
+            0 1px 0 rgba(255, 255, 255, 0.5) inset,
+            0 -1px 0 rgba(0, 0, 0, 0.05) inset !important;
+        transition: all 0.5s ease !important;
+        overflow: hidden !important;
+    `;
     
-    // Простий скролл-ефект
+    // Ефект при скролі
     window.addEventListener('scroll', function() {
         if (window.scrollY > 20) {
-            header.classList.add('scrolled-active');
+            header.style.background = 'rgba(255, 255, 255, 0.95) !important';
+            header.style.backdropFilter = 'blur(60px) saturate(200%) !important';
         } else {
-            header.classList.remove('scrolled-active');
+            header.style.background = 'rgba(255, 255, 255, 0.25) !important';
+            header.style.backdropFilter = 'blur(40px) saturate(200%) contrast(120%) !important';
         }
     });
-    
-    // Початковий стан
-    if (window.scrollY > 20) {
-        header.classList.add('scrolled-active');
-    }
 }
 
-// ============ FUNCIONES DE API ============
-
-async function loadRealMarketData() {
-    console.log("📡 Obteniendo datos del mercado en tiempo real...");
+// ============ ІНІЦІАЛІЗАЦІЯ ============
+function initializeEverything() {
+    // Оновити всі UI елементи
+    updateAllUI();
     
-    try {
-        const [ibexData, sp500Data, msciData] = await Promise.allSettled([
-            fetchYahooFinanceData('IBEX'),
-            fetchYahooFinanceData('SPY'),
-            fetchYahooFinanceData('URTH')
-        ]);
-        
-        if (ibexData.status === 'fulfilled' && ibexData.value) {
-            updateIBEXData(ibexData.value);
-            console.log("✅ Datos del IBEX obtenidos correctamente");
-        } else {
-            console.warn("⚠️ No se pudieron obtener datos del IBEX, usando datos simulados");
-            useSimulatedData('ibex');
-        }
-        
-        if (sp500Data.status === 'fulfilled' && sp500Data.value) {
-            updateSP500Data(sp500Data.value);
-            console.log("✅ Datos del S&P 500 obtenidos correctamente");
-        } else {
-            useSimulatedData('sp500');
-        }
-        
-        if (msciData.status === 'fulfilled' && msciData.value) {
-            updateMSCIData(msciData.value);
-            console.log("✅ Datos del MSCI World obtenidos correctamente");
-        } else {
-            useSimulatedData('msci');
-        }
-        
-        createAllCharts();
-        
-        showNotification('Datos del mercado actualizados', 'success');
-        
-    } catch (error) {
-        console.error('❌ Error al cargar datos:', error);
-        useAllSimulatedData();
-        createAllCharts();
-        showNotification('Usando datos simulados. Regístrate en Alpha Vantage para datos reales.', 'warning');
-    }
-}
-
-async function fetchYahooFinanceData(symbol) {
-    try {
-        let url;
-        
-        if (symbol === 'IBEX') {
-            url = `https://query1.finance.yahoo.com/v8/finance/chart/%5E${symbol}?interval=1m&range=1d`;
-        } else {
-            url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=1d`;
-        }
-        
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Error en la respuesta');
-        
-        const data = await response.json();
-        const result = data.chart.result[0];
-        const meta = result.meta;
-        const indicators = result.indicators;
-        
-        return {
-            precio: meta.regularMarketPrice,
-            cambio: meta.regularMarketPrice - meta.previousClose,
-            cambioPorcentaje: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose * 100),
-            max: meta.regularMarketDayHigh,
-            min: meta.regularMarketDayLow,
-            apertura: meta.regularMarketOpen,
-            cierreAnterior: meta.previousClose,
-            volumen: meta.regularMarketVolume,
-            timestamp: meta.regularMarketTime,
-            historial: indicators.quote[0].close.slice(-20)
-        };
-        
-    } catch (error) {
-        console.warn(`Error obteniendo ${symbol}:`, error);
-        return null;
-    }
-}
-
-function updateIBEXData(data) {
-    marketData.ibex = {
-        precio: data.precio,
-        cambio: data.cambio,
-        cambioPorcentaje: data.cambioPorcentaje,
-        max: data.max,
-        min: data.min,
-        apertura: data.apertura,
-        cierreAnterior: data.cierreAnterior,
-        volumen: data.volumen,
-        historial1D: data.historial
-    };
+    // Створити всі графіки
+    createAllCharts();
     
-    updateIBEXUI();
-}
-
-function updateIBEXUI() {
-    const ibex = marketData.ibex;
-    
-    document.getElementById('ibex-price').textContent = `€${ibex.precio.toLocaleString('es-ES', {minimumFractionDigits: 2})}`;
-    
-    const changeElement = document.getElementById('ibex-change');
-    const isPositive = ibex.cambio >= 0;
-    changeElement.textContent = `${isPositive ? '+' : ''}${ibex.cambio.toFixed(2)} (${isPositive ? '+' : ''}${ibex.cambioPorcentaje.toFixed(2)}%)`;
-    changeElement.className = `change ${isPositive ? 'positive' : 'negative'}`;
-    
-    document.getElementById('ibex-high').textContent = `€${ibex.max.toLocaleString('es-ES', {minimumFractionDigits: 2})}`;
-    document.getElementById('ibex-low').textContent = `€${ibex.min.toLocaleString('es-ES', {minimumFractionDigits: 2})}`;
-    
-    if (ibex.volumen) {
-        document.getElementById('ibex-volume').textContent = formatVolume(ibex.volumen);
-    }
-}
-
-function updateSP500Data(data) {
-    marketData.sp500 = {
-        precio: data.precio,
-        cambio: data.cambio,
-        cambioPorcentaje: data.cambioPorcentaje,
-        max: data.max,
-        min: data.min,
-        volumen: data.volumen,
-        historial1D: data.historial
-    };
-    
-    updateSP500UI();
-}
-
-function updateSP500UI() {
-    const sp500 = marketData.sp500;
-    
-    document.getElementById('sp500-price').textContent = `$${sp500.precio.toFixed(2)}`;
-    
-    const changeElement = document.getElementById('sp500-change');
-    const isPositive = sp500.cambio >= 0;
-    changeElement.textContent = `${isPositive ? '+' : ''}${sp500.cambio.toFixed(2)} (${isPositive ? '+' : ''}${sp500.cambioPorcentaje.toFixed(2)}%)`;
-    changeElement.className = `change ${isPositive ? 'positive' : 'negative'}`;
-    
-    document.getElementById('sp500-high').textContent = `$${sp500.max.toFixed(2)}`;
-    document.getElementById('sp500-low').textContent = `$${sp500.min.toFixed(2)}`;
-    
-    if (sp500.volumen) {
-        document.getElementById('sp500-volume').textContent = formatVolume(sp500.volumen);
-    }
-}
-
-function updateMSCIData(data) {
-    marketData.msci = {
-        precio: data.precio,
-        cambio: data.cambio,
-        cambioPorcentaje: data.cambioPorcentaje,
-        max: data.max,
-        min: data.min,
-        volumen: data.volumen,
-        historial1D: data.historial
-    };
-    
-    updateMSCIUI();
-}
-
-function updateMSCIUI() {
-    const msci = marketData.msci;
-    
-    document.getElementById('msci-price').textContent = `$${msci.precio.toFixed(2)}`;
-    
-    const changeElement = document.getElementById('msci-change');
-    const isPositive = msci.cambio >= 0;
-    changeElement.textContent = `${isPositive ? '+' : ''}${msci.cambio.toFixed(2)} (${isPositive ? '+' : ''}${msci.cambioPorcentaje.toFixed(2)}%)`;
-    changeElement.className = `change ${isPositive ? 'positive' : 'negative'}`;
-    
-    document.getElementById('msci-high').textContent = `$${msci.max.toFixed(2)}`;
-    document.getElementById('msci-low').textContent = `$${msci.min.toFixed(2)}`;
-    
-    if (msci.volumen) {
-        document.getElementById('msci-volume').textContent = formatVolume(msci.volumen);
-    }
-}
-
-function useSimulatedData(etf) {
-    console.log(`Usando datos simulados para ${etf}`);
-    const variation = (Math.random() - 0.5) * (etf === 'ibex' ? 50 : 2);
-    
-    marketData[etf] = {
-        ...initialData[etf],
-        precio: initialData[etf].precio + variation,
-        cambio: initialData[etf].cambio + variation,
-        cambioPorcentaje: ((initialData[etf].cambio + variation) / initialData[etf].precio * 100),
-        historial1D: generateSimulatedData(initialData[etf].precio, 5)
-    };
-}
-
-function useAllSimulatedData() {
-    Object.keys(initialData).forEach(etf => {
-        useSimulatedData(etf);
-    });
-}
-
-// ============ FUNCIONES DE GRÁFICOS ============
-
-function createAllCharts() {
-    createETFChart('sp500', '#217a4a');
-    createETFChart('msci', '#3b82f6');
-    createETFChart('ibex', '#ef4444');
-    createComparisonChart();
+    // Оновити статус ринку
     updateMarketStatus();
 }
 
-function createETFChart(etfId, color) {
+function updateAllUI() {
+    // Оновити всі дані
+    Object.keys(etfData).forEach(etfId => {
+        updateETFUI(etfId);
+    });
+}
+
+function updateETFUI(etfId) {
+    const etf = etfData[etfId];
+    const isPositive = etf.cambio >= 0;
+    const symbol = etfId === 'ibex' ? '€' : '$';
+    const priceFormat = etfId === 'ibex' ? 
+        etf.precio.toLocaleString('es-ES', {minimumFractionDigits: 2}) : 
+        etf.precio.toFixed(2);
+    
+    // Оновити ціну та зміну
+    const priceElement = document.getElementById(`${etfId}-price`);
+    const changeElement = document.getElementById(`${etfId}-change`);
+    
+    if (priceElement) {
+        priceElement.textContent = `${symbol}${priceFormat}`;
+    }
+    
+    if (changeElement) {
+        changeElement.textContent = `${isPositive ? '+' : ''}${etf.cambio.toFixed(2)} (${isPositive ? '+' : ''}${etf.cambioPorcentaje.toFixed(2)}%)`;
+        changeElement.className = `change ${isPositive ? 'positive' : 'negative'}`;
+    }
+    
+    // Оновити статистики
+    const highElement = document.getElementById(`${etfId}-high`);
+    const lowElement = document.getElementById(`${etfId}-low`);
+    const volumeElement = document.getElementById(`${etfId}-volume`);
+    
+    if (highElement) highElement.textContent = `${symbol}${etfId === 'ibex' ? etf.max.toLocaleString('es-ES', {minimumFractionDigits: 2}) : etf.max.toFixed(2)}`;
+    if (lowElement) lowElement.textContent = `${symbol}${etfId === 'ibex' ? etf.min.toLocaleString('es-ES', {minimumFractionDigits: 2}) : etf.min.toFixed(2)}`;
+    if (volumeElement) volumeElement.textContent = etf.volumen;
+}
+
+// ============ ГРАФІКИ ============
+function createAllCharts() {
+    // Графіки для кожного ETF
+    createETFChart('sp500');
+    createETFChart('msci');
+    createETFChart('ibex');
+    
+    // Графік порівняння
+    createComparisonChart();
+}
+
+function createETFChart(etfId) {
     const canvas = document.getElementById(`${etfId}-chart`);
-    if (!canvas) return;
+    if (!canvas) {
+        console.warn(`⚠️ Canvas no encontrado: ${etfId}-chart`);
+        return;
+    }
     
     const ctx = canvas.getContext('2d');
-    const data = marketData[etfId];
+    const etf = etfData[etfId];
     
+    // Якщо графік вже існує - знищити
     if (charts[etfId]) {
         charts[etfId].destroy();
     }
     
     const labels = getLabelsForTimeframe(currentTimeframe);
-    const chartData = getChartDataForTimeframe(etfId, currentTimeframe);
+    const data = getChartData(etfId, currentTimeframe);
     
     charts[etfId] = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                data: chartData,
-                borderColor: color,
-                backgroundColor: color + '20',
+                data: data,
+                borderColor: etf.color,
+                backgroundColor: etf.color + '20',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
-                pointRadius: 4
+                pointRadius: 4,
+                pointBackgroundColor: etf.color,
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2
             }]
         },
-        options: getChartOptions(etfId)
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const symbol = etfId === 'ibex' ? '€' : '$';
+                            const value = etfId === 'ibex' ? 
+                                context.parsed.y.toLocaleString('es-ES', {minimumFractionDigits: 2}) : 
+                                context.parsed.y.toFixed(2);
+                            return `${symbol}${value}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { 
+                    display: false 
+                },
+                y: {
+                    ticks: {
+                        callback: function(value) {
+                            const symbol = etfId === 'ibex' ? '€' : '$';
+                            const formatted = etfId === 'ibex' ? 
+                                value.toLocaleString('es-ES', {minimumFractionDigits: 0}) : 
+                                value.toFixed(0);
+                            return symbol + formatted;
+                        }
+                    }
+                }
+            }
+        }
     });
 }
 
 function createComparisonChart() {
     const canvas = document.getElementById('performanceChart');
-    if (!canvas) return;
+    if (!canvas) {
+        console.warn('⚠️ Canvas no encontrado: performanceChart');
+        return;
+    }
     
     const ctx = canvas.getContext('2d');
+    
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
     
+    // Якщо графік вже існує - знищити
     if (charts.comparison) {
         charts.comparison.destroy();
     }
@@ -376,30 +298,61 @@ function createComparisonChart() {
                 }
             ]
         },
-        options: getComparisonChartOptions()
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            family: "'Roboto', sans-serif",
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
     });
 }
 
-// ============ FUNCIONES AUXILIARES ============
-
+// ============ ДОПОМІЖНІ ФУНКЦІЇ ============
 function updateCurrentDate() {
     const now = new Date();
     const options = { 
         weekday: 'long',
         day: 'numeric', 
         month: 'long', 
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        year: 'numeric'
     };
     const dateStr = now.toLocaleDateString('es-ES', options);
-    document.getElementById('current-date').textContent = dateStr;
+    const dateElement = document.getElementById('current-date');
+    if (dateElement) {
+        dateElement.textContent = dateStr;
+    }
 }
 
 function setupTimeButtons() {
-    document.querySelectorAll('.time-btn').forEach(btn => {
+    const buttons = document.querySelectorAll('.time-btn');
+    buttons.forEach(btn => {
         btn.addEventListener('click', function() {
-            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+            buttons.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             currentTimeframe = this.dataset.timeframe;
             updateChartsTimeframe();
@@ -408,170 +361,135 @@ function setupTimeButtons() {
 }
 
 function updateChartsTimeframe() {
-    ['sp500', 'msci', 'ibex'].forEach(etfId => {
+    Object.keys(etfData).forEach(etfId => {
         if (charts[etfId]) {
             charts[etfId].data.labels = getLabelsForTimeframe(currentTimeframe);
-            charts[etfId].data.datasets[0].data = getChartDataForTimeframe(etfId, currentTimeframe);
-            charts[etfId].update();
+            charts[etfId].data.datasets[0].data = getChartData(etfId, currentTimeframe);
+            charts[etfId].update('none');
         }
     });
 }
 
 function getLabelsForTimeframe(timeframe) {
-    const now = new Date();
     switch(timeframe) {
-        case '1D':
-            return ['9:30', '11:00', '12:30', '14:00', now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0')];
-        case '1W':
-            return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-        case '1M':
-            const days = [];
-            for (let i = 6; i >= 0; i -= 2) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                days.push(date.getDate() + '/' + (date.getMonth() + 1));
-            }
-            return days;
-        default:
-            return ['Punto 1', 'Punto 2', 'Punto 3', 'Punto 4', 'Punto 5'];
+        case '1D': return ['9:30', '11:00', '12:30', '14:00', '16:00'];
+        case '1W': return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        case '1M': return ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
+        case '3M': return ['Mes 1', 'Mes 2', 'Mes 3'];
+        case '1Y': return ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        default: return ['Punto 1', 'Punto 2', 'Punto 3', 'Punto 4', 'Punto 5'];
     }
 }
 
-function getChartDataForTimeframe(etfId, timeframe) {
-    const basePrice = marketData[etfId].precio;
-    
-    switch(timeframe) {
-        case '1D':
-            if (marketData[etfId].historial1D) {
-                return marketData[etfId].historial1D;
-            }
-            return generateSimulatedData(basePrice, 5);
-        default:
-            return generateSimulatedData(basePrice, 5);
-    }
-}
-
-function generateSimulatedData(basePrice, points) {
-    const data = [basePrice * 0.995];
-    for (let i = 1; i < points; i++) {
-        const change = (Math.random() - 0.5) * basePrice * 0.01;
-        data.push(data[i-1] + change);
-    }
-    data[data.length-1] = basePrice;
-    return data;
-}
-
-function getChartOptions(etfId) {
-    const isIbex = etfId === 'ibex';
-    
-    return {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: (context) => {
-                        const symbol = isIbex ? '€' : '$';
-                        const value = isIbex ? context.parsed.y.toLocaleString('es-ES') : context.parsed.y.toFixed(2);
-                        return `${symbol}${value}`;
-                    }
-                }
-            }
-        },
-        scales: {
-            x: { display: false },
-            y: {
-                ticks: {
-                    callback: (value) => {
-                        const symbol = isIbex ? '€' : '$';
-                        const formatted = isIbex ? value.toLocaleString('es-ES') : value.toFixed(0);
-                        return symbol + formatted;
-                    }
-                }
-            }
-        },
-        interaction: { intersect: false }
-    };
-}
-
-function getComparisonChartOptions() {
-    return {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'top' },
-            tooltip: {
-                callbacks: {
-                    label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`
-                }
-            }
-        },
-        scales: {
-            y: {
-                ticks: { callback: (value) => value + '%' },
-                title: { display: true, text: 'Rendimiento (%)' }
-            }
-        }
-    };
-}
-
-function formatVolume(volume) {
-    if (volume >= 1000000) {
-        return (volume / 1000000).toFixed(1) + 'M';
-    } else if (volume >= 1000) {
-        return (volume / 1000).toFixed(1) + 'K';
-    }
-    return volume.toString();
+function getChartData(etfId, timeframe) {
+    // Просто повертаємо дані для 1D
+    // Можна розширити для інших timeframe
+    return etfData[etfId].historial1D;
 }
 
 function updateMarketStatus() {
     const now = new Date();
     const hour = now.getHours();
-    const isMarketOpen = hour >= 15 && hour < 21;
+    const isMarketOpen = hour >= 9 && hour < 17;
+    
+    // Функція для безпечного оновлення елемента
+    function safeUpdate(elementId, text, className) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = text;
+            if (className) {
+                element.className = className;
+            }
+        } else {
+            console.warn(`⚠️ Elemento no encontrado: ${elementId}`);
+        }
+    }
+    
+    // Оновити статуси
+    safeUpdate('sp500-status', isMarketOpen ? 'Mercado Abierto' : 'Mercado Cerrado', 
+              `market-status ${isMarketOpen ? 'open' : 'closed'}`);
+    
+    safeUpdate('msci-status', isMarketOpen ? 'Mercado Abierto' : 'Mercado Cerrado',
+              `market-status ${isMarketOpen ? 'open' : 'closed'}`);
+    
+    // IBEX має інший графік (іспанський)
     const isSpanishMarketOpen = hour >= 9 && hour < 17.5;
-    
-    document.getElementById('sp500-status').textContent = 
-        isMarketOpen ? 'Mercado Abierto' : 'Mercado Cerrado';
-    document.getElementById('sp500-status').className = 
-        `market-status ${isMarketOpen ? 'open' : 'closed'}`;
-    
-    document.getElementById('msci-status').textContent = 
-        isMarketOpen ? 'Mercado Abierto' : 'Mercado Cerrado';
-    
-    document.getElementById('ibex-status').textContent = 
-        isSpanishMarketOpen ? 'Mercado Abierto' : 'Mercado Cerrado';
-    document.getElementById('ibex-status').className = 
-        `market-status ${isSpanishMarketOpen ? 'open' : 'closed'}`;
+    safeUpdate('ibex-status', isSpanishMarketOpen ? 'Mercado Abierto' : 'Mercado Cerrado',
+              `market-status ${isSpanishMarketOpen ? 'open' : 'closed'}`);
 }
 
-function startAutoUpdate() {
+function startDataSimulation() {
+    // Симулювати зміни даних кожні 30 секунд
     setInterval(() => {
-        loadRealMarketData();
-    }, API_CONFIG.updateInterval);
-    
-    setInterval(updateCurrentDate, 60000);
+        simulateDataUpdate();
+    }, 30000);
+}
+
+function simulateDataUpdate() {
+    Object.keys(etfData).forEach(etfId => {
+        const etf = etfData[etfId];
+        
+        // Невелика випадкова зміна
+        const change = (Math.random() - 0.5) * (etfId === 'ibex' ? 30 : 0.5);
+        etf.precio += change;
+        etf.cambio += change;
+        etf.cambioPorcentaje = (etf.cambio / (etf.precio - etf.cambio)) * 100;
+        
+        // Оновити UI
+        updateETFUI(etfId);
+        
+        // Оновити графік
+        if (charts[etfId] && currentTimeframe === '1D') {
+            const data = charts[etfId].data.datasets[0].data;
+            data.push(etf.precio);
+            if (data.length > 10) data.shift();
+            charts[etfId].update('none');
+        }
+    });
 }
 
 function setupEventListeners() {
-    document.querySelector('.notification-btn')?.addEventListener('click', () => {
-        showNotification('Los datos se actualizan automáticamente cada minuto', 'info');
-    });
+    // Кнопка сповіщень
+    const notificationBtn = document.querySelector('.notification-btn');
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', function() {
+            showNotification('📊 Datos actualizados correctamente', 'info');
+        });
+    }
     
+    // Кнопка пошуку
+    const searchBtn = document.querySelector('.top-icon[title="Buscar"]');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            showNotification('🔍 Función de búsqueda en desarrollo', 'info');
+        });
+    }
+    
+    // Картки освіти
     document.querySelectorAll('.edu-card').forEach(card => {
         card.addEventListener('click', function() {
             const title = this.querySelector('h3').textContent;
-            showNotification(`Educación: ${title} - Más información en nuestro blog`, 'info');
+            const desc = this.querySelector('p').textContent;
+            showNotification(`📚 ${title}: ${desc}`, 'info');
         });
     });
 }
 
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
+    notification.className = 'notification';
+    
+    let icon = 'info-circle';
+    let bgColor = '#3b82f6';
+    
+    if (type === 'success') {
+        icon = 'check-circle';
+        bgColor = '#10b981';
+    }
+    
     notification.innerHTML = `
         <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+            <i class="fas fa-${icon}"></i>
             <span>${message}</span>
         </div>
     `;
@@ -580,7 +498,7 @@ function showNotification(message, type = 'info') {
         position: fixed;
         top: 100px;
         right: 20px;
-        background: ${type === 'success' ? '#10b981' : '#3b82f6'};
+        background: ${bgColor};
         color: white;
         padding: 12px 20px;
         border-radius: 8px;
@@ -593,11 +511,14 @@ function showNotification(message, type = 'info') {
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => notification.remove(), 300);
-    }, 4000);
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 3000);
 }
 
+// Додати стилі анімації
 if (!document.querySelector('#notification-styles')) {
     const style = document.createElement('style');
     style.id = 'notification-styles';
@@ -614,4 +535,4 @@ if (!document.querySelector('#notification-styles')) {
     document.head.appendChild(style);
 }
 
-console.log('✅ BudgetBuddy - Módulo de estadísticas cargado');
+console.log('🎉 Módulo de estadísticas listo para usar');
