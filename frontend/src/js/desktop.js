@@ -102,7 +102,6 @@ function getStaticTags() {
     ];
 }
 
-
 /**
  * Renderizar etiquetas en el DOM
  * @param {Array} tags - Array de objetos de etiquetas
@@ -146,12 +145,308 @@ function renderTags(tags) {
         tagsList.insertBefore(tagElement, deleteTagArea);
     });
     
-    // Inicializar drag & drop
-    if (typeof initializeDragAndDrop === 'function') {
+    // Inicializar drag & drop PARA NUEVAS ETIQUETAS
+    if (typeof window.initializeDragAndDrop === 'function') {
+        window.initializeDragAndDrop();
+    } else if (typeof initializeDragAndDrop === 'function') {
         initializeDragAndDrop();
     }
     
     console.log('Etiquetas renderizadas exitosamente');
+}
+
+/**
+ * Mostrar notificación
+ * @param {string} message - Mensaje a mostrar
+ * @param {string} type - Tipo de notificación (success, error, info, warning)
+ */
+function showNotification(message, type) {
+    // Verificar si ya existe una notificación con ese texto
+    const existingNotifications = document.querySelectorAll('.notification');
+    for (const notif of existingNotifications) {
+        if (notif.textContent.includes(message)) {
+            return; // No mostrar duplicado
+        }
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    let icon = 'info-circle';
+    let bgColor = '#3b82f6';
+    
+    if (type === 'success') {
+        icon = 'check-circle';
+        bgColor = '#10b981';
+    } else if (type === 'error') {
+        icon = 'exclamation-circle';
+        bgColor = '#ef4444';
+    } else if (type === 'info') {
+        icon = 'info-circle';
+        bgColor = '#3b82f6';
+    } else if (type === 'warning') {
+        icon = 'exclamation-triangle';
+        bgColor = '#f59e0b';
+    }
+    
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${icon}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close">&times;</button>
+    `;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background-color: ${bgColor};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 300px;
+        max-width: 400px;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    // Añadir estilo para animación
+    if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+            }
+            .notification-close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 0;
+                margin-left: 10px;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
+        notification.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    });
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideIn 0.3s ease-out reverse';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 3000);
+}
+
+// ========== FUNCIONES GLOBALES PARA DRAG-AND-DROP ==========
+
+let deleteTagArea = null;
+let deleteIndicator = null;
+
+/**
+ * Inicializar sistema de drag-and-drop
+ */
+function initializeDragAndDrop() {
+    // Obtener referencias a elementos si aún no las tenemos
+    if (!deleteTagArea) {
+        deleteTagArea = document.getElementById('delete-tag-area');
+    }
+    if (!deleteIndicator) {
+        deleteIndicator = document.getElementById('delete-indicator');
+    }
+    
+    const tagItems = document.querySelectorAll('.tag-item:not(.delete-tag-item)');
+    
+    console.log('Inicializando drag-and-drop para', tagItems.length, 'etiquetas');
+    
+    tagItems.forEach(tag => {
+        // Remover manejadores antiguos
+        tag.removeEventListener('dragstart', handleDragStart);
+        tag.removeEventListener('dragend', handleDragEnd);
+        
+        // Añadir nuevos manejadores
+        tag.addEventListener('dragstart', handleDragStart);
+        tag.addEventListener('dragend', handleDragEnd);
+        
+        // Asegurarse de que el atributo draggable está activo
+        tag.setAttribute('draggable', 'true');
+    });
+    
+    if (deleteTagArea) {
+        // Remover manejadores antiguos para deleteTagArea
+        deleteTagArea.removeEventListener('dragover', handleDragOver);
+        deleteTagArea.removeEventListener('dragleave', handleDragLeave);
+        deleteTagArea.removeEventListener('drop', handleDrop);
+        
+        // Añadir nuevos manejadores para deleteTagArea
+        deleteTagArea.addEventListener('dragover', handleDragOver);
+        deleteTagArea.addEventListener('dragleave', handleDragLeave);
+        deleteTagArea.addEventListener('drop', handleDrop);
+    }
+}
+
+function handleDragStart(e) {
+    console.log('Drag start para etiqueta ID:', this.getAttribute('data-id'));
+    e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
+    this.classList.add('dragging');
+    if (deleteIndicator) {
+        deleteIndicator.textContent = 'Arrastra a la zona roja para eliminar';
+        deleteIndicator.classList.add('active');
+    }
+}
+
+function handleDragEnd() {
+    console.log('Drag end para etiqueta');
+    this.classList.remove('dragging');
+    if (deleteIndicator) {
+        deleteIndicator.classList.remove('active');
+    }
+    if (deleteTagArea) {
+        deleteTagArea.classList.remove('drag-over');
+        deleteTagArea.style.transform = 'scale(1)';
+    }
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    if (deleteTagArea) {
+        deleteTagArea.classList.add('drag-over');
+        deleteTagArea.style.transform = 'scale(1.02)';
+    }
+}
+
+function handleDragLeave() {
+    if (deleteTagArea) {
+        deleteTagArea.classList.remove('drag-over');
+        deleteTagArea.style.transform = 'scale(1)';
+    }
+}
+
+/**
+ * Manejador para soltar etiqueta en zona de eliminación
+ */
+async function handleDrop(e) {
+    e.preventDefault();
+    const tagId = e.dataTransfer.getData('text/plain');
+    console.log('Drop etiqueta ID:', tagId);
+    
+    const tagToDelete = document.querySelector(`.tag-item[data-id="${tagId}"]:not(.delete-tag-item)`);
+    
+    if (!tagToDelete) {
+        console.log('Etiqueta no encontrada para eliminar');
+        if (deleteTagArea) {
+            deleteTagArea.classList.remove('drag-over');
+            deleteTagArea.style.transform = 'scale(1)';
+        }
+        return;
+    }
+    
+    // Preguntar confirmación
+    if (!confirm('¿Estás seguro de que quieres eliminar esta etiqueta?')) {
+        if (deleteTagArea) {
+            deleteTagArea.classList.remove('drag-over');
+            deleteTagArea.style.transform = 'scale(1)';
+        }
+        return;
+    }
+    
+    // Animación de eliminación
+    tagToDelete.style.opacity = '0.5';
+    tagToDelete.style.pointerEvents = 'none';
+    
+    try {
+        console.log('Eliminando etiqueta ID:', tagId);
+        
+        const response = await fetch(`/api/tags/${tagId}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log('Respuesta de eliminación:', response.status);
+        
+        if (response.ok) {
+            // Animación completa de eliminación
+            tagToDelete.style.opacity = '0';
+            tagToDelete.style.transform = 'translateX(100px) rotate(10deg)';
+            
+            setTimeout(() => {
+                tagToDelete.remove();
+                
+                if (deleteIndicator) {
+                    deleteIndicator.textContent = '¡Etiqueta eliminada correctamente!';
+                    deleteIndicator.classList.add('active');
+                    
+                    setTimeout(() => {
+                        deleteIndicator.textContent = '';
+                        deleteIndicator.classList.remove('active');
+                    }, 2000);
+                }
+                
+                // Recargar etiquetas del servidor para actualizar la lista
+                setTimeout(() => {
+                    loadTagsFromServer();
+                }, 500);
+                
+            }, 300);
+            
+            showNotification('Etiqueta eliminada exitosamente', 'success');
+        } else {
+            const errorData = await response.json().catch(() => ({}));
+            // Cancelar animación si hay error
+            tagToDelete.style.opacity = '1';
+            tagToDelete.style.pointerEvents = 'auto';
+            showNotification(errorData.message || 'Error al eliminar la etiqueta', 'error');
+        }
+    } catch (error) {
+        // Cancelar animación si hay error
+        tagToDelete.style.opacity = '1';
+        tagToDelete.style.pointerEvents = 'auto';
+        showNotification('Error de conexión con el servidor', 'error');
+        console.error('Error:', error);
+    }
+    
+    if (deleteTagArea) {
+        deleteTagArea.classList.remove('drag-over');
+        deleteTagArea.style.transform = 'scale(1)';
+    }
 }
 
 // ========== INICIALIZACIÓN PRINCIPAL ==========
@@ -381,160 +676,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
     
-    // ========== DRAG-AND-DROP PARA ETIQUETAS ==========
-    const deleteTagArea = document.getElementById('delete-tag-area');
-    const deleteIndicator = document.getElementById('delete-indicator');
-    
-    if (deleteTagArea) {
-        /**
-         * Inicializar sistema de drag-and-drop
-         */
-        function initializeDragAndDrop() {
-            const tagItems = document.querySelectorAll('.tag-item');
-            
-            tagItems.forEach(tag => {
-                // Remover manejadores antiguos
-                tag.removeEventListener('dragstart', handleDragStart);
-                tag.removeEventListener('dragend', handleDragEnd);
-                
-                // Añadir nuevos manejadores
-                tag.addEventListener('dragstart', handleDragStart);
-                tag.addEventListener('dragend', handleDragEnd);
-            });
-            
-            // Remover manejadores antiguos para deleteTagArea
-            deleteTagArea.removeEventListener('dragover', handleDragOver);
-            deleteTagArea.removeEventListener('dragleave', handleDragLeave);
-            deleteTagArea.removeEventListener('drop', handleDrop);
-            
-            // Añadir nuevos manejadores para deleteTagArea
-            deleteTagArea.addEventListener('dragover', handleDragOver);
-            deleteTagArea.addEventListener('dragleave', handleDragLeave);
-            deleteTagArea.addEventListener('drop', handleDrop);
-        }
-        
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
-            this.classList.add('dragging');
-            if (deleteIndicator) {
-                deleteIndicator.textContent = 'Arrastra a la zona roja para eliminar';
-                deleteIndicator.classList.add('active');
-            }
-        }
-        
-        function handleDragEnd() {
-            this.classList.remove('dragging');
-            if (deleteIndicator) {
-                deleteIndicator.classList.remove('active');
-            }
-            deleteTagArea.classList.remove('drag-over');
-            deleteTagArea.style.transform = 'scale(1)';
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            deleteTagArea.classList.add('drag-over');
-            deleteTagArea.style.transform = 'scale(1.02)';
-        }
-        
-        function handleDragLeave() {
-            deleteTagArea.classList.remove('drag-over');
-            deleteTagArea.style.transform = 'scale(1)';
-        }
-        
-        /**
-         * Manejador para soltar etiqueta en zona de eliminación
-         */
-async function handleDrop(e) {
-    e.preventDefault();
-    const tagId = e.dataTransfer.getData('text/plain');
-    const tagToDelete = document.querySelector(`.tag-item[data-id="${tagId}"]`);
-    
-    if (!tagToDelete) {
-        deleteTagArea.classList.remove('drag-over');
-        deleteTagArea.style.transform = 'scale(1)';
-        return;
-    }
-    
-    // Спитати підтвердження
-    if (!confirm('¿Estás seguro de que quieres eliminar esta etiqueta?')) {
-        deleteTagArea.classList.remove('drag-over');
-        deleteTagArea.style.transform = 'scale(1)';
-        return;
-    }
-    
-    // Анімація видалення
-    tagToDelete.style.opacity = '0.5';
-    tagToDelete.style.pointerEvents = 'none';
-    
-    try {
-        console.log('Eliminando etiqueta ID:', tagId);
-        
-        const response = await fetch(`/api/tags/${tagId}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-        
-        console.log('Respuesta de eliminación:', response.status);
-        
-        if (response.ok) {
-            // Повна анімація видалення
-            tagToDelete.style.opacity = '0';
-            tagToDelete.style.transform = 'translateX(100px) rotate(10deg)';
-            
-            setTimeout(() => {
-                tagToDelete.remove();
-                
-                if (deleteIndicator) {
-                    deleteIndicator.textContent = '¡Etiqueta eliminada correctamente!';
-                    deleteIndicator.classList.add('active');
-                    
-                    setTimeout(() => {
-                        deleteIndicator.textContent = '';
-                        deleteIndicator.classList.remove('active');
-                    }, 2000);
-                }
-            }, 300);
-            
-            showNotification('Etiqueta eliminada exitosamente', 'success');
-        } else {
-            const errorData = await response.json().catch(() => ({}));
-            // Скасувати анімацію, якщо помилка
-            tagToDelete.style.opacity = '1';
-            tagToDelete.style.pointerEvents = 'auto';
-            showNotification(errorData.message || 'Error al eliminar la etiqueta', 'error');
-        }
-    } catch (error) {
-        // Скасувати анімацію, якщо помилка
-        tagToDelete.style.opacity = '1';
-        tagToDelete.style.pointerEvents = 'auto';
-        showNotification('Error de conexión con el servidor', 'error');
-        console.error('Error:', error);
-    }
-    
-    deleteTagArea.classList.remove('drag-over');
-    deleteTagArea.style.transform = 'scale(1)';
-}
-
-        /**
-         * Obtener cookie por nombre
-         * @param {string} name - Nombre de la cookie
-         */
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
-        }
-        
-        // Inicializar drag & drop al cargar
-        setTimeout(() => {
-            initializeDragAndDrop();
-        }, 500);
-    }
-    
     // ========== MODAL PARA ETIQUETAS ==========
     const tagModal = document.getElementById('tagModal');
     const addTagBtn = document.getElementById('desktop-add-tag');
@@ -596,71 +737,71 @@ async function handleDrop(e) {
         });
     }
     
-if (saveTag) {
-    saveTag.addEventListener('click', async function() {
-        const tagName = tagNameInput ? tagNameInput.value.trim() : '';
-        
-        if (!tagName) {
-            showNotification('Por favor, ingresa un nombre para la etiqueta', 'error');
-            return;
-        }
-        
-        // Показати індикатор завантаження
-        const originalButtonText = saveTag.innerHTML;
-        saveTag.disabled = true;
-        saveTag.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
-        
-        try {
-            console.log('Enviando solicitud para crear etiqueta:', tagName);
+    if (saveTag) {
+        saveTag.addEventListener('click', async function() {
+            const tagName = tagNameInput ? tagNameInput.value.trim() : '';
             
-            const response = await fetch('/api/tags', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: tagName,
-                    color: selectedColor,
-                    icon: selectedIcon
-                })
-            });
-            
-            console.log('Respuesta:', response.status);
-            
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Etiqueta creada:', data);
-                
-                // Очистити форму
-                if (tagNameInput) tagNameInput.value = '';
-                tagModal.close();
-                
-                // Завантажити оновлений список тегів
-                await loadTagsFromServer();
-                
-                showNotification('Etiqueta creada exitosamente', 'success');
-            } else {
-                let errorMessage = 'Error al crear la etiqueta';
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.message || errorMessage;
-                } catch (e) {
-                    // Ignorar si no hay JSON
-                }
-                showNotification(errorMessage, 'error');
+            if (!tagName) {
+                showNotification('Por favor, ingresa un nombre para la etiqueta', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('Error de red:', error);
-            showNotification('Error de conexión con el servidor', 'error');
-        } finally {
-            // Відновити кнопку
-            saveTag.disabled = false;
-            saveTag.innerHTML = originalButtonText;
-        }
-    });
-}
-        
+            
+            // Mostrar indicador de carga
+            const originalButtonText = saveTag.innerHTML;
+            saveTag.disabled = true;
+            saveTag.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
+            
+            try {
+                console.log('Enviando solicitud para crear etiqueta:', tagName);
+                
+                const response = await fetch('/api/tags', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: tagName,
+                        color: selectedColor,
+                        icon: selectedIcon
+                    })
+                });
+                
+                console.log('Respuesta:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Etiqueta creada:', data);
+                    
+                    // Limpiar formulario
+                    if (tagNameInput) tagNameInput.value = '';
+                    tagModal.close();
+                    
+                    // Cargar lista actualizada de etiquetas
+                    await loadTagsFromServer();
+                    
+                    showNotification('Etiqueta creada exitosamente', 'success');
+                } else {
+                    let errorMessage = 'Error al crear la etiqueta';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (e) {
+                        // Ignorar si no hay JSON
+                    }
+                    showNotification(errorMessage, 'error');
+                }
+            } catch (error) {
+                console.error('Error de red:', error);
+                showNotification('Error de conexión con el servidor', 'error');
+            } finally {
+                // Restaurar botón
+                saveTag.disabled = false;
+                saveTag.innerHTML = originalButtonText;
+            }
+        });
+    }
+    
     // ========== POPUP "VER TODAS" PARA METAS FINANCIERAS ==========
     const viewAllBtn = document.getElementById('viewAllGoals');
     const goalsModal = document.getElementById('goalsModal');
@@ -860,124 +1001,6 @@ if (saveTag) {
     
     // ========== FUNCIONES UTILITARIAS ==========
     
-    /**
-     * Mostrar notificación
-     * @param {string} message - Mensaje a mostrar
-     * @param {string} type - Tipo de notificación (success, error, info, warning)
-     */
-    function showNotification(message, type) {
-        // Verificar si ya existe una notificación con ese texto
-        const existingNotifications = document.querySelectorAll('.notification');
-        for (const notif of existingNotifications) {
-            if (notif.textContent.includes(message)) {
-                return; // No mostrar duplicado
-            }
-        }
-        
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        
-        let icon = 'info-circle';
-        let bgColor = '#3b82f6';
-        
-        if (type === 'success') {
-            icon = 'check-circle';
-            bgColor = '#10b981';
-        } else if (type === 'error') {
-            icon = 'exclamation-circle';
-            bgColor = '#ef4444';
-        } else if (type === 'info') {
-            icon = 'info-circle';
-            bgColor = '#3b82f6';
-        } else if (type === 'warning') {
-            icon = 'exclamation-triangle';
-            bgColor = '#f59e0b';
-        }
-        
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas fa-${icon}"></i>
-                <span>${message}</span>
-            </div>
-            <button class="notification-close">&times;</button>
-        `;
-        
-        notification.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background-color: ${bgColor};
-            color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-width: 300px;
-            max-width: 400px;
-            animation: slideIn 0.3s ease-out;
-        `;
-        
-        // Añadir estilo para animación
-        if (!document.querySelector('#notification-styles')) {
-            const style = document.createElement('style');
-            style.id = 'notification-styles';
-            style.textContent = `
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                .notification-content {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    flex: 1;
-                }
-                .notification-close {
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 20px;
-                    cursor: pointer;
-                    padding: 0;
-                    margin-left: 10px;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-        
-        document.body.appendChild(notification);
-        
-        const closeBtn = notification.querySelector('.notification-close');
-        closeBtn.addEventListener('click', () => {
-            notification.style.animation = 'slideIn 0.3s ease-out reverse';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 300);
-        });
-        
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.animation = 'slideIn 0.3s ease-out reverse';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 300);
-            }
-        }, 3000);
-    }
-    
     // Actualizar fecha
     function updateDate() {
         const now = new Date();
@@ -1007,6 +1030,14 @@ if (saveTag) {
     // Inicializar todas las funciones al cargar
     setTimeout(() => {
         updateProgressCircles();
+        
+        // Inicializar drag-and-drop al cargar la página
+        deleteTagArea = document.getElementById('delete-tag-area');
+        deleteIndicator = document.getElementById('delete-indicator');
+        
+        if (deleteTagArea) {
+            initializeDragAndDrop();
+        }
         
         // Cargar etiquetas del servidor al cargar la página
         loadTagsFromServer();
