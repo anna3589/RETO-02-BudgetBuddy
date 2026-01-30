@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Card extends Model
 {
@@ -13,13 +15,23 @@ class Card extends Model
         'account_id',
         'alias',
         'last_4_digits',
-        // ¡AÑADE ESTOS DOS O FALLARÁ LA BASE DE DATOS!
         'expiration_date', 
         'type'
     ];
 
-    public function account()
+    // Relación con la cuenta
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * Relación con los movimientos
+     * Una tarjeta puede tener muchos movimientos
+     * Movimientos realizados con esta tarjeta
+     */
+    public function movements(): HasMany
+    {
+        return $this->hasMany(Movement::class);
     }
 }

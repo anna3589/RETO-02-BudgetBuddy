@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Envelope extends Model
 {
@@ -17,8 +19,19 @@ class Envelope extends Model
         'icon'
     ];
 
-    public function account()
+    // Relación con la cuenta
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * Relación con los movimientos
+     * Un sobre puede contener muchos movimientos
+     * Movimientos asignados a este sobre
+     */
+    public function movements(): HasMany
+    {
+        return $this->hasMany(Movement::class);
     }
 }
