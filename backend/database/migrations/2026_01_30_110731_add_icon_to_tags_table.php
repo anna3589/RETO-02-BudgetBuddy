@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('color')->default('#cccccc');
-            $table->string('icon')->default('tag'); // Додати іконку
-            $table->timestamps();
+        Schema::table('tags', function (Blueprint $table) {
+            $table->string('icon')->default('tag')->after('color');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        Schema::table('tags', function (Blueprint $table) {
+            $table->dropColumn('icon');
+        });
     }
 };

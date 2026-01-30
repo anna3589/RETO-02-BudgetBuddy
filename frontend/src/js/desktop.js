@@ -1,23 +1,183 @@
-// desktop.js - Спрощена працююча версія
+// desktop.js - Versión simplificada funcional con integración API
+
+// ========== FUNCIONES GLOBALES PARA ETIQUETAS ==========
+
+/**
+ * Convertir color hexadecimal a RGB
+ * @param {string} hex - Color en formato hexadecimal
+ */
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) return '52, 211, 153';
+    const r = parseInt(result[1], 16);
+    const g = parseInt(result[2], 16);
+    const b = parseInt(result[3], 16);
+    return `${r}, ${g}, ${b}`;
+}
+
+/**
+ * Formatear fecha
+ * @param {string} dateString - Fecha en formato string
+ */
+function formatDate(dateString) {
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric' 
+        });
+    } catch (e) {
+        return dateString;
+    }
+}
+
+/**
+ * Cargar etiquetas desde el servidor
+ * Intenta obtener etiquetas de la API, si falla usa datos estáticos
+ */
+async function loadTagsFromServer() {
+    console.log('loadTagsFromServer llamado');
+    
+    try {
+        // Intentar obtener etiquetas de la API
+        const response = await fetch('/api/tags', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        });
+        
+        console.log('Estado de respuesta API:', response.status);
+        
+        if (response.ok) {
+            const tags = await response.json();
+            console.log('Etiquetas obtenidas de API:', tags.length, 'elementos');
+            
+            // Renderizar etiquetas si la función existe
+            if (typeof renderTags === 'function') {
+                renderTags(tags);
+            } else {
+                console.error('Error: función renderTags no encontrada');
+                showNotification('Error al cargar etiquetas', 'error');
+            }
+            
+            return tags;
+        } else {
+            // Si hay error en la API, usar etiquetas estáticas
+            console.warn('API devolvió error:', response.status);
+            const staticTags = getStaticTags();
+            renderTags(staticTags);
+            showNotification('Usando etiquetas locales', 'info');
+            return staticTags;
+        }
+    } catch (error) {
+        // Error de red
+        console.error('Error de red:', error);
+        
+        // Usar etiquetas estáticas como fallback
+        const staticTags = getStaticTags();
+        renderTags(staticTags);
+        showNotification('Error de conexión. Usando etiquetas locales', 'warning');
+        return staticTags;
+    }
+}
+
+/**
+ * Obtener etiquetas estáticas (para cuando la API no está disponible)
+ */
+function getStaticTags() {
+    return [
+        { id: 1, name: 'Gimnasio', color: '#34d399', icon: 'dumbbell' },
+        { id: 2, name: 'Internet', color: '#60a5fa', icon: 'wifi' },
+        { id: 3, name: 'Gasolina', color: '#fbbf24', icon: 'gas-pump' },
+        { id: 4, name: 'Supermercado', color: '#ef4444', icon: 'shopping-cart' },
+        { id: 5, name: 'Entretenimiento', color: '#a855f7', icon: 'gamepad' },
+        { id: 6, name: 'Netflix', color: '#ef4444', icon: 'tv' },
+        { id: 7, name: 'Spotify', color: '#10b981', icon: 'music' },
+        { id: 8, name: 'Transporte', color: '#60a5fa', icon: 'bus' },
+        { id: 9, name: 'Ropa', color: '#a855f7', icon: 'tshirt' },
+        { id: 10, name: 'Restaurante', color: '#fbbf24', icon: 'utensils' }
+    ];
+}
+
+
+/**
+ * Renderizar etiquetas en el DOM
+ * @param {Array} tags - Array de objetos de etiquetas
+ */
+function renderTags(tags) {
+    const tagsList = document.querySelector('.tags-list');
+    const deleteTagArea = document.getElementById('delete-tag-area');
+    
+    if (!tagsList) {
+        console.error('No se encontró .tags-list');
+        return;
+    }
+    
+    console.log('Renderizando etiquetas:', tags.length);
+    
+    // Limpiar etiquetas existentes (excepto deleteTagArea)
+    document.querySelectorAll('.tag-item').forEach(tag => {
+        if (!tag.classList.contains('delete-tag-item')) {
+            tag.remove();
+        }
+    });
+    
+    // Añadir nuevas etiquetas
+    tags.forEach(tag => {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag-item';
+        tagElement.setAttribute('draggable', 'true');
+        tagElement.setAttribute('data-id', tag.id.toString());
+        tagElement.style.setProperty('--tag-color', tag.color);
+        
+        tagElement.innerHTML = `
+            <div class="tag-icon" style="background-color: rgba(${hexToRgb(tag.color)}, 0.1); color: ${tag.color};">
+                <i class="fas fa-${tag.icon || 'tag'}"></i>
+            </div>
+            <div class="tag-info">
+                <h3>${tag.name}</h3>
+                <p>${tag.created_at ? 'Creada: ' + formatDate(tag.created_at) : 'Etiqueta'}</p>
+            </div>
+        `;
+        
+        tagsList.insertBefore(tagElement, deleteTagArea);
+    });
+    
+    // Inicializar drag & drop
+    if (typeof initializeDragAndDrop === 'function') {
+        initializeDragAndDrop();
+    }
+    
+    console.log('Etiquetas renderizadas exitosamente');
+}
+
+// ========== INICIALIZACIÓN PRINCIPAL ==========
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Desktop.js завантажено!');
+    console.log('Desktop.js cargado!');
     
-    // ========== ТІЛЬКИ ДЛЯ СТОРІНОК У РОЗРОБЦІ (href="#") ==========
+    // Variables globales para etiquetas
+    let selectedColor = '#34d399';
+    let selectedIcon = 'dumbbell';
+    
+    // ========== SOLO PARA PÁGINAS EN DESARROLLO (href="#") ==========
     document.querySelectorAll('a[href="#"]').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            const title = this.getAttribute('title') || 'цієї сторінки';
+            const title = this.getAttribute('title') || 'esta página';
             showNotification(`Página "${title}" en desarrollo`, 'info');
             
-            // Для sidebar навігації на десктопі оновлюємо активний клас
+            // Para navegación sidebar en desktop actualizar clase activa
             if (this.classList.contains('nav-item')) {
                 document.querySelectorAll('.nav-item').forEach(nav => {
                     nav.classList.remove('active');
                 });
                 this.classList.add('active');
                 
-                // Оновлюємо заголовок сторінки
+                // Actualizar título de página
                 const pageTitleElement = document.querySelector('.page-title');
                 if (pageTitleElement && title !== 'Panel general') {
                     pageTitleElement.textContent = title;
@@ -26,233 +186,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ========== НАВІГАЦІЯ КАРТОЧЕК ==========
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    const cardCounter = document.querySelector('.card-counter');
-    const cards = document.querySelectorAll('.credit-card-compact');
-    const cardTitle = document.getElementById('card-title');
-    
-    if (cards.length > 0) {
-        let currentCardIndex = 0;
-        const totalCards = cards.length;
-        
-        function updateCardNavigation() {
-            cards.forEach(card => {
-                card.classList.remove('active');
-                card.style.display = 'none';
-            });
-            
-            if (cards[currentCardIndex]) {
-                cards[currentCardIndex].classList.add('active');
-                cards[currentCardIndex].style.display = 'block';
-            }
-            
-            if (cardCounter) {
-                cardCounter.textContent = `${currentCardIndex + 1}/${totalCards}`;
-            }
-            
-            if (cardTitle) {
-                cardTitle.textContent = `Tarjeta ${currentCardIndex + 1}`;
-            }
-        }
-        
-        if (prevBtn) {
-            prevBtn.addEventListener('click', function() {
-                currentCardIndex = (currentCardIndex - 1 + totalCards) % totalCards;
-                updateCardNavigation();
-            });
-        }
-        
-        if (nextBtn) {
-            nextBtn.addEventListener('click', function() {
-                currentCardIndex = (currentCardIndex + 1) % totalCards;
-                updateCardNavigation();
-            });
-        }
-        
-        updateCardNavigation();
-    }
-    
-    // ========== ДРАГ-ЕНД-ДРОП ДЛЯ ТЕГІВ ==========
-    const deleteTagArea = document.getElementById('delete-tag-area');
-    const deleteIndicator = document.getElementById('delete-indicator');
-    
-    if (deleteTagArea) {
-        function initializeDragAndDrop() {
-            const tagItems = document.querySelectorAll('.tag-item');
-            
-            tagItems.forEach(tag => {
-                tag.addEventListener('dragstart', handleDragStart);
-                tag.addEventListener('dragend', handleDragEnd);
-            });
-            
-            deleteTagArea.addEventListener('dragover', handleDragOver);
-            deleteTagArea.addEventListener('dragleave', handleDragLeave);
-            deleteTagArea.addEventListener('drop', handleDrop);
-        }
-        
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
-            this.classList.add('dragging');
-            if (deleteIndicator) {
-                deleteIndicator.textContent = 'Arrastra a la zona roja para eliminar';
-                deleteIndicator.classList.add('active');
-            }
-        }
-        
-        function handleDragEnd() {
-            this.classList.remove('dragging');
-            if (deleteIndicator) {
-                deleteIndicator.classList.remove('active');
-            }
-            deleteTagArea.classList.remove('drag-over');
-            deleteTagArea.style.transform = 'scale(1)';
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            deleteTagArea.classList.add('drag-over');
-            deleteTagArea.style.transform = 'scale(1.02)';
-        }
-        
-        function handleDragLeave() {
-            deleteTagArea.classList.remove('drag-over');
-            deleteTagArea.style.transform = 'scale(1)';
-        }
-        
-        function handleDrop(e) {
-            e.preventDefault();
-            const tagId = e.dataTransfer.getData('text/plain');
-            const tagToDelete = document.querySelector(`.tag-item[data-id="${tagId}"]`);
-            
-            if (tagToDelete) {
-                tagToDelete.style.opacity = '0';
-                tagToDelete.style.transform = 'translateX(100px) rotate(10deg)';
-                
-                setTimeout(() => {
-                    tagToDelete.remove();
-                    
-                    if (deleteIndicator) {
-                        deleteIndicator.textContent = '¡Etiqueta eliminada correctamente!';
-                        deleteIndicator.classList.add('active');
-                        
-                        setTimeout(() => {
-                            deleteIndicator.textContent = '';
-                            deleteIndicator.classList.remove('active');
-                        }, 2000);
-                    }
-                    
-                    initializeDragAndDrop();
-                }, 300);
-            }
-            
-            deleteTagArea.classList.remove('drag-over');
-            deleteTagArea.style.transform = 'scale(1)';
-        }
-        
-        initializeDragAndDrop();
-    }
-    
-    // ========== МОДАЛЬНЕ ВІКНО ДЛЯ ТЕГІВ ==========
-    const tagModal = document.getElementById('tagModal');
-    const addTagBtn = document.getElementById('desktop-add-tag');
-    const closeModal = document.getElementById('closeModal');
-    const cancelTag = document.getElementById('cancelTag');
-    const saveTag = document.getElementById('saveTag');
-    const colorOptions = document.querySelectorAll('.color-option');
-    const iconOptions = document.querySelectorAll('.icon-option');
-    
-    let selectedColor = '#34d399';
-    let selectedIcon = 'dumbbell';
-    
-    if (addTagBtn && tagModal) {
-        addTagBtn.addEventListener('click', () => {
-            tagModal.showModal();
-        });
-    }
-    
-    if (closeModal) {
-        closeModal.addEventListener('click', () => {
-            tagModal.close();
-        });
-    }
-    
-    if (cancelTag) {
-        cancelTag.addEventListener('click', () => {
-            tagModal.close();
-        });
-    }
-    
-    colorOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            colorOptions.forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            selectedColor = this.getAttribute('data-color');
-        });
-    });
-    
-    iconOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            iconOptions.forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            selectedIcon = this.getAttribute('data-icon');
-        });
-    });
-    
-    if (saveTag) {
-        saveTag.addEventListener('click', function() {
-            const tagName = document.getElementById('tagName').value;
-            
-            if (!tagName.trim()) {
-                showNotification('Por favor, ingresa un nombre para la etiqueta', 'error');
-                return;
-            }
-            
-            const tagsList = document.querySelector('.tags-list');
-            const deleteTagArea = document.getElementById('delete-tag-area');
-            
-            const existingTags = document.querySelectorAll('.tag-item');
-            const newId = existingTags.length + 1;
-            
-            const newTagItem = document.createElement('div');
-            newTagItem.className = 'tag-item';
-            newTagItem.setAttribute('draggable', 'true');
-            newTagItem.setAttribute('data-id', newId);
-            newTagItem.style.setProperty('--tag-color', selectedColor);
-            
-            const iconClass = `fas fa-${selectedIcon}`;
-            
-            newTagItem.innerHTML = `
-                <div class="tag-icon" style="background-color: rgba(${hexToRgb(selectedColor)}, 0.1); color: ${selectedColor};">
-                    <i class="${iconClass}"></i>
-                </div>
-                <div class="tag-info">
-                    <h3>${tagName}</h3>
-                    <p>Etiqueta personalizada</p>
-                </div>
-                <div class="tag-amount"></div>
-            `;
-            
-            tagsList.insertBefore(newTagItem, deleteTagArea);
-            document.getElementById('tagName').value = '';
-            
-            colorOptions.forEach(opt => opt.classList.remove('selected'));
-            iconOptions.forEach(opt => opt.classList.remove('selected'));
-            
-            colorOptions[0].classList.add('selected');
-            iconOptions[0].classList.add('selected');
-            selectedColor = '#34d399';
-            selectedIcon = 'dumbbell';
-            
-            tagModal.close();
-            showNotification('Etiqueta creada exitosamente', 'success');
-        });
-    }
-
-    // Додати цей код у desktop.js для обробки селектора рахунків
-document.addEventListener('DOMContentLoaded', function() {
-    // Дані для кожного рахунку
+    // ========== SELECTOR DE CUENTAS BANCARIAS ==========
+    // Datos para cada cuenta
     const accountsData = {
         '1': {
             bankName: 'Banco Nacional',
@@ -312,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Отримуємо елементи DOM
+    // Obtener elementos DOM
     const accountSelect = document.getElementById('bankAccountSelect');
     const bankNameElement = document.querySelector('.bank-name');
     const accountTypeElement = document.querySelector('.account-type');
@@ -326,20 +261,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusDotElement = document.querySelector('.status-dot');
     const statusTextElement = document.querySelector('.status-text');
 
-    // Функція для оновлення інформації про рахунок
+    /**
+     * Actualizar información de cuenta bancaria
+     * @param {string} accountId - ID de la cuenta
+     */
     function updateAccountInfo(accountId) {
         const account = accountsData[accountId];
         
         if (!account) return;
         
-        // Оновлюємо всі поля
+        // Actualizar todos los campos
         bankNameElement.textContent = account.bankName;
         accountTypeElement.textContent = account.accountType;
         bankLogoElement.className = account.logoIcon;
         ibanElement.textContent = account.iban;
         balanceElement.textContent = account.balance;
         
-        // Оновлюємо зміну балансу
+        // Actualizar cambio de balance
         balanceChangeElement.textContent = account.balanceChange;
         balanceChangeElement.className = `balance-change ${account.changeType}`;
         
@@ -347,31 +285,31 @@ document.addEventListener('DOMContentLoaded', function() {
         accountAgeElement.textContent = account.accountAge;
         interestRateElement.textContent = account.interestRate;
         
-        // Оновлюємо статус
+        // Actualizar estado
         statusDotElement.className = `status-dot ${account.status}`;
         statusTextElement.textContent = account.status === 'active' ? 'Cuenta activa' : 'Cuenta inactiva';
     }
 
-    // Обробник зміни селектора
+    // Manejador de cambio de selector
     if (accountSelect) {
         accountSelect.addEventListener('change', function() {
             const selectedAccountId = this.value;
             updateAccountInfo(selectedAccountId);
         });
         
-        // Ініціалізуємо з першим рахунком
+        // Inicializar con primera cuenta
         updateAccountInfo(accountSelect.value);
     }
 
-    // Функція копіювання IBAN
+    // Función para copiar IBAN
     const copyButtons = document.querySelectorAll('.copy-btn');
     copyButtons.forEach(button => {
         button.addEventListener('click', function() {
             const iban = ibanElement.textContent;
             
-            // Використовуємо Clipboard API для копіювання
+            // Usar Clipboard API para copiar
             navigator.clipboard.writeText(iban).then(() => {
-                // Змінюємо іконку на короткий час
+                // Cambiar ícono temporalmente
                 const originalIcon = this.innerHTML;
                 this.innerHTML = '<i class="fas fa-check"></i>';
                 this.style.backgroundColor = 'rgba(0, 185, 52, 0.1)';
@@ -383,37 +321,559 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.style.color = '';
                 }, 2000);
             }).catch(err => {
-                console.error('Error copying text: ', err);
+                console.error('Error copiando texto: ', err);
                 alert('No se pudo copiar el IBAN. Por favor, cópielo manualmente.');
             });
         });
     });
     
-    // Оновлення дати (якщо ще немає)
-    function updateDate() {
-        const now = new Date();
-        const options = { day: 'numeric', month: 'short', year: 'numeric' };
-        const formattedDate = now.toLocaleDateString('es-ES', options);
-        const dateElement = document.querySelector('.date-container');
-        if (dateElement) {
-            dateElement.textContent = formattedDate;
+    // ========== FUNCIONES AUXILIARES PARA ETIQUETAS ==========
+    
+    /**
+     * Intentar URLs alternativas para cargar etiquetas
+     */
+    async function tryAlternativeUrls() {
+        const alternativeUrls = [
+            '/api/tags',                      // A través de nginx
+            'http://localhost/api/tags',      // Localhost directo
+            'http://backend:8000/api/tags',   // Conexión directa al backend
+        ];
+        
+        for (const url of alternativeUrls) {
+            try {
+                console.log('Intentando URL:', url);
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const tags = await response.json();
+                    console.log('Cargado exitosamente desde:', url);
+                    renderTags(tags);
+                    return tags;
+                }
+            } catch (error) {
+                console.log('Falló con URL:', url, error.message);
+            }
         }
+        
+        console.log('Todas las URLs fallaron, mostrando etiquetas estáticas');
+        renderTags(getStaticTags());
+        return [];
     }
     
-    updateDate();
-});
-    
-    // ========== УТІЛІТИ ==========
-    function hexToRgb(hex) {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        if (!result) return '52, 211, 153';
-        const r = parseInt(result[1], 16);
-        const g = parseInt(result[2], 16);
-        const b = parseInt(result[3], 16);
-        return `${r}, ${g}, ${b}`;
+    /**
+     * Verificar si ya existe una etiqueta con ese nombre
+     * @param {string} tagName - Nombre de la etiqueta
+     */
+    async function checkTagExists(tagName) {
+        try {
+            const response = await fetch('/api/tags');
+            if (response.ok) {
+                const tags = await response.json();
+                return tags.some(tag => tag.name.toLowerCase() === tagName.toLowerCase());
+            }
+        } catch (error) {
+            console.error('Error verificando etiquetas:', error);
+        }
+        return false;
     }
     
+    // ========== DRAG-AND-DROP PARA ETIQUETAS ==========
+    const deleteTagArea = document.getElementById('delete-tag-area');
+    const deleteIndicator = document.getElementById('delete-indicator');
+    
+    if (deleteTagArea) {
+        /**
+         * Inicializar sistema de drag-and-drop
+         */
+        function initializeDragAndDrop() {
+            const tagItems = document.querySelectorAll('.tag-item');
+            
+            tagItems.forEach(tag => {
+                // Remover manejadores antiguos
+                tag.removeEventListener('dragstart', handleDragStart);
+                tag.removeEventListener('dragend', handleDragEnd);
+                
+                // Añadir nuevos manejadores
+                tag.addEventListener('dragstart', handleDragStart);
+                tag.addEventListener('dragend', handleDragEnd);
+            });
+            
+            // Remover manejadores antiguos para deleteTagArea
+            deleteTagArea.removeEventListener('dragover', handleDragOver);
+            deleteTagArea.removeEventListener('dragleave', handleDragLeave);
+            deleteTagArea.removeEventListener('drop', handleDrop);
+            
+            // Añadir nuevos manejadores para deleteTagArea
+            deleteTagArea.addEventListener('dragover', handleDragOver);
+            deleteTagArea.addEventListener('dragleave', handleDragLeave);
+            deleteTagArea.addEventListener('drop', handleDrop);
+        }
+        
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
+            this.classList.add('dragging');
+            if (deleteIndicator) {
+                deleteIndicator.textContent = 'Arrastra a la zona roja para eliminar';
+                deleteIndicator.classList.add('active');
+            }
+        }
+        
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            if (deleteIndicator) {
+                deleteIndicator.classList.remove('active');
+            }
+            deleteTagArea.classList.remove('drag-over');
+            deleteTagArea.style.transform = 'scale(1)';
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            deleteTagArea.classList.add('drag-over');
+            deleteTagArea.style.transform = 'scale(1.02)';
+        }
+        
+        function handleDragLeave() {
+            deleteTagArea.classList.remove('drag-over');
+            deleteTagArea.style.transform = 'scale(1)';
+        }
+        
+        /**
+         * Manejador para soltar etiqueta en zona de eliminación
+         */
+async function handleDrop(e) {
+    e.preventDefault();
+    const tagId = e.dataTransfer.getData('text/plain');
+    const tagToDelete = document.querySelector(`.tag-item[data-id="${tagId}"]`);
+    
+    if (!tagToDelete) {
+        deleteTagArea.classList.remove('drag-over');
+        deleteTagArea.style.transform = 'scale(1)';
+        return;
+    }
+    
+    // Спитати підтвердження
+    if (!confirm('¿Estás seguro de que quieres eliminar esta etiqueta?')) {
+        deleteTagArea.classList.remove('drag-over');
+        deleteTagArea.style.transform = 'scale(1)';
+        return;
+    }
+    
+    // Анімація видалення
+    tagToDelete.style.opacity = '0.5';
+    tagToDelete.style.pointerEvents = 'none';
+    
+    try {
+        console.log('Eliminando etiqueta ID:', tagId);
+        
+        const response = await fetch(`/api/tags/${tagId}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        console.log('Respuesta de eliminación:', response.status);
+        
+        if (response.ok) {
+            // Повна анімація видалення
+            tagToDelete.style.opacity = '0';
+            tagToDelete.style.transform = 'translateX(100px) rotate(10deg)';
+            
+            setTimeout(() => {
+                tagToDelete.remove();
+                
+                if (deleteIndicator) {
+                    deleteIndicator.textContent = '¡Etiqueta eliminada correctamente!';
+                    deleteIndicator.classList.add('active');
+                    
+                    setTimeout(() => {
+                        deleteIndicator.textContent = '';
+                        deleteIndicator.classList.remove('active');
+                    }, 2000);
+                }
+            }, 300);
+            
+            showNotification('Etiqueta eliminada exitosamente', 'success');
+        } else {
+            const errorData = await response.json().catch(() => ({}));
+            // Скасувати анімацію, якщо помилка
+            tagToDelete.style.opacity = '1';
+            tagToDelete.style.pointerEvents = 'auto';
+            showNotification(errorData.message || 'Error al eliminar la etiqueta', 'error');
+        }
+    } catch (error) {
+        // Скасувати анімацію, якщо помилка
+        tagToDelete.style.opacity = '1';
+        tagToDelete.style.pointerEvents = 'auto';
+        showNotification('Error de conexión con el servidor', 'error');
+        console.error('Error:', error);
+    }
+    
+    deleteTagArea.classList.remove('drag-over');
+    deleteTagArea.style.transform = 'scale(1)';
+}
+
+        /**
+         * Obtener cookie por nombre
+         * @param {string} name - Nombre de la cookie
+         */
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+        
+        // Inicializar drag & drop al cargar
+        setTimeout(() => {
+            initializeDragAndDrop();
+        }, 500);
+    }
+    
+    // ========== MODAL PARA ETIQUETAS ==========
+    const tagModal = document.getElementById('tagModal');
+    const addTagBtn = document.getElementById('desktop-add-tag');
+    const closeModal = document.getElementById('closeModal');
+    const cancelTag = document.getElementById('cancelTag');
+    const saveTag = document.getElementById('saveTag');
+    const tagNameInput = document.getElementById('tagName');
+    const colorOptions = document.querySelectorAll('.color-option');
+    const iconOptions = document.querySelectorAll('.icon-option');
+    
+    if (addTagBtn && tagModal) {
+        addTagBtn.addEventListener('click', () => {
+            // Resetear selección de color e ícono a valores por defecto
+            colorOptions.forEach(opt => opt.classList.remove('selected'));
+            iconOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            if (colorOptions.length > 0) colorOptions[0].classList.add('selected');
+            if (iconOptions.length > 0) iconOptions[0].classList.add('selected');
+            
+            selectedColor = '#34d399';
+            selectedIcon = 'dumbbell';
+            
+            // Limpiar campo de entrada
+            if (tagNameInput) tagNameInput.value = '';
+            
+            tagModal.showModal();
+        });
+    }
+    
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            tagModal.close();
+        });
+    }
+    
+    if (cancelTag) {
+        cancelTag.addEventListener('click', () => {
+            tagModal.close();
+        });
+    }
+    
+    if (colorOptions.length > 0) {
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                colorOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedColor = this.getAttribute('data-color');
+            });
+        });
+    }
+    
+    if (iconOptions.length > 0) {
+        iconOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                iconOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedIcon = this.getAttribute('data-icon');
+            });
+        });
+    }
+    
+if (saveTag) {
+    saveTag.addEventListener('click', async function() {
+        const tagName = tagNameInput ? tagNameInput.value.trim() : '';
+        
+        if (!tagName) {
+            showNotification('Por favor, ingresa un nombre para la etiqueta', 'error');
+            return;
+        }
+        
+        // Показати індикатор завантаження
+        const originalButtonText = saveTag.innerHTML;
+        saveTag.disabled = true;
+        saveTag.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
+        
+        try {
+            console.log('Enviando solicitud para crear etiqueta:', tagName);
+            
+            const response = await fetch('/api/tags', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: tagName,
+                    color: selectedColor,
+                    icon: selectedIcon
+                })
+            });
+            
+            console.log('Respuesta:', response.status);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Etiqueta creada:', data);
+                
+                // Очистити форму
+                if (tagNameInput) tagNameInput.value = '';
+                tagModal.close();
+                
+                // Завантажити оновлений список тегів
+                await loadTagsFromServer();
+                
+                showNotification('Etiqueta creada exitosamente', 'success');
+            } else {
+                let errorMessage = 'Error al crear la etiqueta';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {
+                    // Ignorar si no hay JSON
+                }
+                showNotification(errorMessage, 'error');
+            }
+        } catch (error) {
+            console.error('Error de red:', error);
+            showNotification('Error de conexión con el servidor', 'error');
+        } finally {
+            // Відновити кнопку
+            saveTag.disabled = false;
+            saveTag.innerHTML = originalButtonText;
+        }
+    });
+}
+        
+    // ========== POPUP "VER TODAS" PARA METAS FINANCIERAS ==========
+    const viewAllBtn = document.getElementById('viewAllGoals');
+    const goalsModal = document.getElementById('goalsModal');
+    const closeGoalsModal = document.getElementById('closeGoalsModal');
+    const allGoalsList = document.getElementById('allGoalsList');
+    
+    // Datos para todas las metas financieras
+    const allGoalsData = [
+        {
+            id: 1,
+            title: 'Comprar iPhone 15',
+            category: 'Tecnología',
+            targetAmount: 1200,
+            savedAmount: 360,
+            deadline: '8 mayo 2024',
+            progress: 30,
+            priority: 'alta'
+        },
+        {
+            id: 2,
+            title: 'Nuevo portátil para la uni',
+            category: 'Educación',
+            targetAmount: 1200,
+            savedAmount: 1080,
+            deadline: '16 agosto 2024',
+            progress: 90,
+            priority: 'alta'
+        },
+        {
+            id: 3,
+            title: 'Fiestas de graduación',
+            category: 'Entretenimiento',
+            targetAmount: 1000,
+            savedAmount: 770,
+            deadline: '12 mayo 2025',
+            progress: 77,
+            priority: 'media'
+        },
+        {
+            id: 4,
+            title: 'Viaje a Japón',
+            category: 'Viajes',
+            targetAmount: 3000,
+            savedAmount: 450,
+            deadline: '15 diciembre 2024',
+            progress: 15,
+            priority: 'baja'
+        },
+        {
+            id: 5,
+            title: 'Curso de programación',
+            category: 'Educación',
+            targetAmount: 800,
+            savedAmount: 320,
+            deadline: '30 junio 2024',
+            progress: 40,
+            priority: 'alta'
+        },
+        {
+            id: 6,
+            title: 'Fondo de emergencia',
+            category: 'Ahorro',
+            targetAmount: 5000,
+            savedAmount: 2500,
+            deadline: '31 diciembre 2024',
+            progress: 50,
+            priority: 'alta'
+        },
+        {
+            id: 7,
+            title: 'Nueva cámara fotográfica',
+            category: 'Hobbies',
+            targetAmount: 900,
+            savedAmount: 180,
+            deadline: '1 octubre 2024',
+            progress: 20,
+            priority: 'media'
+        },
+        {
+            id: 8,
+            title: 'Regalos de Navidad',
+            category: 'Regalos',
+            targetAmount: 500,
+            savedAmount: 150,
+            deadline: '20 diciembre 2024',
+            progress: 30,
+            priority: 'media'
+        }
+    ];
+    
+    /**
+     * Renderizar todas las metas en el popup
+     */
+    function renderAllGoals() {
+        if (!allGoalsList) return;
+        
+        allGoalsList.innerHTML = '';
+        
+        allGoalsData.forEach(goal => {
+            const goalElement = document.createElement('div');
+            goalElement.className = 'goals-modal-item';
+            goalElement.setAttribute('data-id', goal.id);
+            
+            // Determinar color para prioridad
+            let priorityColor = '#34d399'; // verde para baja
+            if (goal.priority === 'alta') priorityColor = '#ef4444'; // rojo para alta
+            if (goal.priority === 'media') priorityColor = '#fbbf24'; // amarillo para media
+            
+            goalElement.innerHTML = `
+                <div class="goals-modal-item-left">
+                    <div class="goals-modal-progress">
+                        <svg class="goals-modal-progress-circle" viewBox="0 0 36 36">
+                            <circle class="progress-circle-bg" cx="18" cy="18" r="16"></circle>
+                            <circle class="progress-circle-fill" cx="18" cy="18" r="16" 
+                                    style="--progress: ${goal.progress}; stroke: ${priorityColor};"></circle>
+                        </svg>
+                        <div class="goals-modal-progress-text">${goal.progress}%</div>
+                    </div>
+                    <div class="goals-modal-item-info">
+                        <h4 class="goals-modal-item-title">${goal.title}</h4>
+                        <div class="goals-modal-item-date">Fecha límite: ${goal.deadline}</div>
+                        <span class="goals-modal-item-category">${goal.category}</span>
+                    </div>
+                </div>
+                <div class="goals-modal-item-right">
+                    <div class="goals-modal-amount">
+                        ${goal.savedAmount}€ / ${goal.targetAmount}€
+                    </div>
+                    <div class="goals-modal-progress-bar">
+                        <div class="goals-modal-progress-fill" style="width: ${goal.progress}%"></div>
+                    </div>
+                    <div class="goals-modal-actions">
+                        <button class="goals-modal-action-btn" onclick="editGoal(${goal.id})">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="goals-modal-action-btn primary" onclick="addToGoal(${goal.id})">
+                            <i class="fas fa-plus"></i> Añadir
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            allGoalsList.appendChild(goalElement);
+        });
+    }
+    
+    // Manejador para botón "Ver todas"
+    if (viewAllBtn && goalsModal) {
+        viewAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            renderAllGoals();
+            goalsModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    
+    // Cerrar popup
+    if (closeGoalsModal && goalsModal) {
+        closeGoalsModal.addEventListener('click', function() {
+            goalsModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    }
+    
+    // Cerrar al hacer clic en overlay
+    if (goalsModal) {
+        goalsModal.addEventListener('click', function(event) {
+            if (event.target === goalsModal) {
+                goalsModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+    
+    // Cerrar con tecla ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && goalsModal && goalsModal.style.display === 'flex') {
+            goalsModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // Funciones globales para botones en popup
+    window.editGoal = function(goalId) {
+        const goal = allGoalsData.find(g => g.id === goalId);
+        if (goal) {
+            showNotification(`Editando: ${goal.title}`, 'info');
+        }
+    };
+    
+    window.addToGoal = function(goalId) {
+        const goal = allGoalsData.find(g => g.id === goalId);
+        if (goal) {
+            showNotification(`Añadiendo dinero a: ${goal.title}`, 'info');
+        }
+    };
+    
+    // ========== FUNCIONES UTILITARIAS ==========
+    
+    /**
+     * Mostrar notificación
+     * @param {string} message - Mensaje a mostrar
+     * @param {string} type - Tipo de notificación (success, error, info, warning)
+     */
     function showNotification(message, type) {
+        // Verificar si ya existe una notificación con ese texto
+        const existingNotifications = document.querySelectorAll('.notification');
+        for (const notif of existingNotifications) {
+            if (notif.textContent.includes(message)) {
+                return; // No mostrar duplicado
+            }
+        }
+        
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         
@@ -426,6 +886,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (type === 'error') {
             icon = 'exclamation-circle';
             bgColor = '#ef4444';
+        } else if (type === 'info') {
+            icon = 'info-circle';
+            bgColor = '#3b82f6';
+        } else if (type === 'warning') {
+            icon = 'exclamation-triangle';
+            bgColor = '#f59e0b';
         }
         
         notification.innerHTML = `
@@ -446,23 +912,73 @@ document.addEventListener('DOMContentLoaded', function() {
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
         `;
+        
+        // Añadir estilo para animación
+        if (!document.querySelector('#notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                .notification-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    flex: 1;
+                }
+                .notification-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 20px;
+                    cursor: pointer;
+                    padding: 0;
+                    margin-left: 10px;
+                }
+            `;
+            document.head.appendChild(style);
+        }
         
         document.body.appendChild(notification);
         
         const closeBtn = notification.querySelector('.notification-close');
         closeBtn.addEventListener('click', () => {
-            notification.remove();
+            notification.style.animation = 'slideIn 0.3s ease-out reverse';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
         });
         
         setTimeout(() => {
             if (notification.parentNode) {
-                notification.remove();
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
             }
         }, 3000);
     }
     
-    // Оновлення дати
+    // Actualizar fecha
     function updateDate() {
         const now = new Date();
         const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -475,9 +991,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateDate();
     
-    // Оновлення кругових прогресів
+    // Actualizar círculos de progreso
     function updateProgressCircles() {
-        document.querySelectorAll('.progress-circle-fill').forEach(circle => {
+        document.querySelectorAll('.progress-circle-fill, .goals-modal-progress-circle .progress-circle-fill').forEach(circle => {
             const progress = circle.style.getPropertyValue('--progress');
             const circumference = 100;
             const offset = circumference - (progress / 100 * circumference);
@@ -487,4 +1003,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     updateProgressCircles();
+    
+    // Inicializar todas las funciones al cargar
+    setTimeout(() => {
+        updateProgressCircles();
+        
+        // Cargar etiquetas del servidor al cargar la página
+        loadTagsFromServer();
+    }, 100);
 });

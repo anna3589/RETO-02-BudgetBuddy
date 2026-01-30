@@ -449,379 +449,11 @@
 /* =========================================== */
 /* СПЕЦИФІЧНІ СТИЛІ ДЛЯ ПАНЕЛІ */
 /* =========================================== */
-/* Карусель карток (Панель) */
-.cards-carousel {
-    position: relative;
-    height: 140px;
-    overflow: hidden;
-}
-
-.credit-card-compact {
-    position: absolute;
-    top: 0;
-    left: 30%;
-    width: 40%;
-    height: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.3s ease;
-    display: none;
-}
-
-.credit-card-compact.active {
-    opacity: 1;
-    transform: translateX(0);
-    display: block;
-}
-
-.card-black {
-    background: linear-gradient(135deg, #374151 0%, #111827 100%);
-}
-
-.card-blue {
-    background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);
-}
-
-.card-orange {
-    background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%);
-}
-
-.card-type {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.card-number {
-    font-size: 16px;
-    letter-spacing: 1.2px;
-    margin-bottom: 8px;
-    font-family: 'Outfit', sans-serif;
-}
-
-.card-details {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    font-size: 12px;
-    opacity: 0.9;
-}
-
-/* =========================================== */
-/* СЕЛЕКТОР БАНКІВСЬКИХ РАХУНКІВ */
-/* =========================================== */
-
-.account-selector {
-    position: relative;
-    min-width: 300px;
-}
-
-.account-dropdown {
-    width: 100%;
-    padding: 10px 40px 10px 15px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    background-color: white;
-    color: var(--text-main);
-    cursor: pointer;
-    appearance: none;
-    transition: all 0.2s;
-}
-
-.account-dropdown:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(33, 122, 74, 0.1);
-}
-
-.dropdown-arrow {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--text-muted);
-    font-size: 12px;
-}
-
-.account-info-display {
-    margin-top: 20px;
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(33, 122, 74, 0.05) 0%, rgba(33, 122, 74, 0.1) 100%);
-    border-radius: 15px;
-    border: 1px solid rgba(33, 122, 74, 0.2);
-}
-
-.account-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(117, 117, 117, 0.1);
-}
-
-.bank-logo {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 20px;
-}
-
-.bank-info {
-    flex: 1;
-}
-
-.bank-name {
-    font-family: 'Outfit', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 5px;
-}
-
-.account-type {
-    font-size: 14px;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.account-details-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.detail-card {
-    padding: 15px;
-    background-color: white;
-    border-radius: 10px;
-    border: 1px solid rgba(117, 117, 117, 0.1);
-    position: relative;
-    transition: all 0.2s;
-}
-
-.detail-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: rgba(33, 122, 74, 0.2);
-}
-
-.detail-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.detail-label i {
-    font-size: 11px;
-}
-
-.detail-value {
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-main);
-    word-break: break-word;
-    margin-bottom: 5px;
-}
-
-.detail-value.iban-number {
-    font-size: 15px;
-    letter-spacing: 0.5px;
-    font-family: 'Roboto', monospace;
-}
-
-.copy-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    background-color: var(--gray-light);
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.copy-btn:hover {
-    background-color: rgba(33, 122, 74, 0.1);
-    color: var(--primary);
-}
-
-.balance-amount {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-main);
-}
-
-.balance-change {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.balance-change.positive {
-    background-color: rgba(0, 185, 52, 0.1);
-    color: var(--income-green);
-}
-
-.balance-change.negative {
-    background-color: rgba(244, 72, 27, 0.1);
-    color: var(--expense-red);
-}
-
-.account-age, .interest-type {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 3px;
-}
-
-.account-status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 15px;
-    background-color: white;
-    border-radius: 10px;
-    border: 1px solid rgba(117, 117, 117, 0.1);
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.status-dot.active {
-    background-color: var(--income-green);
-    box-shadow: 0 0 0 3px rgba(0, 185, 52, 0.2);
-    animation: pulse 2s infinite;
-}
-
-.status-dot.inactive {
-    background-color: var(--expense-red);
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(0, 185, 52, 0.4); }
-    70% { box-shadow: 0 0 0 6px rgba(0, 185, 52, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(0, 185, 52, 0); }
-}
-
-.status-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-main);
-}
-
-/* Адаптивність для селектора рахунків */
-@media (max-width: 992px) {
-    .account-selector {
-        min-width: 250px;
-    }
-    
-    .account-details-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .bank-name {
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 768px) {
-    .account-selector {
-        min-width: 200px;
-    }
-    
-    .account-dropdown {
-        font-size: 13px;
-        padding: 8px 35px 8px 12px;
-    }
-    
-    .account-info-display {
-        padding: 15px;
-    }
-    
-    .bank-logo {
-        width: 45px;
-        height: 45px;
-        font-size: 18px;
-    }
-    
-    .detail-card {
-        padding: 12px;
-    }
-    
-    .balance-amount {
-        font-size: 20px;
-    }
-}
-
-@media (max-width: 480px) {
-    .account-selector {
-        min-width: 100%;
-    }
-    
-    .card-header-compact {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .account-selector {
-        width: 100%;
-    }
-    
-    .account-dropdown {
-        width: 100%;
-    }
-    
-    .bank-name {
-        font-size: 16px;
-    }
-    
-    .detail-value {
-        font-size: 14px;
-    }
-    
-    .detail-value.iban-number {
-        font-size: 13px;
-    }
-}
-
 /* Секція тегів */
 .tags-card {
-    height: fit-content;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
 }
 
 .add-tag-btn {
@@ -849,6 +481,30 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+    max-height: 300px;
+}
+
+/* Стилі для скролбару в тегах */
+.tags-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tags-list::-webkit-scrollbar-track {
+    background: var(--gray-light);
+    border-radius: 3px;
+}
+
+.tags-list::-webkit-scrollbar-thumb {
+    background: rgba(33, 122, 74, 0.5);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.tags-list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
 }
 
 .tag-item {
@@ -996,6 +652,29 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Стилі для скролбару в цілях */
+.goals-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.goals-list::-webkit-scrollbar-track {
+    background: var(--gray-light);
+    border-radius: 3px;
+}
+
+.goals-list::-webkit-scrollbar-thumb {
+    background: rgba(33, 122, 74, 0.5);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.goals-list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
 }
 
 .goal-item {
@@ -1321,6 +1000,229 @@
 }
 
 /* =========================================== */
+/* СЕЛЕКТОР БАНКІВСЬКИХ РАХУНКІВ */
+/* =========================================== */
+.account-selector {
+    position: relative;
+    min-width: 300px;
+}
+
+.account-dropdown {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: white;
+    color: var(--text-main);
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.2s;
+}
+
+.account-dropdown:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(33, 122, 74, 0.1);
+}
+
+.dropdown-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.account-info-display {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(33, 122, 74, 0.05) 0%, rgba(33, 122, 74, 0.1) 100%);
+    border-radius: 15px;
+    border: 1px solid rgba(33, 122, 74, 0.2);
+}
+
+.account-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(117, 117, 117, 0.1);
+}
+
+.bank-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+}
+
+.bank-info {
+    flex: 1;
+}
+
+.bank-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.account-type {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.account-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.detail-card {
+    padding: 15px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid rgba(117, 117, 117, 0.1);
+    position: relative;
+    transition: all 0.2s;
+}
+
+.detail-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(33, 122, 74, 0.2);
+}
+
+.detail-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-label i {
+    font-size: 11px;
+}
+
+.detail-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    word-break: break-word;
+    margin-bottom: 5px;
+}
+
+.detail-value.iban-number {
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    font-family: 'Roboto', monospace;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background-color: var(--gray-light);
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.copy-btn:hover {
+    background-color: rgba(33, 122, 74, 0.1);
+    color: var(--primary);
+}
+
+.balance-amount {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.balance-change {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.balance-change.positive {
+    background-color: rgba(0, 185, 52, 0.1);
+    color: var(--income-green);
+}
+
+.balance-change.negative {
+    background-color: rgba(244, 72, 27, 0.1);
+    color: var(--expense-red);
+}
+
+.account-age, .interest-type {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+
+.account-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid rgba(117, 117, 117, 0.1);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-dot.active {
+    background-color: var(--income-green);
+    box-shadow: 0 0 0 3px rgba(0, 185, 52, 0.2);
+    animation: pulse 2s infinite;
+}
+
+.status-dot.inactive {
+    background-color: var(--expense-red);
+}
+
+.status-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+/* =========================================== */
 /* МОДАЛЬНЕ ВІКНО (ЗАГАЛЬНЕ) */
 /* =========================================== */
 .tag-modal {
@@ -1506,6 +1408,265 @@
 }
 
 /* =========================================== */
+/* POPUP ДЛЯ ВСІХ METAS FINANCIERAS */
+/* =========================================== */
+.goals-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.goals-modal {
+    background-color: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.goals-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+.goals-modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.goals-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.goals-modal-close:hover {
+    background-color: var(--gray-light);
+    color: var(--text-main);
+}
+
+.goals-modal-content {
+    padding: 25px 30px 30px;
+}
+
+.goals-modal-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--border);
+}
+
+.goals-modal-stat-item {
+    text-align: center;
+}
+
+.goals-modal-stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.goals-modal-stat-label {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.goals-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.goals-modal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: var(--gray-light);
+    border: 1px solid rgba(117, 117, 117, 0.1);
+    transition: all 0.2s;
+}
+
+.goals-modal-item:hover {
+    background-color: rgba(33, 122, 74, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.goals-modal-item-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.goals-modal-progress {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.goals-modal-progress-circle {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.goals-modal-progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+.goals-modal-item-info {
+    flex: 1;
+}
+
+.goals-modal-item-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-main);
+}
+
+.goals-modal-item-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.goals-modal-item-category {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: rgba(33, 122, 74, 0.1);
+    color: var(--primary);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.goals-modal-item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 150px;
+}
+
+.goals-modal-amount {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.goals-modal-progress-bar {
+    width: 150px;
+    height: 6px;
+    background-color: rgba(117, 117, 117, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.goals-modal-progress-fill {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.goals-modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.goals-modal-action-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: white;
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.goals-modal-action-btn:hover {
+    background-color: var(--gray-light);
+}
+
+.goals-modal-action-btn.primary {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.goals-modal-action-btn.primary:hover {
+    background-color: var(--primary-dark);
+}
+
+/* =========================================== */
 /* МЕДІА-ЗАПИТИ */
 /* =========================================== */
 
@@ -1551,8 +1712,12 @@
         padding-bottom: 70px;
     }
     
-    .cards-carousel {
-        height: 130px;
+    .account-selector {
+        min-width: 250px;
+    }
+    
+    .account-details-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1595,6 +1760,43 @@
     .mobile-nav {
         padding: 8px 15px;
     }
+    
+    .goals-modal {
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .goals-modal-header {
+        padding: 15px 20px;
+    }
+    
+    .goals-modal-title {
+        font-size: 20px;
+    }
+    
+    .goals-modal-content {
+        padding: 20px;
+    }
+    
+    .goals-modal-stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .goals-modal-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .goals-modal-item-right {
+        width: 100%;
+        align-items: flex-start;
+    }
+    
+    .goals-modal-progress-bar {
+        width: 100%;
+    }
 }
 
 /* Медіа-запит для 480px (ОБ'ЄДНАНА ВЕРСІЯ) */
@@ -1619,11 +1821,6 @@
     .page-title {
         margin-top: -25%;
     }
-
-    .credit-card-compact {
-        width: 100%;
-        left: 0px;
-    }
     
     .add-tag-btn {
         font-size: 12px;
@@ -1631,5 +1828,35 @@
     
     .mobile-nav {
         padding: 8px 10px;
+    }
+    
+    .account-selector {
+        min-width: 100%;
+    }
+    
+    .card-header-compact {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .account-selector {
+        width: 100%;
+    }
+    
+    .account-dropdown {
+        width: 100%;
+    }
+    
+    .bank-name {
+        font-size: 16px;
+    }
+    
+    .detail-value {
+        font-size: 14px;
+    }
+    
+    .detail-value.iban-number {
+        font-size: 13px;
     }
 }

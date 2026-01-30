@@ -21,6 +21,9 @@ services:
     container_name: budgetbuddy-backend
     restart: unless-stopped
     # SIN PORTS (Requisito del enunciado)
+    #ports:
+    #- "8000:8000"  # Для тестування API
+    #- "9000:9000"  # Для php-fpm (якщо потрібно)
     volumes:
       - ./backend:/var/www/html
 

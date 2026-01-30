@@ -13,6 +13,7 @@ class Tag extends Model
     protected $fillable = [
         'name',     // #Viaje, #Urgente
         'color',    // Color de la etiqueta
+        'icon'
     ];
 
     /**
