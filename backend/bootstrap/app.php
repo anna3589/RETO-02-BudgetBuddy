@@ -12,15 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-    $middleware->web(append: [
-        \App\Http\Middleware\HandleInertiaRequests::class,
-        \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-    ]);
-    
-    $middleware->validateCsrfTokens(except: [
-        'api/*', // Додайте цей рядок
-    ]);
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+        ]);
+        
+        // IMPORTANTE: Desactivar CSRF para API
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+            'sanctum/*',
+        ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

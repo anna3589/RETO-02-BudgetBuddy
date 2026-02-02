@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\account;
+use App\Models\Account;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -29,29 +29,47 @@ class AccountController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'bank_name' => 'required|string',
-            'current_balance' => 'required|numeric',
-            'color' => 'required|string',
-            'iban' => 'required|string|unique:accounts,iban'
-        ]);
+        {
+            try {
+                // ТИМЧАСОВО: Дозволити без аутентифікації для setup
+                // $user_id = Auth::id(); // Закоментуйте це
+                $user_id = $request->input('user_id') ?? 2; // ТИМЧАСОВО: використовуємо ID 2 (ваш ID)
+                
+                // Або отримуємо з сесії, якщо це web запит
+                if ($request->hasSession() && $request->user()) {
+                    $user_id = $request->user()->id;
+                }
 
-        $account = Account::create([
-            'user_id' => Auth::id(),
-            'bank_name' => $validated['bank_name'],
-            'current_balance' => $validated['current_balance'],
-            // Usamos el operador null coalescing (??) por seguridad
-            'iban' => $validated['iban'] ?? null, 
-            'color' => $validated['color'],
-            'country_code' => $validated['country_code'] ?? null,
-        ]);
+                $validated = $request->validate([
+                    'bank_name' => 'required|string|max:255',
+                    'current_balance' => 'required|numeric',
+                    'color' => 'required|string|max:7',
+                    'iban' => 'required|string|unique:accounts,iban|max:34'
+                ]);
 
-        return response()->json([
-            'message' => 'Cuenta creada', 
-            'account' => $account
-        ], 201);
-    }
+                $account = Account::create([
+                    'user_id' => $user_id,
+                    'bank_name' => $validated['bank_name'],
+                    'current_balance' => $validated['current_balance'],
+                    'iban' => $validated['iban'],
+                    'color' => $validated['color'],
+                    'country_code' => substr($validated['iban'], 0, 2)
+                ]);
+
+                return response()->json([
+                    'message' => 'Cuenta creada exitosamente', 
+                    'account' => $account,
+                    'account_id' => $account->id // Додаємо ID для JavaScript
+                ], 201);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Error al crear la cuenta',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+
 
     /**
      * Display the specified resource.
