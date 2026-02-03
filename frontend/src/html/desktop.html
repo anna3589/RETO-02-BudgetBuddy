@@ -15,7 +15,7 @@
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 		/>
-		<link rel="stylesheet" href="../css/style.css" />
+		<!--	<link rel="stylesheet" href="../css/style.css" />-->
 		<link rel="stylesheet" href="../css/desktop.css" />
 		<link rel="stylesheet" href="../css/notification.css" />
 	</head>
@@ -35,7 +35,7 @@
 					<span class="notification-badge">3</span>
 				</div>
 				<div class="user-profile-top">
-					<div class="user-avatar-top" title="Mi perfil">JD</div>
+					<div class="user-avatar-top" title="Mi perfil">...</div>
 				</div>
 			</div>
 		</header>
@@ -298,6 +298,92 @@
 									</div>
 								</div>
 							</div>
+
+							<div style="display: flex; gap: 10px; align-items: center marginº">
+								<button
+									id="open-account-modal-btn"
+									class="btn-primary"
+									title="Añadir nueva cuenta"
+								>
+									<i class="fas fa-plus"></i>
+								</button>
+							</div>
+
+							<dialog id="account-modal" class="tag-modal">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3><i class="fas fa-university"></i> Nueva Cuenta</h3>
+										<button class="close-modal" id="close-account-modal-btn">
+											&times;
+										</button>
+									</div>
+									<div class="modal-body">
+										<form id="create-account-form">
+											<div class="form-group">
+												<label>Nombre del Banco</label>
+												<input
+													type="text"
+													id="acc-name"
+													placeholder="Ej: Santander Ahorro"
+													required
+												/>
+											</div>
+											<div class="form-group">
+												<label>IBAN</label>
+												<input
+													type="text"
+													id="acc-iban"
+													placeholder="ES..."
+													required
+												/>
+											</div>
+											<div class="form-group">
+												<label>Saldo Inicial</label>
+												<input
+													type="number"
+													id="acc-balance"
+													step="0.01"
+													placeholder="0.00"
+													required
+												/>
+											</div>
+											<div class="form-group">
+												<label>Color</label>
+												<div class="color-picker" id="acc-color-picker">
+													<div
+														class="color-option selected"
+														data-color="#217A4A"
+														style="background: #217a4a"
+													></div>
+													<div
+														class="color-option"
+														data-color="#1d4ed8"
+														style="background: #1d4ed8"
+													></div>
+													<div
+														class="color-option"
+														data-color="#dc2626"
+														style="background: #dc2626"
+													></div>
+													<div
+														class="color-option"
+														data-color="#fbbf24"
+														style="background: #fbbf24"
+													></div>
+												</div>
+											</div>
+										</form>
+									</div>
+									<div class="modal-footer">
+										<button class="btn-secondary" id="cancel-account-btn">
+											Cancelar
+										</button>
+										<button class="btn-primary" id="save-account-btn">
+											Guardar
+										</button>
+									</div>
+								</div>
+							</dialog>
 						</div>
 						<!-- Balance total con transacciones -->
 						<div class="card balance-card">

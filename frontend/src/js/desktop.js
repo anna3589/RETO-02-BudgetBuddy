@@ -2,32 +2,84 @@
 
 // ========== FUNCIONES AUXILIARES GENERALES ==========
 function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2)
-        return decodeURIComponent(parts.pop().split(";").shift());
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2)
+		return decodeURIComponent(parts.pop().split(";").shift());
 }
 
 function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return "52, 211, 153";
-    const r = parseInt(result[1], 16);
-    const g = parseInt(result[2], 16);
-    const b = parseInt(result[3], 16);
-    return `${r}, ${g}, ${b}`;
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	if (!result) return "52, 211, 153";
+	const r = parseInt(result[1], 16);
+	const g = parseInt(result[2], 16);
+	const b = parseInt(result[3], 16);
+	return `${r}, ${g}, ${b}`;
 }
 
 function formatDate(dateString) {
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString("es-ES", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-        });
-    } catch (e) {
-        return dateString;
-    }
+	try {
+		const date = new Date(dateString);
+		return date.toLocaleDateString("es-ES", {
+			day: "numeric",
+			month: "short",
+			year: "numeric",
+		});
+	} catch (e) {
+		return dateString;
+	}
+}
+
+// ========== GESTIÓN DE PERFIL DE USUARIO ==========
+
+// Elemento del DOM
+const userAvatarTop = document.querySelector(".user-avatar-top");
+
+/**
+ * Carga el usuario logueado y actualiza el avatar
+ */
+async function loadUserProfile() {
+	console.log("Cargando perfil de usuario...");
+
+	try {
+		// Petición estándar a Laravel para obtener el usuario autenticado
+		const response = await fetch("/api/user", {
+			headers: { Accept: "application/json" },
+			credentials: "same-origin",
+		});
+
+		if (response.ok) {
+			const user = await response.json();
+			// Asumimos que tu tabla users tiene una columna 'name'
+			updateAvatarUI(user.name);
+		}
+	} catch (error) {
+		console.error("Error cargando usuario:", error);
+		showNotification("Error cargando perfil de usuario", "error");
+	}
+}
+
+/**
+ * Calcula las iniciales y actualiza el círculo del header
+ * Ej: "Juan Pérez" -> "JP"
+ */
+function updateAvatarUI(fullName) {
+	if (!userAvatarTop || !fullName) return;
+
+	// Dividimos el nombre por espacios
+	const parts = fullName.trim().split(" ");
+
+	// Tomamos la primera letra del primer nombre
+	let initials = parts[0].charAt(0).toUpperCase();
+
+	// Si hay apellido (o segundo nombre), tomamos su inicial también
+	if (parts.length > 1) {
+		initials += parts[parts.length - 1].charAt(0).toUpperCase();
+	}
+
+	userAvatarTop.textContent = initials;
+	// Opcional: poner el nombre completo en el título al pasar el ratón
+	userAvatarTop.title = fullName;
 }
 
 // ========== GESTIÓN DE CUENTAS BANCARIAS (Lógica Real) ==========
@@ -48,207 +100,214 @@ const balanceElement = document.querySelector(".balance-amount");
  * Cargar cuentas desde el servidor (Laravel API)
  */
 async function loadAccountsFromServer() {
-    console.log("Cargando cuentas...");
-    
-    // 1. ACTIVAR MODO CARGA
-    if(accountCard) accountCard.classList.add("is-loading");
+	console.log("Cargando cuentas...");
 
-    try {
-        // Simulamos un pequeño retardo artificial para que se aprecie la animación 
-        // (puedes quitar el setTimeout en producción, pero ayuda a ver el efecto)
-        await new Promise(r => setTimeout(r, 800)); 
+	// 1. ACTIVAR MODO CARGA
+	if (accountCard) accountCard.classList.add("is-loading");
 
-        const response = await fetch("/api/accounts", {
-            headers: { "Accept": "application/json" },
-            credentials: "same-origin",
-        });
+	try {
+		// Simulamos un pequeño retardo artificial para que se aprecie la animación
+		// (puedes quitar el setTimeout en producción, pero ayuda a ver el efecto)
+		await new Promise((r) => setTimeout(r, 800));
 
-        if (response.ok) {
-            const accounts = await response.json();
-            
-            // Mapeo de datos (Asegúrate de usar los nombres de TU base de datos)
-            accountsData = {}; 
-            accounts.forEach(acc => {
-                accountsData[acc.id] = {
-                    bankName: acc.bank_name, 
-                    accountType: "Cuenta Corriente", // Valor fijo si no viene de BD
-                    iban: acc.iban,
-                    balance: new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(acc.current_balance),
-                    logoIcon: getBankIcon(acc.bank_name), 
-                };
-            });
+		const response = await fetch("/api/accounts", {
+			headers: { Accept: "application/json" },
+			credentials: "same-origin",
+		});
 
-            renderAccountDropdown(accounts);
-            
-            if (accounts.length > 0) {
-                updateAccountInfo(accounts[0].id.toString());
-            } else {
-                // Manejar caso de 0 cuentas (opcional)
-                bankNameElement.textContent = "Sin cuentas";
-            }
+		if (response.ok) {
+			const accounts = await response.json();
 
-            // 2. DESACTIVAR MODO CARGA (Datos listos)
-            if(accountCard) accountCard.classList.remove("is-loading");
+			// Mapeo de datos (Asegúrate de usar los nombres de TU base de datos)
+			accountsData = {};
+			accounts.forEach((acc) => {
+				accountsData[acc.id] = {
+					bankName: acc.bank_name,
+					accountType: "Cuenta Corriente", // Valor fijo si no viene de BD
+					iban: acc.iban,
+					balance: new Intl.NumberFormat("es-ES", {
+						style: "currency",
+						currency: "EUR",
+					}).format(acc.current_balance),
+					logoIcon: getBankIcon(acc.bank_name),
+				};
+			});
 
-        } else {
-            showNotification("Error al cargar cuentas", "error");
-            if(accountCard) accountCard.classList.remove("is-loading");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        if(accountCard) accountCard.classList.remove("is-loading");
-    }
+			renderAccountDropdown(accounts);
+
+			if (accounts.length > 0) {
+				updateAccountInfo(accounts[0].id.toString());
+			} else {
+				// Manejar caso de 0 cuentas (opcional)
+				bankNameElement.textContent = "Sin cuentas";
+			}
+
+			// 2. DESACTIVAR MODO CARGA (Datos listos)
+			if (accountCard) accountCard.classList.remove("is-loading");
+		} else {
+			showNotification("Error al cargar cuentas", "error");
+			if (accountCard) accountCard.classList.remove("is-loading");
+		}
+	} catch (error) {
+		console.error("Error:", error);
+		if (accountCard) accountCard.classList.remove("is-loading");
+	}
 }
 
 /**
  * Pintar las opciones en el <select>
  */
 function renderAccountDropdown(accounts) {
-    if (!accountSelect) return;
+	if (!accountSelect) return;
 
-    accountSelect.innerHTML = ""; // Limpiar "Cargando..."
+	accountSelect.innerHTML = ""; // Limpiar "Cargando..."
 
-    accounts.forEach(acc => {
-        const option = document.createElement("option");
-        option.value = acc.id;
-        const shortIban = acc.iban ? acc.iban.slice(-4) : "????";
-        option.textContent = `${acc.bank_name} - **** ${shortIban}`;
-        accountSelect.appendChild(option);
-    });
+	accounts.forEach((acc) => {
+		const option = document.createElement("option");
+		option.value = acc.id;
+		const shortIban = acc.iban ? acc.iban.slice(-4) : "????";
+		option.textContent = `${acc.bank_name} - **** ${shortIban}`;
+		accountSelect.appendChild(option);
+	});
 }
 
-
 function updateAccountInfo(accountId) {
-    const account = accountsData[accountId];
-    if (!account) return;
+	const account = accountsData[accountId];
+	if (!account) return;
 
-    // Solo actualizamos lo que existe en el HTML nuevo
-    bankNameElement.textContent = account.bankName;
-    accountTypeElement.textContent = account.accountType;
-    bankLogoElement.className = account.logoIcon;
-    ibanElement.textContent = account.iban;
-    balanceElement.textContent = account.balance;
-    
-    // Como hemos borrado fecha, interes y estado del HTML, 
-    // borramos esas líneas del JS para que no den error.
+	// Solo actualizamos lo que existe en el HTML nuevo
+	bankNameElement.textContent = account.bankName;
+	accountTypeElement.textContent = account.accountType;
+	bankLogoElement.className = account.logoIcon;
+	ibanElement.textContent = account.iban;
+	balanceElement.textContent = account.balance;
+
+	// Como hemos borrado fecha, interes y estado del HTML,
+	// borramos esas líneas del JS para que no den error.
 }
 /**
  * Elegir icono según el nombre del banco
  */
 function getBankIcon(bankName) {
-    const name = (bankName || "").toLowerCase();
-    if (name.includes("caixa")) return "fas fa-star";
-    if (name.includes("bbva")) return "fas fa-location-arrow"; 
-    if (name.includes("santander")) return "fas fa-fire";
-    if (name.includes("ing")) return "fas fa-lion";
-    return "fas fa-university"; 
+	const name = (bankName || "").toLowerCase();
+	if (name.includes("caixa")) return "fas fa-star";
+	if (name.includes("bbva")) return "fas fa-location-arrow";
+	if (name.includes("santander")) return "fas fa-fire";
+	if (name.includes("ing")) return "fas fa-lion";
+	return "fas fa-university";
 }
 
 /**
  * Actualizar la tarjeta visual de la cuenta
  */
 function updateAccountInfo(accountId) {
-    const account = accountsData[accountId];
-    if (!account) return;
+	const account = accountsData[accountId];
+	if (!account) return;
 
-    // Solo actualizamos lo que existe en el HTML nuevo
-    bankNameElement.textContent = account.bankName;
-    accountTypeElement.textContent = account.accountType;
-    bankLogoElement.className = account.logoIcon;
-    ibanElement.textContent = account.iban;
-    balanceElement.textContent = account.balance;
-    
-    // Como hemos borrado fecha, interes y estado del HTML, 
-    // borramos esas líneas del JS para que no den error.
+	// Solo actualizamos lo que existe en el HTML nuevo
+	bankNameElement.textContent = account.bankName;
+	accountTypeElement.textContent = account.accountType;
+	bankLogoElement.className = account.logoIcon;
+	ibanElement.textContent = account.iban;
+	balanceElement.textContent = account.balance;
+
+	// Como hemos borrado fecha, interes y estado del HTML,
+	// borramos esas líneas del JS para que no den error.
 }
 
 // Event Listener para cambio de cuenta
 if (accountSelect) {
-    accountSelect.addEventListener("change", function () {
-        updateAccountInfo(this.value);
-    });
+	accountSelect.addEventListener("change", function () {
+		updateAccountInfo(this.value);
+	});
 }
 
 // Botones copiar IBAN
 const copyButtons = document.querySelectorAll(".copy-btn");
 copyButtons.forEach((button) => {
-    button.addEventListener("click", function () {
-        const iban = ibanElement.textContent;
-        navigator.clipboard.writeText(iban)
-            .then(() => {
-                const originalIcon = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-check"></i>';
-                this.style.color = "var(--income-green)";
-                setTimeout(() => {
-                    this.innerHTML = originalIcon;
-                    this.style.color = "";
-                }, 2000);
-            })
-            .catch(() => alert("No se pudo copiar el IBAN."));
-    });
+	button.addEventListener("click", function () {
+		const iban = ibanElement.textContent;
+		navigator.clipboard
+			.writeText(iban)
+			.then(() => {
+				const originalIcon = this.innerHTML;
+				this.innerHTML = '<i class="fas fa-check"></i>';
+				this.style.color = "var(--income-green)";
+				setTimeout(() => {
+					this.innerHTML = originalIcon;
+					this.style.color = "";
+				}, 2000);
+			})
+			.catch(() => alert("No se pudo copiar el IBAN."));
+	});
 });
-
 
 // ========== GESTIÓN DE ETIQUETAS (TAGS) ==========
 
 async function loadTagsFromServer() {
-    console.log("Cargando etiquetas...");
-    try {
-        const response = await fetch("/api/tags", {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            credentials: "same-origin",
-        });
+	console.log("Cargando etiquetas...");
+	try {
+		const response = await fetch("/api/tags", {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			credentials: "same-origin",
+		});
 
-        if (response.ok) {
-            const tags = await response.json();
-            if (typeof renderTags === "function") {
-                renderTags(tags);
-            }
-            return tags;
-        } else {
-            console.warn("No se pudieron cargar etiquetas");
-        }
-    } catch (error) {
-        console.error("Error de red tags:", error);
-    }
+		if (response.ok) {
+			const tags = await response.json();
+			if (typeof renderTags === "function") {
+				renderTags(tags);
+			}
+			return tags;
+		} else {
+			console.warn("No se pudieron cargar etiquetas");
+		}
+	} catch (error) {
+		console.error("Error de red tags:", error);
+	}
 }
 
 function renderTags(tags) {
-    const tagsList = document.querySelector(".tags-list");
-    const deleteTagArea = document.getElementById("delete-tag-area");
+	const tagsList = document.querySelector(".tags-list");
+	const deleteTagArea = document.getElementById("delete-tag-area");
 
-    if (!tagsList) return;
+	if (!tagsList) return;
 
-    // Limpiar viejas (manteniendo el área de borrar)
-    document.querySelectorAll(".tag-item").forEach((tag) => {
-        if (!tag.classList.contains("delete-tag-item")) {
-            tag.remove();
-        }
-    });
+	// Limpiar viejas (manteniendo el área de borrar)
+	document.querySelectorAll(".tag-item").forEach((tag) => {
+		if (!tag.classList.contains("delete-tag-item")) {
+			tag.remove();
+		}
+	});
 
-    tags.forEach((tag) => {
-        const tagElement = document.createElement("div");
-        tagElement.className = "tag-item";
-        tagElement.setAttribute("draggable", "true");
-        tagElement.setAttribute("data-id", tag.id.toString());
-        tagElement.style.setProperty("--tag-color", tag.color);
+	tags.forEach((tag) => {
+		const tagElement = document.createElement("div");
+		tagElement.className = "tag-item";
+		tagElement.setAttribute("draggable", "true");
+		tagElement.setAttribute("data-id", tag.id.toString());
+		tagElement.style.setProperty("--tag-color", tag.color);
 
-        tagElement.innerHTML = `
-            <div class="tag-icon" style="background-color: rgba(${hexToRgb(tag.color)}, 0.1); color: ${tag.color};">
+		tagElement.innerHTML = `
+            <div class="tag-icon" style="background-color: rgba(${hexToRgb(
+							tag.color
+						)}, 0.1); color: ${tag.color};">
                 <i class="fas fa-${tag.icon || "tag"}"></i>
             </div>
             <div class="tag-info">
                 <h3>${tag.name}</h3>
-                <p>${tag.created_at ? "Creada: " + formatDate(tag.created_at) : "Etiqueta"}</p>
+                <p>${
+									tag.created_at
+										? "Creada: " + formatDate(tag.created_at)
+										: "Etiqueta"
+								}</p>
             </div>
         `;
-        tagsList.insertBefore(tagElement, deleteTagArea);
-    });
+		tagsList.insertBefore(tagElement, deleteTagArea);
+	});
 
-    initializeDragAndDrop();
+	initializeDragAndDrop();
 }
 
 // ========== SISTEMA DRAG & DROP ETIQUETAS ==========
@@ -257,103 +316,107 @@ let deleteTagArea = null;
 let deleteIndicator = null;
 
 function initializeDragAndDrop() {
-    if (!deleteTagArea) deleteTagArea = document.getElementById("delete-tag-area");
-    if (!deleteIndicator) deleteIndicator = document.getElementById("delete-indicator");
+	if (!deleteTagArea)
+		deleteTagArea = document.getElementById("delete-tag-area");
+	if (!deleteIndicator)
+		deleteIndicator = document.getElementById("delete-indicator");
 
-    const tagItems = document.querySelectorAll(".tag-item:not(.delete-tag-item)");
+	const tagItems = document.querySelectorAll(".tag-item:not(.delete-tag-item)");
 
-    tagItems.forEach((tag) => {
-        tag.removeEventListener("dragstart", handleDragStart);
-        tag.removeEventListener("dragend", handleDragEnd);
-        tag.addEventListener("dragstart", handleDragStart);
-        tag.addEventListener("dragend", handleDragEnd);
-        tag.setAttribute("draggable", "true");
-    });
+	tagItems.forEach((tag) => {
+		tag.removeEventListener("dragstart", handleDragStart);
+		tag.removeEventListener("dragend", handleDragEnd);
+		tag.addEventListener("dragstart", handleDragStart);
+		tag.addEventListener("dragend", handleDragEnd);
+		tag.setAttribute("draggable", "true");
+	});
 
-    if (deleteTagArea) {
-        deleteTagArea.removeEventListener("dragover", handleDragOver);
-        deleteTagArea.removeEventListener("dragleave", handleDragLeave);
-        deleteTagArea.removeEventListener("drop", handleDrop);
-        
-        deleteTagArea.addEventListener("dragover", handleDragOver);
-        deleteTagArea.addEventListener("dragleave", handleDragLeave);
-        deleteTagArea.addEventListener("drop", handleDrop);
-    }
+	if (deleteTagArea) {
+		deleteTagArea.removeEventListener("dragover", handleDragOver);
+		deleteTagArea.removeEventListener("dragleave", handleDragLeave);
+		deleteTagArea.removeEventListener("drop", handleDrop);
+
+		deleteTagArea.addEventListener("dragover", handleDragOver);
+		deleteTagArea.addEventListener("dragleave", handleDragLeave);
+		deleteTagArea.addEventListener("drop", handleDrop);
+	}
 }
 
 function handleDragStart(e) {
-    e.dataTransfer.setData("text/plain", this.getAttribute("data-id"));
-    this.classList.add("dragging");
-    if (deleteIndicator) {
-        deleteIndicator.textContent = "Arrastra a la zona roja para eliminar";
-        deleteIndicator.classList.add("active");
-    }
+	e.dataTransfer.setData("text/plain", this.getAttribute("data-id"));
+	this.classList.add("dragging");
+	if (deleteIndicator) {
+		deleteIndicator.textContent = "Arrastra a la zona roja para eliminar";
+		deleteIndicator.classList.add("active");
+	}
 }
 
 function handleDragEnd() {
-    this.classList.remove("dragging");
-    if (deleteIndicator) deleteIndicator.classList.remove("active");
-    if (deleteTagArea) {
-        deleteTagArea.classList.remove("drag-over");
-        deleteTagArea.style.transform = "scale(1)";
-    }
+	this.classList.remove("dragging");
+	if (deleteIndicator) deleteIndicator.classList.remove("active");
+	if (deleteTagArea) {
+		deleteTagArea.classList.remove("drag-over");
+		deleteTagArea.style.transform = "scale(1)";
+	}
 }
 
 function handleDragOver(e) {
-    e.preventDefault();
-    if (deleteTagArea) {
-        deleteTagArea.classList.add("drag-over");
-        deleteTagArea.style.transform = "scale(1.02)";
-    }
+	e.preventDefault();
+	if (deleteTagArea) {
+		deleteTagArea.classList.add("drag-over");
+		deleteTagArea.style.transform = "scale(1.02)";
+	}
 }
 
 function handleDragLeave() {
-    if (deleteTagArea) {
-        deleteTagArea.classList.remove("drag-over");
-        deleteTagArea.style.transform = "scale(1)";
-    }
+	if (deleteTagArea) {
+		deleteTagArea.classList.remove("drag-over");
+		deleteTagArea.style.transform = "scale(1)";
+	}
 }
 
 async function handleDrop(e) {
-    e.preventDefault();
-    const tagId = e.dataTransfer.getData("text/plain");
-    const tagToDelete = document.querySelector(`.tag-item[data-id="${tagId}"]:not(.delete-tag-item)`);
+	e.preventDefault();
+	const tagId = e.dataTransfer.getData("text/plain");
+	const tagToDelete = document.querySelector(
+		`.tag-item[data-id="${tagId}"]:not(.delete-tag-item)`
+	);
 
-    if (!tagToDelete) return;
+	if (!tagToDelete) return;
 
-    if (!confirm("¿Estás seguro de eliminar esta etiqueta?")) {
-        if (deleteTagArea) deleteTagArea.classList.remove("drag-over");
-        return;
-    }
+	if (!confirm("¿Estás seguro de eliminar esta etiqueta?")) {
+		if (deleteTagArea) deleteTagArea.classList.remove("drag-over");
+		return;
+	}
 
-    tagToDelete.style.opacity = "0.5";
+	tagToDelete.style.opacity = "0.5";
 
-    try {
-        await fetch("/sanctum/csrf-cookie"); // Refresh CSRF
-        const response = await fetch(`/api/tags/${tagId}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-            },
-            credentials: "same-origin",
-        });
+	try {
+		await fetch("/sanctum/csrf-cookie"); // Refresh CSRF
+		const response = await fetch(`/api/tags/${tagId}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+				"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+			},
+			credentials: "same-origin",
+		});
 
-        if (response.ok) {
-            tagToDelete.remove();
-            showNotification("Etiqueta eliminada", "success");
-            loadTagsFromServer(); // Recargar lista
-        } else {
-            showNotification("No se pudo eliminar (¿Está en uso?)", "error");
-            tagToDelete.style.opacity = "1";
-        }
-    } catch (error) {
-        console.error(error);
-        tagToDelete.style.opacity = "1";
-    }
-    
-    if (deleteTagArea) deleteTagArea.classList.remove("drag-over");
+		if (response.ok) {
+			tagToDelete.remove();
+			showNotification("Etiqueta eliminada", "success");
+			loadTagsFromServer(); // Recargar lista
+		} else {
+			showNotification("No se pudo eliminar (¿Está en uso?)", "error");
+			tagToDelete.style.opacity = "1";
+		}
+	} catch (error) {
+		console.error(error);
+		tagToDelete.style.opacity = "1";
+	}
+
+	if (deleteTagArea) deleteTagArea.classList.remove("drag-over");
 }
 
 // ========== CREACIÓN DE ETIQUETAS (MODAL) ==========
@@ -369,88 +432,221 @@ let selectedIcon = "dumbbell";
 
 // Setup Listeners Modal
 if (addTagBtn) {
-    addTagBtn.addEventListener("click", () => {
-        if(tagNameInput) tagNameInput.value = "";
-        tagModal.showModal();
-    });
+	addTagBtn.addEventListener("click", () => {
+		if (tagNameInput) tagNameInput.value = "";
+		tagModal.showModal();
+	});
 }
 if (closeModal) closeModal.addEventListener("click", () => tagModal.close());
 if (cancelTag) cancelTag.addEventListener("click", () => tagModal.close());
 
 // Color Pickers
-document.querySelectorAll(".color-option").forEach(opt => {
-    opt.addEventListener("click", function() {
-        document.querySelectorAll(".color-option").forEach(o => o.classList.remove("selected"));
-        this.classList.add("selected");
-        selectedColor = this.getAttribute("data-color");
-    });
+document.querySelectorAll(".color-option").forEach((opt) => {
+	opt.addEventListener("click", function () {
+		document
+			.querySelectorAll(".color-option")
+			.forEach((o) => o.classList.remove("selected"));
+		this.classList.add("selected");
+		selectedColor = this.getAttribute("data-color");
+	});
 });
 
 // Icon Pickers
-document.querySelectorAll(".icon-option").forEach(opt => {
-    opt.addEventListener("click", function() {
-        document.querySelectorAll(".icon-option").forEach(o => o.classList.remove("selected"));
-        this.classList.add("selected");
-        selectedIcon = this.getAttribute("data-icon");
-    });
+document.querySelectorAll(".icon-option").forEach((opt) => {
+	opt.addEventListener("click", function () {
+		document
+			.querySelectorAll(".icon-option")
+			.forEach((o) => o.classList.remove("selected"));
+		this.classList.add("selected");
+		selectedIcon = this.getAttribute("data-icon");
+	});
 });
 
 if (saveTag) {
-    saveTag.addEventListener("click", async () => {
-        const name = tagNameInput.value.trim();
-        if(!name) return showNotification("Pon un nombre", "error");
+	saveTag.addEventListener("click", async () => {
+		const name = tagNameInput.value.trim();
+		if (!name) return showNotification("Pon un nombre", "error");
 
-        saveTag.disabled = true;
-        try {
-            const response = await fetch("/api/tags", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "X-XSRF-TOKEN": getCookie("XSRF-TOKEN")
-                },
-                credentials: "same-origin",
-                body: JSON.stringify({ name, color: selectedColor, icon: selectedIcon })
-            });
+		saveTag.disabled = true;
+		try {
+			const response = await fetch("/api/tags", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+					"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+				},
+				credentials: "same-origin",
+				body: JSON.stringify({
+					name,
+					color: selectedColor,
+					icon: selectedIcon,
+				}),
+			});
 
-            if(response.ok) {
-                tagModal.close();
-                showNotification("Creada correctamente", "success");
-                loadTagsFromServer();
-            } else {
-                showNotification("Error al crear", "error");
-            }
-        } catch(e) {
-            console.error(e);
-        } finally {
-            saveTag.disabled = false;
-        }
-    });
+			if (response.ok) {
+				tagModal.close();
+				showNotification("Creada correctamente", "success");
+				loadTagsFromServer();
+			} else {
+				showNotification("Error al crear", "error");
+			}
+		} catch (e) {
+			console.error(e);
+		} finally {
+			saveTag.disabled = false;
+		}
+	});
+}
+
+// ===========================================
+// LÓGICA DE CREACIÓN DE CUENTAS (Estilo Ajustes.js)
+// ===========================================
+
+// Variables
+let accountModal,
+	openAccountBtn,
+	closeAccountBtn,
+	cancelAccountBtn,
+	saveAccountBtn;
+let accNameInput, accIbanInput, accBalanceInput;
+let selectedAccColor = "#217A4A";
+
+// Inicializar elementos
+function initAccountElements() {
+	accountModal = document.getElementById("account-modal");
+	openAccountBtn = document.getElementById("open-account-modal-btn");
+	closeAccountBtn = document.getElementById("close-account-modal-btn");
+	cancelAccountBtn = document.getElementById("cancel-account-btn");
+	saveAccountBtn = document.getElementById("save-account-btn");
+
+	accNameInput = document.getElementById("acc-name");
+	accIbanInput = document.getElementById("acc-iban");
+	accBalanceInput = document.getElementById("acc-balance");
+
+	// Listener para abrir
+	if (openAccountBtn) {
+		openAccountBtn.addEventListener("click", () => {
+			// Limpiar formulario
+			accNameInput.value = "";
+			accIbanInput.value = "";
+			accBalanceInput.value = "";
+			accountModal.showModal();
+		});
+	}
+
+	// Listeners para cerrar
+	if (closeAccountBtn)
+		closeAccountBtn.addEventListener("click", () => accountModal.close());
+	if (cancelAccountBtn)
+		cancelAccountBtn.addEventListener("click", () => accountModal.close());
+
+	// Listener para colores
+	const colorOptions = document.querySelectorAll(
+		"#acc-color-picker .color-option"
+	);
+	colorOptions.forEach((opt) => {
+		opt.addEventListener("click", function () {
+			colorOptions.forEach((o) => o.classList.remove("selected"));
+			this.classList.add("selected");
+			selectedAccColor = this.getAttribute("data-color");
+		});
+	});
+
+	// Listener para GUARDAR
+	if (saveAccountBtn) {
+		saveAccountBtn.addEventListener("click", saveNewAccount);
+	}
+}
+
+// Función principal de guardado (Igual que saveProfileChanges)
+async function saveNewAccount(e) {
+	e.preventDefault();
+
+	// Validar
+	if (!accNameInput.value || !accIbanInput.value || !accBalanceInput.value) {
+		showNotification("Por favor rellena todos los campos", "error");
+		return;
+	}
+
+	const originalText = saveAccountBtn.innerHTML;
+	saveAccountBtn.disabled = true;
+	saveAccountBtn.innerHTML =
+		'<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+	const newAccountData = {
+		bank_name: accNameInput.value,
+		iban: accIbanInput.value,
+		current_balance: parseFloat(accBalanceInput.value),
+		color: selectedAccColor,
+	};
+
+	try {
+		// 1. Cookie CSRF (La clave de seguridad de Laravel)
+		await fetch("/sanctum/csrf-cookie");
+
+		// 2. Petición POST
+		const response = await fetch("/api/accounts", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+				"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+			},
+			body: JSON.stringify(newAccountData),
+		});
+
+		if (response.ok) {
+			showNotification("Cuenta creada correctamente", "success");
+			accountModal.close();
+			// Recargar la lista de cuentas para que aparezca la nueva
+			await loadAccountsFromServer();
+		} else {
+			const errorData = await response.json();
+			showNotification(
+				errorData.message || "Error al crear la cuenta",
+				"error"
+			);
+		}
+	} catch (error) {
+		console.error(error);
+		showNotification("Error de conexión", "error");
+	} finally {
+		saveAccountBtn.disabled = false;
+		saveAccountBtn.innerHTML = originalText;
+	}
 }
 
 // ========== NOTIFICACIONES ==========
 
 function showNotification(message, type) {
-    // (Tu función de notificaciones original, resumida aquí para no ocupar espacio pero mantenla igual)
-    const notification = document.createElement("div");
-    notification.className = `notification ${type}`;
-    notification.innerHTML = `<div class="notification-content"><span>${message}</span></div>`;
-    notification.style.cssText = `position: fixed; top: 100px; right: 20px; background: ${type === 'error' ? '#ef4444' : '#10b981'}; color: white; padding: 12px; border-radius: 8px; z-index: 9999;`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+	// (Tu función de notificaciones original, resumida aquí para no ocupar espacio pero mantenla igual)
+	const notification = document.createElement("div");
+	notification.className = `notification ${type}`;
+	notification.innerHTML = `<div class="notification-content"><span>${message}</span></div>`;
+	notification.style.cssText = `position: fixed; top: 100px; right: 20px; background: ${
+		type === "error" ? "#ef4444" : "#10b981"
+	}; color: white; padding: 12px; border-radius: 8px; z-index: 9999;`;
+	document.body.appendChild(notification);
+	setTimeout(() => notification.remove(), 3000);
 }
 
 // ========== INICIALIZACIÓN PRINCIPAL ==========
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Desktop.js cargado e iniciando...");
-    
-    // 1. Cargar Etiquetas
-    loadTagsFromServer();
-    
-    // 2. Cargar Cuentas Bancarias (¡Ahora real!)
-    loadAccountsFromServer();
-    
-    // 3. Inicializar Drag and Drop
-    setTimeout(initializeDragAndDrop, 500);
+	console.log("Desktop.js cargado e iniciando...");
+
+	// 1. Cargar Etiquetas
+	loadTagsFromServer();
+
+	// 2. Cargar Cuentas Bancarias (¡Ahora real!)
+	loadAccountsFromServer();
+
+    // 3. Cargar Perfil (NUEVO)
+    loadUserProfile();
+
+	// 3. Inicializar Drag and Drop
+	setTimeout(initializeDragAndDrop, 500);
+
+	initAccountElements();
 });
