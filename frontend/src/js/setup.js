@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 });
 
-// Función auxiliar para las cookies (obligatoria para Laravel)
+// Función auxiliar para las cookies (MEJORADA)
 function getCookie(name) {
 	let matches = document.cookie.match(
 		new RegExp(
