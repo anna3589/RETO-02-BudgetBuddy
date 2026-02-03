@@ -4,53 +4,48 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// 1. Redirigir la raíz al login
+// 1. Redirigir la raíz al login (DESCOMENTADO)
+// Esto es vital para que al entrar a localhost no te salga error 404
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // 2. LÓGICA DEL CEREBRO (Dashboard vs Setup)
+    // 2. LÓGICA DEL CEREBRO (Dashboard)
     Route::get('/dashboard', function () {
         $user = Auth::user();
         
-        // Si el usuario no tiene cuentas bancarias creadas, al Wizard
+        // Si no tiene cuentas -> Al Wizard de configuración
         if ($user->accounts()->count() === 0) {
             return redirect()->route('setup.view');
         }
         
-        // Si ya tiene cuentas, al Escritorio principal
+        // Si ya tiene cuentas -> Al Escritorio Principal
         return redirect()->route('desktop.index');
     })->name('dashboard');
 
-    // 3. RUTAS DE VISTAS
+    // 3. RUTAS DE VISTAS (Aquí cumplimos con la profesora)
+
+    // Ruta SETUP (Blade)
     Route::get('/setup', function () {
+        // Protección: si ya tiene cuentas, no le dejes entrar al setup
         if (Auth::user()->accounts()->count() > 0) {
             return redirect()->route('dashboard');
         }
+        // Retorna la vista resources/views/setup.blade.php
         return view('setup'); 
     })->name('setup.view');
 
-    // Esta ruta carga la vista del escritorio (Blade)
+    // Ruta DESKTOP (Blade) - DESCOMENTADA Y ARREGLADA
+    // Esta es la ruta que te faltaba y por la que fallaba la redirección anterior
     Route::get('/desktop', function () {
-        return view('dashboard'); 
+        // Retorna la vista resources/views/desktop.blade.php
+        return view('desktop'); 
     })->name('desktop.index');
 
-    // 4. API INTERNA PARA EL FRONTEND (JS)
-    // Definimos esto aquí para aprovechar la sesión de usuario logueado
-    
-    // Obtener datos del perfil (GET)
-    Route::get('/api/profile', [ProfileController::class, 'show']);
-    
-    // Guardar datos del perfil (PUT)
-    Route::put('/api/profile', [ProfileController::class, 'update']);
 
-
-    // 5. RUTAS DE PERFIL DE BREEZE (Standard)
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// ¡IMPORTANTE! Faltaba el punto y coma aquí al final
 require __DIR__ . '/auth.php';

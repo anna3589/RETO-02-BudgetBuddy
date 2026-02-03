@@ -14,7 +14,9 @@ class AccountController extends Controller
      */
     public function index()
     {
-        //
+        // Obtenemos las cuentas del usuario actual
+        $accounts = auth()->user()->accounts()->orderBy('created_at', 'desc')->get();
+        return response()->json($accounts);
     }
 
     /**
@@ -42,13 +44,13 @@ class AccountController extends Controller
             'bank_name' => $validated['bank_name'],
             'current_balance' => $validated['current_balance'],
             // Usamos el operador null coalescing (??) por seguridad
-            'iban' => $validated['iban'] ?? null, 
+            'iban' => $validated['iban'] ?? null,
             'color' => $validated['color'],
             'country_code' => $validated['country_code'] ?? null,
         ]);
 
         return response()->json([
-            'message' => 'Cuenta creada', 
+            'message' => 'Cuenta creada',
             'account' => $account
         ], 201);
     }

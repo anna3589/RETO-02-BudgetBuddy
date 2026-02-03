@@ -27,17 +27,17 @@
     .mobile-nav {
         display: none !important;
     }
-    
+
     .sidebar {
         display: flex !important;
     }
-    
+
     .desktop-main {
         margin-left: 110px !important;
         padding: 20px 30px 30px 30px !important;
         max-width: calc(100% - 110px) !important;
     }
-    
+
     .desktop-container {
         margin-top: 100px !important;
         padding-bottom: 0 !important;
@@ -87,7 +87,7 @@
     z-index: 1000;
     border-radius: 50px;
     border: 1px solid var(--border);
-    box-shadow: 
+    box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.08),
         0 1px 0 rgba(255, 255, 255, 0.5) inset,
         0 -1px 0 rgba(0, 0, 0, 0.05) inset;
@@ -102,12 +102,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 100%
-    );
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.4) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.1) 100%);
     border-radius: 50px;
     z-index: -1;
     pointer-events: none;
@@ -118,7 +116,7 @@
     backdrop-filter: blur(50px) saturate(250%) contrast(130%);
     -webkit-backdrop-filter: blur(50px) saturate(250%) contrast(130%);
     border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 
+    box-shadow:
         0 12px 48px rgba(0, 0, 0, 0.12),
         0 2px 0 rgba(255, 255, 255, 0.6) inset,
         0 -2px 0 rgba(0, 0, 0, 0.1) inset;
@@ -591,8 +589,13 @@
 }
 
 @keyframes pulseDelete {
-    from { background-color: rgba(239, 68, 68, 0.15); }
-    to { background-color: rgba(239, 68, 68, 0.25); }
+    from {
+        background-color: rgba(239, 68, 68, 0.15);
+    }
+
+    to {
+        background-color: rgba(239, 68, 68, 0.25);
+    }
 }
 
 .delete-tag-icon {
@@ -642,9 +645,17 @@
 }
 
 @keyframes pulse {
-    0% { opacity: 0.7; }
-    50% { opacity: 1; }
-    100% { opacity: 0.7; }
+    0% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.7;
+    }
 }
 
 /* Секція цілей */
@@ -1184,7 +1195,8 @@
     color: var(--expense-red);
 }
 
-.account-age, .interest-type {
+.account-age,
+.interest-type {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 3px;
@@ -1315,7 +1327,8 @@
     box-shadow: 0 0 0 3px rgba(33, 122, 74, 0.1);
 }
 
-.color-picker, .icon-picker {
+.color-picker,
+.icon-picker {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -1374,7 +1387,8 @@
     border-radius: 0 0 20px 20px;
 }
 
-.btn-secondary, .btn-primary {
+.btn-secondary,
+.btn-primary {
     padding: 8px 16px;
     border-radius: 8px;
     font-weight: 600;
@@ -1442,6 +1456,7 @@
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1685,37 +1700,37 @@
         top: 10px;
         padding: 0 20px;
     }
-    
+
     .sidebar {
         display: none;
     }
-    
+
     .mobile-nav {
         display: flex;
     }
-    
+
     .desktop-main {
         margin-left: 0;
         padding: 100px 20px 30px;
         max-width: 100%;
     }
-    
+
     .page-title {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
     }
-    
+
     .desktop-container {
         margin-top: 90px;
         min-height: calc(100vh - 90px);
         padding-bottom: 70px;
     }
-    
+
     .account-selector {
         min-width: 250px;
     }
-    
+
     .account-details-grid {
         grid-template-columns: 1fr;
     }
@@ -1723,77 +1738,78 @@
 
 /* Медіа-запит для 768px */
 @media (max-width: 768px) {
+
     .add-tag-btn,
     .view-all-btn {
         font-size: 14px;
     }
-    
+
     .balance-main {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
     }
-    
+
     .balance-actions {
         flex-direction: column;
     }
-    
+
     .balance-details-compact {
         grid-template-columns: 1fr;
     }
-    
+
     .goal-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
     }
-    
+
     .goal-stats {
         width: 100%;
         align-items: flex-start;
     }
-    
+
     .card-title {
         font-size: 20px;
     }
-    
+
     .mobile-nav {
         padding: 8px 15px;
     }
-    
+
     .goals-modal {
         width: 95%;
         max-height: 85vh;
     }
-    
+
     .goals-modal-header {
         padding: 15px 20px;
     }
-    
+
     .goals-modal-title {
         font-size: 20px;
     }
-    
+
     .goals-modal-content {
         padding: 20px;
     }
-    
+
     .goals-modal-stats {
         flex-direction: column;
         gap: 20px;
     }
-    
+
     .goals-modal-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
     }
-    
+
     .goals-modal-item-right {
         width: 100%;
         align-items: flex-start;
     }
-    
+
     .goals-modal-progress-bar {
         width: 100%;
     }
@@ -1804,7 +1820,7 @@
     .card-title {
         font-size: 25px;
     }
-    
+
     .balance-amount {
         font-size: 24px;
     }
@@ -1813,7 +1829,7 @@
         width: auto;
         gap: 10px;
     }
-    
+
     .view-all-btn {
         font-size: 12px;
     }
@@ -1821,42 +1837,97 @@
     .page-title {
         margin-top: -25%;
     }
-    
+
     .add-tag-btn {
         font-size: 12px;
     }
-    
+
     .mobile-nav {
         padding: 8px 10px;
     }
-    
+
     .account-selector {
         min-width: 100%;
     }
-    
+
     .card-header-compact {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
     }
-    
+
     .account-selector {
         width: 100%;
     }
-    
+
     .account-dropdown {
         width: 100%;
     }
-    
+
     .bank-name {
         font-size: 16px;
     }
-    
+
     .detail-value {
         font-size: 14px;
     }
-    
+
     .detail-value.iban-number {
         font-size: 13px;
+    }
+}
+
+
+/* =========================================== */
+/* ANIMACIÓN DE CARGA (SKELETON) */
+/* =========================================== */
+
+/* Clase para activar el modo carga */
+.account-info-display.is-loading .detail-value,
+.account-info-display.is-loading .bank-name,
+.account-info-display.is-loading .account-type,
+.account-info-display.is-loading .balance-amount,
+.account-info-display.is-loading .iban-number {
+    color: transparent !important;
+    /* Ocultamos el texto base */
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Ajuste específico para que la "barra" de carga tenga altura */
+.account-info-display.is-loading .bank-name {
+    min-width: 150px;
+    min-height: 24px;
+    display: inline-block;
+}
+
+.account-info-display.is-loading .balance-amount {
+    min-width: 120px;
+    min-height: 28px;
+    display: inline-block;
+}
+
+/* Ocultar elementos decorativos durante la carga */
+.account-info-display.is-loading .balance-change,
+.account-info-display.is-loading .bank-logo i {
+    opacity: 0;
+}
+
+.account-info-display.is-loading .bank-logo {
+    background: #e0e0e0;
+    /* Gris plano mientras carga */
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
     }
 }

@@ -13,7 +13,6 @@ class TagController extends Controller
     public function index()
     {
         $tags = Tag::orderBy('created_at', 'desc')->get();
-        
         return response()->json($tags);
     }
 
