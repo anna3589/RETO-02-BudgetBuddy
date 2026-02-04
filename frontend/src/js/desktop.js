@@ -176,8 +176,8 @@ function renderGoals(goals) {
                         <circle class="progress-circle-bg" cx="18" cy="18" r="16"></circle>
                         <circle class="progress-circle-fill" cx="18" cy="18" r="16"
                                 style="--progress: ${visualPercentage}; stroke-dasharray: 100 100; stroke-dashoffset: ${
-			100 - visualPercentage
-		};">
+																	100 - visualPercentage
+																};">
                         </circle>
                     </svg>
                     <div class="progress-text">${percentage}%</div>
@@ -196,18 +196,26 @@ function renderGoals(goals) {
                     <span class="goal-stat-label">Ahorrado</span>
                     <span class="goal-stat-value ahorrado">${current.toLocaleString(
 											"es-ES",
-											{ minimumFractionDigits: 0 }
+											{ minimumFractionDigits: 0 },
 										)}€</span>
                 </div>
                 <div class="goal-stat-item">
                     <span class="goal-stat-label">Meta</span>
                     <span class="goal-stat-value meta">${target.toLocaleString(
 											"es-ES",
-											{ minimumFractionDigits: 0 }
+											{ minimumFractionDigits: 0 },
 										)}€</span>
                 </div>
             </div>
         `;
+
+		// --- NUEVO: HACER CLICKEABLE PARA EDITAR ---
+		goalItem.style.cursor = "pointer";
+		goalItem.addEventListener("click", () => {
+			// Llamamos a la función de abrir modal pasando los datos de ESTA meta
+			openGoalModal(goal);
+		});
+		// -------------------------------------------
 		container.appendChild(goalItem);
 	});
 }
@@ -283,6 +291,9 @@ async function loadAccountsFromServer() {
 						style: "currency",
 						currency: "EUR",
 					}).format(acc.current_balance),
+					// Guardamos el número crudo total
+					rawBalance: acc.current_balance,
+					spendable_balance: acc.spendable_balance,
 					logoIcon: getBankIcon(acc.bank_name),
 				};
 			});
@@ -329,14 +340,36 @@ function updateAccountInfo(accountId) {
 	const account = accountsData[accountId];
 	if (!account) return;
 
-	// Solo actualizamos lo que existe en el HTML nuevo
+	// Actualizar textos básicos
 	bankNameElement.textContent = account.bankName;
 	accountTypeElement.textContent = account.accountType;
 	bankLogoElement.className = account.logoIcon;
 	ibanElement.textContent = account.iban;
-	balanceElement.textContent = account.balance;
 
-	// Carga las tarjetas asociadas a esta cuenta
+	// --- LÓGICA DE SALDO DISPONIBLE ---
+	// Nota: Necesitamos asegurarnos de que accountsData tenga el nuevo campo.
+	// Si hiciste el paso 1 y 2, la API ya lo devuelve.
+
+	// Si la API devuelve el spendable_balance, lo usamos. Si no, usamos el total.
+	const rawBalance =
+		account.spendable_balance !== undefined
+			? account.spendable_balance
+			: account.rawBalance;
+
+	const formattedAvailable = new Intl.NumberFormat("es-ES", {
+		style: "currency",
+		currency: "EUR",
+	}).format(rawBalance);
+
+	// Pintamos el Saldo Disponible (El real menos las metas)
+	balanceElement.innerHTML = `
+        ${formattedAvailable}
+        <div style="font-size: 0.8rem; color: #9ca3af; font-weight: normal; margin-top: 5px;">
+            Disponible Real (Total: ${account.balance})
+        </div>
+    `;
+
+	// Carga las tarjetas asociadas
 	loadCardsForAccount(accountId);
 }
 // Dibuja la tarjeta de credito
@@ -639,7 +672,7 @@ if (saveCardBtn) {
 		if (!alias || !digits || !expInput || digits.length !== 4) {
 			showNotification(
 				"Por favor, rellena todos los datos correctamente",
-				"error"
+				"error",
 			);
 			return;
 		}
@@ -747,7 +780,7 @@ function renderTags(tags) {
 
 		tagElement.innerHTML = `
             <div class="tag-icon" style="background-color: rgba(${hexToRgb(
-							tag.color
+							tag.color,
 						)}, 0.1); color: ${tag.color};">
                 <i class="fas fa-${tag.icon || "tag"}"></i>
             </div>
@@ -835,7 +868,7 @@ async function handleDrop(e) {
 	e.preventDefault();
 	const tagId = e.dataTransfer.getData("text/plain");
 	const tagToDelete = document.querySelector(
-		`.tag-item[data-id="${tagId}"]:not(.delete-tag-item)`
+		`.tag-item[data-id="${tagId}"]:not(.delete-tag-item)`,
 	);
 
 	if (!tagToDelete) return;
@@ -873,6 +906,207 @@ async function handleDrop(e) {
 	}
 
 	if (deleteTagArea) deleteTagArea.classList.remove("drag-over");
+}
+
+// ==========================================
+// GESTIÓN DE METAS (GOALS) - CREAR / EDITAR
+// ==========================================
+
+const goalModal = document.getElementById("goal-modal");
+const closeGoalBtn = document.getElementById("close-goal-modal-btn");
+const cancelGoalBtn = document.getElementById("cancel-goal-btn");
+const saveGoalBtn = document.getElementById("save-goal-btn");
+const deleteGoalBtn = document.getElementById("delete-goal-btn");
+
+// Listeners básicos cerrar
+if (closeGoalBtn)
+	closeGoalBtn.addEventListener("click", () => goalModal.close());
+if (cancelGoalBtn)
+	cancelGoalBtn.addEventListener("click", () => goalModal.close());
+
+// Selección de Iconos
+document.querySelectorAll("#goal-icon-picker .icon-option").forEach((opt) => {
+	opt.addEventListener("click", function () {
+		document
+			.querySelectorAll("#goal-icon-picker .icon-option")
+			.forEach((o) => o.classList.remove("selected"));
+		this.classList.add("selected");
+	});
+});
+
+/**
+ * Abre el modal de Metas
+ * @param {Object|null} goalData - Objeto con datos de la meta (si es editar) o null (crear)
+ */
+function openGoalModal(goalData = null) {
+	const title = document.getElementById("goal-modal-title");
+	const form = document.getElementById("goal-form");
+	const idInput = document.getElementById("goal-id");
+
+	// Limpiar formulario
+	form.reset();
+
+	// Resetear iconos
+	document
+		.querySelectorAll("#goal-icon-picker .icon-option")
+		.forEach((o) => o.classList.remove("selected"));
+
+	if (goalData) {
+		// MODO EDICIÓN
+		title.innerHTML = '<i class="fas fa-edit"></i> Editar Meta';
+		idInput.value = goalData.id;
+		document.getElementById("goal-name").value = goalData.name;
+		document.getElementById("goal-target").value = goalData.target_amount;
+		document.getElementById("goal-current").value = goalData.allocated_amount;
+
+		// Seleccionar icono
+		const iconName = goalData.icon
+			? goalData.icon.replace("fas fa-", "")
+			: "bullseye";
+		const iconEl = document.querySelector(
+			`#goal-icon-picker .icon-option[data-icon="${iconName}"]`,
+		);
+		if (iconEl) iconEl.classList.add("selected");
+		else
+			document
+				.querySelector("#goal-icon-picker .icon-option")
+				.classList.add("selected"); // fallback
+
+		// Mostrar botón borrar
+		if (deleteGoalBtn) deleteGoalBtn.style.display = "block";
+	} else {
+		// MODO CREAR
+		title.innerHTML = '<i class="fas fa-bullseye"></i> Nueva Meta';
+		idInput.value = "";
+		document
+			.querySelector("#goal-icon-picker .icon-option")
+			.classList.add("selected"); // Default
+
+		// Ocultar botón borrar
+		if (deleteGoalBtn) deleteGoalBtn.style.display = "none";
+	}
+
+	goalModal.showModal();
+}
+
+/**
+ * GUARDAR META (Crear o Editar)
+ */
+if (saveGoalBtn) {
+	saveGoalBtn.addEventListener("click", async (e) => {
+		e.preventDefault();
+
+		const id = document.getElementById("goal-id").value;
+		const name = document.getElementById("goal-name").value;
+		const target = document.getElementById("goal-target").value;
+		const current = document.getElementById("goal-current").value;
+
+		// Obtener icono seleccionado
+		const selectedIconDiv = document.querySelector(
+			"#goal-icon-picker .icon-option.selected",
+		);
+		const iconName = selectedIconDiv
+			? selectedIconDiv.getAttribute("data-icon")
+			: "bullseye";
+		const fullIconClass = `fas fa-${iconName}`;
+
+		// Obtener ID de cuenta (Usamos la seleccionada en el dashboard o la primera disponible)
+		// NOTA: Para simplificar, asignamos a la cuenta actualmente seleccionada en el dashboard
+		const accountId = document.getElementById("bankAccountSelect").value;
+
+		if (!name || !target || !accountId) {
+			showNotification("Rellena nombre y meta", "error");
+			return;
+		}
+
+		const originalText = saveGoalBtn.innerHTML;
+		saveGoalBtn.disabled = true;
+		saveGoalBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+
+		try {
+			await fetch("/sanctum/csrf-cookie");
+
+			let url = "/api/envelopes";
+			let method = "POST";
+
+			if (id) {
+				// Es Editar
+				url += `/${id}`;
+				method = "PUT";
+			}
+
+			const response = await fetch(url, {
+				method: method,
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+					"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+				},
+				credentials: "same-origin",
+				body: JSON.stringify({
+					account_id: accountId,
+					name: name,
+					target_amount: target,
+					allocated_amount: current,
+					icon: fullIconClass,
+				}),
+			});
+
+			if (response.ok) {
+				goalModal.close();
+				showNotification(id ? "Meta actualizada" : "Meta creada", "success");
+				loadGoalsFromServer(); // Recargar lista visual
+				loadAccountsFromServer(); // Actualizar saldo disponible
+			} else {
+				goalModal.close();	
+				showNotification("Error al guardar", "error");
+			}
+		} catch (error) {
+			goalModal.close();		
+			console.error(error);
+			showNotification("Error de conexión", "error");
+		} finally {
+			saveGoalBtn.disabled = false;
+			saveGoalBtn.innerHTML = originalText;
+		}
+	});
+}
+
+/**
+ * BORRAR META
+ */
+if (deleteGoalBtn) {
+	deleteGoalBtn.addEventListener("click", async () => {
+		const id = document.getElementById("goal-id").value;
+		if (!id) return;
+
+		if (!confirm("¿Seguro que quieres eliminar esta meta?")) return;
+
+		try {
+			await fetch("/sanctum/csrf-cookie");
+			const response = await fetch(`/api/envelopes/${id}`, {
+				method: "DELETE",
+				headers: {
+					Accept: "application/json",
+					"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+				},
+				credentials: "same-origin",
+			});
+
+			if (response.ok) {
+				goalModal.close();
+				showNotification("Meta eliminada", "success");
+				loadGoalsFromServer();
+				loadAccountsFromServer(); // Actualizar saldo disponible
+			} else {
+				goalModal.close();
+				console.error("Error al eliminar meta:", response.status);
+				showNotification("No se pudo eliminar", "error");
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	});
 }
 
 // ========== CREACIÓN DE ETIQUETAS (MODAL) ==========
@@ -1020,7 +1254,7 @@ function initAccountElements() {
 
 	// Listener para colores
 	const colorOptions = document.querySelectorAll(
-		"#acc-color-picker .color-option"
+		"#acc-color-picker .color-option",
 	);
 	colorOptions.forEach((opt) => {
 		opt.addEventListener("click", function () {
@@ -1082,7 +1316,7 @@ async function saveNewAccount(e) {
 			const errorData = await response.json();
 			showNotification(
 				errorData.message || "Error al crear la cuenta",
-				"error"
+				"error",
 			);
 		}
 	} catch (error) {

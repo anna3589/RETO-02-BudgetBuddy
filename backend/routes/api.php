@@ -36,11 +36,11 @@ Route::middleware(['web', 'auth'])->group(function () {
     });
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
-    Route::post('/logout', [ProfileController::class, 'logout']); 
+    Route::post('/logout', [ProfileController::class, 'logout']);
 
     // 2. TAGS (MOVIDO AQUÍ PARA QUE FUNCIONE)
     // Al estar aquí, Auth::user() ya no será null en el controlador
-    Route::get('/tags', [TagController::class, 'index']); 
+    Route::get('/tags', [TagController::class, 'index']);
     Route::post('/tags', [TagController::class, 'store']);
     Route::get('/tags/{tag}', [TagController::class, 'show']);
     Route::put('/tags/{tag}', [TagController::class, 'update']);
@@ -52,9 +52,11 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/accounts/{account}/cards', [AccountController::class, 'getCards']);
 
     Route::post('/cards', [CardController::class, 'store']);
-    
+
     Route::post('/envelopes', [EnvelopeController::class, 'store']);
-    Route::get('/envelopes', [App\Http\Controllers\EnvelopeController::class, 'index']);
+    Route::put('/envelopes/{envelope}', [EnvelopeController::class, 'update']);
+    Route::delete('/envelopes/{envelope}', [EnvelopeController::class, 'destroy']);
+    Route::get('/envelopes', [EnvelopeController::class, 'index']);
 
     Route::get('/accounts/{account}/movements', [MovementController::class, 'index']);
 });

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
@@ -242,10 +242,7 @@
 			<main class="desktop-main">
 				<!-- Page Header -->
 				<div class="page-header">
-					<h1 class="page-title">
-						Pagina principal
-						
-					</h1>
+					<h1 class="page-title">Pagina principal</h1>
 				</div>
 
 				<div class="desktop-grid">
@@ -332,24 +329,58 @@
 											</div>
 											<div class="form-group">
 												<label>IBAN</label>
-												<div style="display: flex; align-items: stretch; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden;">
-													<select id="acc-iban-country" style="border: none; background: #f9fafb; padding: 8px 5px; font-weight: 600; color: #374151; cursor: pointer; width: 60px; text-align: center; border-right: 1px solid #e5e7eb;">
+												<div
+													style="
+														display: flex;
+														align-items: stretch;
+														border: 1px solid #d1d5db;
+														border-radius: 8px;
+														overflow: hidden;
+													"
+												>
+													<select
+														id="acc-iban-country"
+														style="
+															border: none;
+															background: #f9fafb;
+															padding: 8px 5px;
+															font-weight: 600;
+															color: #374151;
+															cursor: pointer;
+															width: 60px;
+															text-align: center;
+															border-right: 1px solid #e5e7eb;
+														"
+													>
 														<option value="ES" selected>🇪🇸 ES</option>
 														<option value="FR">FR</option>
 														<option value="DE">DE</option>
 														<option value="IT">IT</option>
 														<option value="PT">PT</option>
 													</select>
-													
-													<input 
-														type="text" 
-														id="acc-iban" 
-														placeholder="0000 0000 00..." 
-														required 
-														style="border: none; flex: 1; padding-left: 10px; border-radius: 0;"
-													>
+
+													<input
+														type="text"
+														id="acc-iban"
+														placeholder="0000 0000 00..."
+														required
+														style="
+															border: none;
+															flex: 1;
+															padding-left: 10px;
+															border-radius: 0;
+														"
+													/>
 												</div>
-												<p style="font-size: 0.75rem; color: #6b7280; margin-top: 4px;">Solo los 22 dígitos restantes.</p>
+												<p
+													style="
+														font-size: 0.75rem;
+														color: #6b7280;
+														margin-top: 4px;
+													"
+												>
+													Solo los 22 dígitos restantes.
+												</p>
 											</div>
 											<div class="form-group">
 												<label>Saldo Inicial</label>
@@ -568,6 +599,20 @@
 							<div class="card-header-compact">
 								<h2 class="card-title">Metas Financieras</h2>
 								<button
+									onclick="openGoalModal()"
+									style="
+										border: none;
+										background: #e5e7eb;
+										width: 30px;
+										height: 30px;
+										border-radius: 50%;
+										cursor: pointer;
+										color: var(--primary);
+									"
+								>
+									<i class="fas fa-plus"></i>
+								</button>
+								<button
 									class="view-all-btn"
 									id="viewAllGoals"
 									style="font-size: 14px"
@@ -669,6 +714,99 @@
 			</div>
 		</dialog>
 
+		<dialog id="goal-modal" class="tag-modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 id="goal-modal-title">
+						<i class="fas fa-bullseye"></i> Nueva Meta
+					</h3>
+					<button class="close-modal" id="close-goal-modal-btn">&times;</button>
+				</div>
+
+				<form id="goal-form" class="modal-body">
+					<input type="hidden" id="goal-id" />
+					<div class="form-group">
+						<label>Nombre de la Meta</label>
+						<input
+							type="text"
+							id="goal-name"
+							placeholder="Ej: Viaje a Japón"
+							required
+							maxlength="30"
+						/>
+					</div>
+
+					<div style="display: flex; gap: 15px">
+						<div class="form-group" style="flex: 1">
+							<label>Meta (€)</label>
+							<input
+								type="number"
+								id="goal-target"
+								placeholder="2000"
+								required
+								step="10"
+							/>
+						</div>
+
+						<div class="form-group" style="flex: 1">
+							<label>Ahorrado (€)</label>
+							<input
+								type="number"
+								id="goal-current"
+								placeholder="0"
+								required
+								step="10"
+							/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label>Icono</label>
+						<div class="icon-picker" id="goal-icon-picker">
+							<div class="icon-option selected" data-icon="plane">
+								<i class="fas fa-plane"></i>
+							</div>
+							<div class="icon-option" data-icon="car">
+								<i class="fas fa-car"></i>
+							</div>
+							<div class="icon-option" data-icon="home">
+								<i class="fas fa-home"></i>
+							</div>
+							<div class="icon-option" data-icon="laptop">
+								<i class="fas fa-laptop"></i>
+							</div>
+							<div class="icon-option" data-icon="mobile-alt">
+								<i class="fas fa-mobile-alt"></i>
+							</div>
+							<div class="icon-option" data-icon="gift">
+								<i class="fas fa-gift"></i>
+							</div>
+							<div class="icon-option" data-icon="gamepad">
+								<i class="fas fa-gamepad"></i>
+							</div>
+							<div class="icon-option" data-icon="graduation-cap">
+								<i class="fas fa-graduation-cap"></i>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<div class="modal-footer" style="justify-content: space-between">
+					<button
+						class="btn-secondary"
+						id="delete-goal-btn"
+						style="color: #ef4444; border-color: #ef4444; display: none"
+					>
+						<i class="fas fa-trash"></i>
+					</button>
+
+					<div style="display: flex; gap: 10px">
+						<button class="btn-secondary" id="cancel-goal-btn">Cancelar</button>
+						<button class="btn-primary" id="save-goal-btn">Guardar Meta</button>
+					</div>
+				</div>
+			</div>
+		</dialog>
 		<!-- Popup para todas las Metas Financieras -->
 		<div class="goals-modal-overlay" id="goalsModal">
 			<div class="goals-modal">

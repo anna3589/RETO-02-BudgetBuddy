@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Envelope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Account;
 
 class EnvelopeController extends Controller
 {
@@ -74,14 +75,37 @@ class EnvelopeController extends Controller
      */
     public function update(Request $request, Envelope $envelope)
     {
-        //
-    }
+        // Seguridad: Verificar dueño
+        if ($envelope->account->user_id !== Auth::id()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
 
+        $validated = $request->validate([
+            'name'             => 'required|string|max:50',
+            'target_amount'    => 'required|numeric|min:0',
+            'allocated_amount' => 'nullable|numeric|min:0',
+            'icon'             => 'nullable|string'
+        ]);
+
+        $envelope->update([
+            'name'             => $validated['name'],
+            'target_amount'    => $validated['target_amount'],
+            'allocated_amount' => $validated['allocated_amount'] ?? 0,
+            'icon'             => $validated['icon']
+        ]);
+
+        return response()->json(['message' => 'Meta actualizada', 'envelope' => $envelope]);
+    }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Envelope $envelope)
     {
-        //
+        if ($envelope->account->user_id !== Auth::id()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        $envelope->delete();
+        return response()->json(['message' => 'Meta eliminada']);
     }
 }

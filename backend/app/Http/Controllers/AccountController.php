@@ -14,8 +14,8 @@ class AccountController extends Controller
      */
     public function index()
     {
-        // Obtenemos las cuentas del usuario actual
-        $accounts = auth()->user()->accounts()->orderBy('created_at', 'desc')->get();
+        // Añadimos 'with('envelopes')' para que cargue los datos necesarios para la resta
+        $accounts = Auth::user()->accounts()->with('envelopes')->get();
         return response()->json($accounts);
     }
 

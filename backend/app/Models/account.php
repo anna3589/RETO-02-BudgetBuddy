@@ -13,7 +13,7 @@ class Account extends Model
 
     // Datos que permitimos guardar masivamente
     protected $fillable = [
-        'user_id', 
+        'user_id',
         'bank_name',
         'current_balance',
         'iban',
@@ -51,5 +51,16 @@ class Account extends Model
     public function envelopes(): HasMany
     {
         return $this->hasMany(Envelope::class);
+    }
+
+    // 2. ATRIBUTO VIRTUAL: 'spendable_balance'
+    // Laravel convertirá esto en un campo JSON llamado "spendable_balance"
+    protected $appends = ['spendable_balance'];
+
+    public function getSpendableBalanceAttribute()
+    {
+        // Saldo Real - La suma de lo que has metido en los sobres
+        $allocated = $this->envelopes->sum('allocated_amount');
+        return $this->current_balance - $allocated;
     }
 }

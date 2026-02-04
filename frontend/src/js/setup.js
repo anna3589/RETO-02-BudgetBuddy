@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                             account_id: accountId,
                             name: document.getElementById("env_name").value,
                             target_amount: document.getElementById("env_target").value,
-                            current_amount: document.getElementById("env_allocated").value || 0,
+                            allocated_amount: document.getElementById("env_allocated").value || 0,
                             icon: iconClass,
                         }),
                     });

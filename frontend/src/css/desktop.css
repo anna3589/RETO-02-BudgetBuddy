@@ -917,26 +917,34 @@
 
 /* ESTILO DE BARRA DE SCROLL FINA */
 .dashboard-cards-grid {
-    scrollbar-width: thin; /* Para Firefox */
-    padding-bottom: 10px; /* Un poco más de sitio para la barra */
+    scrollbar-width: thin;
+    /* Para Firefox */
+    padding-bottom: 10px;
+    /* Un poco más de sitio para la barra */
 }
 
 .dashboard-cards-grid::-webkit-scrollbar {
-    height: 6px; /* Altura de la barra horizontal */
-    display: block; /* Asegura que se muestre */
+    height: 6px;
+    /* Altura de la barra horizontal */
+    display: block;
+    /* Asegura que se muestre */
 }
 
 .dashboard-cards-grid::-webkit-scrollbar-track {
-    background: transparent; /* Fondo transparente */
+    background: transparent;
+    /* Fondo transparente */
 }
 
 .dashboard-cards-grid::-webkit-scrollbar-thumb {
-    background-color: #d1d5db; /* Color gris suave */
-    border-radius: 10px;       /* Bordes redondos */
+    background-color: #d1d5db;
+    /* Color gris suave */
+    border-radius: 10px;
+    /* Bordes redondos */
 }
 
 .dashboard-cards-grid::-webkit-scrollbar-thumb:hover {
-    background-color: #9ca3af; /* Color al pasar el ratón */
+    background-color: #9ca3af;
+    /* Color al pasar el ratón */
 }
 
 /* LA TARJETA INDIVIDUAL (El coche en la pista) */
@@ -1330,158 +1338,208 @@
 }
 
 /* =========================================== */
-/* 11. MODALES (VENTANAS EMERGENTES) */
+/* 11. MODALES (DISEÑO MODERNO CLEAN) */
 /* =========================================== */
 
-/* Modal General (Crear Tags, etc) */
+/* La Ventana Principal */
 .tag-modal {
     border: none;
-    border-radius: 20px;
+    border-radius: 24px;
+    /* Más redondeado */
     padding: 0;
-    width: 90%;
-    max-width: 450px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 480px;
+    /* Un poco más ancho */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* Sombra profunda y suave */
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     margin: 0;
+    overflow: hidden;
+    /* Para que la cabecera no se salga del borde */
+    background: #ffffff;
 }
 
+/* El Fondo detrás del modal */
 .tag-modal::backdrop {
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    background-color: rgba(31, 41, 55, 0.4);
+    /* Gris azulado oscuro semitransparente */
+    backdrop-filter: blur(8px);
+    /* Efecto desenfoque fuerte */
+    -webkit-backdrop-filter: blur(8px);
 }
 
-.modal-content {
-    padding: 0;
-    position: relative;
+/* Animación de entrada suave */
+.tag-modal[open] {
+    animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Cabecera */
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem 1.5rem 1rem;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: white;
-    border-radius: 20px 20px 0 0;
+    padding: 1.5rem 2rem;
+    background-color: #ffffff;
+    /* Sin borde inferior para look más limpio, o muy suave */
+    border-bottom: 1px solid #f3f4f6;
 }
 
 .modal-header h3 {
     margin: 0;
-    font-size: 1.2rem;
-    color: #1f2937;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .close-modal {
-    background: none;
+    background: #f3f4f6;
     border: none;
-    font-size: 1.5rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     color: #6b7280;
     cursor: pointer;
-    padding: 0;
-    line-height: 1;
-    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.2s;
 }
 
 .close-modal:hover {
-    color: #1f2937;
+    background-color: #e5e7eb;
+    color: #111827;
 }
 
+/* Cuerpo */
 .modal-body {
-    padding: 1.2rem;
-    background-color: white;
+    padding: 2rem;
+    background-color: #ffffff;
 }
 
+/* Inputs y Labels */
 .form-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
+    margin-bottom: 8px;
+    font-weight: 500;
     color: #374151;
-    font-size: 14px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
 }
 
-.form-group input {
+/* Inputs estilo moderno */
+.form-group input,
+.account-dropdown,
+.country-select {
     width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.2s;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    /* Borde gris suave */
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #1f2937;
+    background-color: #f9fafb;
+    /* Fondo ligeramente gris */
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    /* Evita que el padding rompa el ancho */
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.account-dropdown:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(33, 122, 74, 0.1);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(33, 122, 74, 0.1);
+    /* Anillo de foco */
 }
 
-.color-picker,
-.icon-picker {
+/* Selectores visuales (Iconos y colores) */
+.icon-picker,
+.color-picker {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
+.icon-option,
 .color-option {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.icon-option:hover,
 .color-option:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
 
+.icon-option.selected,
 .color-option.selected {
-    border-color: #1f2937;
-    transform: scale(1.1);
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.icon-option {
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    background-color: #f3f4f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: #6b7280;
-    transition: all 0.2s;
-}
-
-.icon-option:hover {
-    background-color: #e5e7eb;
-    transform: scale(1.05);
-}
-
-.icon-option.selected {
-    background-color: var(--primary);
-    color: white;
-    transform: scale(1.05);
-}
-
+/* Pie de página (Botones) */
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
-    background-color: white;
-    border-radius: 0 0 20px 20px;
+    gap: 12px;
+    padding: 1.5rem 2rem;
+    background-color: #ffffff;
+    border-top: none;
+    /* Quitamos borde para que respire */
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #6b7280;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(33, 122, 74, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(33, 122, 74, 0.3);
 }
 
 /* Modal Específico para Todas las Metas */
@@ -2044,4 +2102,3 @@
     background-color: var(--primary);
     color: white;
 }
-
