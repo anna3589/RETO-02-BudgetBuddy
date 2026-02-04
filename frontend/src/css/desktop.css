@@ -1,7 +1,7 @@
-/* desktop.css - Версія для BudgetBuddy */
+/* desktop.css - Versión Ordenada para BudgetBuddy */
 
 /* =========================================== */
-/* ГЛОБАЛЬНІ ЗМІННІ */
+/* 1. VARIABLES GLOBALES (ROOT) */
 /* =========================================== */
 :root {
     --sidebar-width: 70px;
@@ -22,30 +22,57 @@
     --green-bg: #C7FAC3;
 }
 
-/* ФІКС: Примусово показуємо десктопну версію на великих екранах */
-@media (min-width: 993px) {
-    .mobile-nav {
-        display: none !important;
+/* =========================================== */
+/* 2. ANIMACIONES GLOBALES (KEYFRAMES) */
+/* =========================================== */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
     }
 
-    .sidebar {
-        display: flex !important;
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
     }
 
-    .desktop-main {
-        margin-left: 110px !important;
-        padding: 20px 30px 30px 30px !important;
-        max-width: calc(100% - 110px) !important;
+    50% {
+        opacity: 1;
     }
 
-    .desktop-container {
-        margin-top: 100px !important;
-        padding-bottom: 0 !important;
+    100% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes pulseDelete {
+    from {
+        background-color: rgba(239, 68, 68, 0.15);
+    }
+
+    to {
+        background-color: rgba(239, 68, 68, 0.25);
+    }
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 /* =========================================== */
-/* RESET ТА ЗАГАЛЬНИЙ LAYOUT */
+/* 3. RESET Y LAYOUT GENERAL */
 /* =========================================== */
 .desktop-body {
     margin: 0;
@@ -68,9 +95,55 @@
     max-width: calc(100% - 110px);
 }
 
+/* Títulos y Cabeceras de Página */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.date-container {
+    background-color: var(--date-bg);
+    color: white;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Grid Layout */
+.desktop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.desktop-left-column,
+.desktop-right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    min-height: 0;
+    overflow: hidden;
+}
+
 /* =========================================== */
-/* ВЕРХНІЙ HEADER */
+/* 4. NAVEGACIÓN Y HEADER SUPERIOR */
 /* =========================================== */
+
+/* Header Superior */
 .desktop-header {
     position: fixed;
     top: 20px;
@@ -87,10 +160,7 @@
     z-index: 1000;
     border-radius: 50px;
     border: 1px solid var(--border);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        0 1px 0 rgba(255, 255, 255, 0.5) inset,
-        0 -1px 0 rgba(0, 0, 0, 0.05) inset;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 -1px 0 rgba(0, 0, 0, 0.05) inset;
     transition: all 0.5s ease;
     overflow: hidden;
 }
@@ -102,10 +172,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.4) 0%,
-            rgba(255, 255, 255, 0.2) 50%,
-            rgba(255, 255, 255, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%);
     border-radius: 50px;
     z-index: -1;
     pointer-events: none;
@@ -116,10 +183,7 @@
     backdrop-filter: blur(50px) saturate(250%) contrast(130%);
     -webkit-backdrop-filter: blur(50px) saturate(250%) contrast(130%);
     border-color: rgba(255, 255, 255, 0.5);
-    box-shadow:
-        0 12px 48px rgba(0, 0, 0, 0.12),
-        0 2px 0 rgba(255, 255, 255, 0.6) inset,
-        0 -2px 0 rgba(0, 0, 0, 0.1) inset;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12), 0 2px 0 rgba(255, 255, 255, 0.6) inset, 0 -2px 0 rgba(0, 0, 0, 0.1) inset;
 }
 
 .desktop-brand {
@@ -208,10 +272,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* =========================================== */
-/* НАВІГАЦІЯ (SIDEBAR ТА МОБІЛЬНА) */
-/* =========================================== */
-/* Sidebar для десктопу */
+/* Sidebar (Escritorio) */
 .sidebar {
     width: 70px;
     background-color: white;
@@ -280,7 +341,7 @@
     text-align: center;
 }
 
-/* Мобільна навігація */
+/* Navegación Móvil */
 .mobile-nav {
     position: fixed;
     bottom: 0;
@@ -349,56 +410,8 @@
 }
 
 /* =========================================== */
-/* ЗАГАЛЬНА СТРУКТУРА ДЛЯ ПАНЕЛІ */
+/* 5. COMPONENTES: TARJETAS Y BOTONES (UI) */
 /* =========================================== */
-/* Заголовок сторінки */
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.page-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 32px;
-    font-weight: 600;
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.date-container {
-    background-color: var(--date-bg);
-    color: white;
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-/* Сітка */
-.desktop-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 25px;
-    margin-bottom: 30px;
-}
-
-.desktop-left-column {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-.desktop-right-column {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-/* Стилі карток */
 .card {
     background-color: var(--card-bg);
     border-radius: 20px;
@@ -427,7 +440,54 @@
     gap: 8px;
 }
 
-/* Кнопка "Переглянути все" */
+/* Botones Generales */
+.btn {
+    padding: 10px 15px;
+    border-radius: 15px;
+    border: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.btn-secondary {
+    background-color: white;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-secondary:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .view-all-btn {
     background: none;
     border: none;
@@ -445,573 +505,7 @@
 }
 
 /* =========================================== */
-/* СПЕЦИФІЧНІ СТИЛІ ДЛЯ ПАНЕЛІ */
-/* =========================================== */
-/* Секція тегів */
-.tags-card {
-    max-height: 400px;
-    display: flex;
-    flex-direction: column;
-}
-
-.add-tag-btn {
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 6px 12px;
-    font-weight: 600;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.2s;
-}
-
-.add-tag-btn:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(33, 122, 74, 0.2);
-}
-
-.tags-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-    max-height: 300px;
-}
-
-/* Стилі для скролбару в тегах */
-.tags-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.tags-list::-webkit-scrollbar-track {
-    background: var(--gray-light);
-    border-radius: 3px;
-}
-
-.tags-list::-webkit-scrollbar-thumb {
-    background: rgba(33, 122, 74, 0.5);
-    border-radius: 3px;
-    transition: background 0.3s;
-}
-
-.tags-list::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
-}
-
-.tag-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    background-color: var(--gray-light);
-    border-radius: 12px;
-    border-left: 4px solid var(--tag-color);
-    cursor: grab;
-    transition: all 0.2s;
-    position: relative;
-}
-
-.tag-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-.tag-item.dragging {
-    opacity: 0.5;
-    cursor: grabbing;
-}
-
-.tag-icon {
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    background-color: rgba(var(--tag-color-rgb, 52, 211, 153), 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--tag-color);
-    font-size: 1rem;
-}
-
-.tag-info {
-    flex: 1;
-    margin-left: 12px;
-}
-
-.tag-info h3 {
-    margin: 0 0 4px 0;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.tag-info p {
-    margin: 0;
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.tag-amount {
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-}
-
-.delete-tag-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border: 2px dashed var(--border);
-    border-radius: 12px;
-    cursor: default;
-    transition: all 0.3s;
-    background-color: rgba(239, 68, 68, 0.05);
-    margin-top: 10px;
-}
-
-.delete-tag-item:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-    border-color: #dc2626;
-}
-
-.delete-tag-item.drag-over {
-    background-color: rgba(239, 68, 68, 0.15);
-    border-color: #dc2626;
-    border-style: solid;
-    animation: pulseDelete 0.5s infinite alternate;
-}
-
-@keyframes pulseDelete {
-    from {
-        background-color: rgba(239, 68, 68, 0.15);
-    }
-
-    to {
-        background-color: rgba(239, 68, 68, 0.25);
-    }
-}
-
-.delete-tag-icon {
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    background-color: rgba(239, 68, 68, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ef4444;
-    font-size: 1rem;
-}
-
-.delete-tag-text h3 {
-    margin: 0 0 4px 0;
-    font-size: 14px;
-    color: #ef4444;
-    font-weight: 600;
-}
-
-.delete-tag-text p {
-    margin: 0;
-    font-size: 12px;
-    color: #ef4444;
-    opacity: 0.8;
-}
-
-.delete-indicator {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-muted);
-    background-color: #f9fafb;
-    border: 2px dashed #e5e7eb;
-    display: none;
-}
-
-.delete-indicator.active {
-    display: block;
-    background-color: #fee2e2;
-    border-color: var(--expense-red);
-    color: var(--expense-red);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        opacity: 0.7;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0.7;
-    }
-}
-
-/* Секція цілей */
-.goals-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 5px;
-}
-
-/* Стилі для скролбару в цілях */
-.goals-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.goals-list::-webkit-scrollbar-track {
-    background: var(--gray-light);
-    border-radius: 3px;
-}
-
-.goals-list::-webkit-scrollbar-thumb {
-    background: rgba(33, 122, 74, 0.5);
-    border-radius: 3px;
-    transition: background 0.3s;
-}
-
-.goals-list::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
-}
-
-.goal-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(117, 117, 117, 0.2);
-}
-
-.goal-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.goal-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-}
-
-.goal-progress {
-    position: relative;
-    width: 45px;
-    height: 45px;
-}
-
-.progress-circle {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.progress-circle-bg {
-    fill: none;
-    stroke: rgba(117, 117, 117, 0.3);
-    stroke-width: 4;
-}
-
-.progress-circle-fill {
-    fill: none;
-    stroke: var(--primary);
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-dasharray: 100;
-    stroke-dashoffset: calc(100 - var(--progress));
-    transition: stroke-dashoffset 0.5s ease;
-}
-
-.progress-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: 600;
-    font-size: 12px;
-    color: var(--text-main);
-}
-
-.goal-info {
-    flex: 1;
-}
-
-.goal-info h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.goal-date {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.goal-stats {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-    min-width: 100px;
-}
-
-.goal-stat-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.goal-stat-label {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.goal-stat-value {
-    font-size: 13px;
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
-}
-
-.goal-stat-value.ahorrado {
-    color: var(--primary);
-}
-
-.goal-stat-value.meta {
-    color: var(--expense-red);
-}
-
-/* Картка балансу */
-.balance-card {
-    height: fit-content;
-}
-
-.balance-main {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.balance-amount {
-    font-size: 28px;
-    font-weight: 700;
-    font-family: 'Outfit', sans-serif;
-}
-
-.balance-percent {
-    background-color: var(--green-bg);
-    color: var(--income-green);
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.balance-percent i {
-    color: var(--income-green);
-}
-
-.balance-actions {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.btn {
-    padding: 10px 15px;
-    border-radius: 15px;
-    border: none;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.2s;
-    flex: 1;
-}
-
-.btn-deposit {
-    background-color: white;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-}
-
-.btn-transfer {
-    background-color: var(--green-bg);
-    border: 1px solid var(--green-bg);
-    color: var(--text-main);
-}
-
-.btn-deposit:hover {
-    background-color: rgba(33, 122, 74, 0.05);
-}
-
-.btn-transfer:hover {
-    background-color: #b3e9af;
-}
-
-.balance-details-compact {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.balance-item-compact {
-    background-color: var(--gray-light);
-    padding: 10px;
-    border-radius: 8px;
-}
-
-.balance-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-}
-
-.balance-value {
-    font-size: 16px;
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
-}
-
-.progress-container {
-    margin-bottom: 20px;
-}
-
-.progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-}
-
-.progress-label {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.progress-percentage {
-    font-weight: 600;
-    color: var(--primary);
-    font-size: 12px;
-}
-
-.progress-bar {
-    height: 5px;
-    background-color: #CCCCCC;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: var(--primary);
-    border-radius: 3px;
-    width: 42%;
-}
-
-/* Список транзакцій (Панель) */
-.transactions-list {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(117, 117, 117, 0.2);
-}
-
-.transactions-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.transaction-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(117, 117, 117, 0.1);
-}
-
-.transaction-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.transaction-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.transaction-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(33, 122, 74, 0.1);
-    color: var(--primary);
-    font-size: 14px;
-}
-
-.transaction-icon.red {
-    background-color: rgba(244, 72, 27, 0.1);
-    color: var(--expense-red);
-}
-
-.transaction-info h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 2px;
-}
-
-.transaction-date {
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
-.transaction-amount {
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-}
-
-.transaction-amount.negative {
-    color: var(--expense-red);
-}
-
-.transaction-amount.positive {
-    color: var(--income-green);
-}
-
-/* =========================================== */
-/* СЕЛЕКТОР БАНКІВСЬКИХ РАХУНКІВ */
+/* 6. COMPONENTE: CUENTAS BANCARIAS */
 /* =========================================== */
 .account-selector {
     position: relative;
@@ -1169,32 +663,6 @@
     color: var(--primary);
 }
 
-.balance-amount {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-main);
-}
-
-.balance-change {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.balance-change.positive {
-    background-color: rgba(0, 185, 52, 0.1);
-    color: var(--income-green);
-}
-
-.balance-change.negative {
-    background-color: rgba(244, 72, 27, 0.1);
-    color: var(--expense-red);
-}
-
 .account-age,
 .interest-type {
     font-size: 12px;
@@ -1234,9 +702,638 @@
     color: var(--text-main);
 }
 
+/* Modo Carga (Skeleton) */
+.account-info-display.is-loading .detail-value,
+.account-info-display.is-loading .bank-name,
+.account-info-display.is-loading .account-type,
+.account-info-display.is-loading .balance-amount,
+.account-info-display.is-loading .iban-number {
+    color: transparent !important;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    user-select: none;
+    pointer-events: none;
+}
+
+.account-info-display.is-loading .bank-name {
+    min-width: 150px;
+    min-height: 24px;
+    display: inline-block;
+}
+
+.account-info-display.is-loading .balance-amount {
+    min-width: 120px;
+    min-height: 28px;
+    display: inline-block;
+}
+
+.account-info-display.is-loading .balance-change,
+.account-info-display.is-loading .bank-logo i {
+    opacity: 0;
+}
+
+.account-info-display.is-loading .bank-logo {
+    background: #e0e0e0;
+}
+
 /* =========================================== */
-/* МОДАЛЬНЕ ВІКНО (ЗАГАЛЬНЕ) */
+/* 7. COMPONENTE: BALANCES Y PROGRESS */
 /* =========================================== */
+.balance-card {
+    height: fit-content;
+}
+
+.balance-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.balance-amount {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+}
+
+.balance-percent {
+    background-color: var(--green-bg);
+    color: var(--income-green);
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.balance-percent i {
+    color: var(--income-green);
+}
+
+.balance-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.btn-deposit {
+    background-color: white;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-transfer {
+    background-color: var(--green-bg);
+    border: 1px solid var(--green-bg);
+    color: var(--text-main);
+}
+
+.btn-deposit:hover {
+    background-color: rgba(33, 122, 74, 0.05);
+}
+
+.btn-transfer:hover {
+    background-color: #b3e9af;
+}
+
+.balance-details-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.balance-item-compact {
+    background-color: var(--gray-light);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.balance-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.balance-value {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+}
+
+.balance-change {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.balance-change.positive {
+    background-color: rgba(0, 185, 52, 0.1);
+    color: var(--income-green);
+}
+
+.balance-change.negative {
+    background-color: rgba(244, 72, 27, 0.1);
+    color: var(--expense-red);
+}
+
+.progress-container {
+    margin-bottom: 20px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.progress-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.progress-percentage {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 12px;
+}
+
+.progress-bar {
+    height: 5px;
+    background-color: #CCCCCC;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 3px;
+    width: 42%;
+}
+
+/* =========================================== */
+/* 8. COMPONENTE: MINI TARJETAS (WALLET) */
+/* =========================================== */
+
+/* EL CONTENEDOR (La pista de deslizamiento) */
+.dashboard-cards-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    /* OBLIGATORIO: Prohíbe que bajen de línea */
+    gap: 15px;
+
+    /* Control del Scroll */
+    overflow-x: auto;
+    /* Activa scroll horizontal si se desborda */
+    overflow-y: hidden;
+    /* Evita scroll vertical accidental */
+
+    /* Dimensiones */
+    width: 100%;
+    /* Ocupa el 100% del padre disponible */
+    max-width: 100%;
+    /* Asegura que no rompa la pantalla */
+    padding: 5px 5px 20px 5px;
+    /* Espacio para sombra y scroll */
+
+    /* Magia visual */
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    /* Suavidad en móviles (iOS) */
+
+    /* Ocultar barra de scroll */
+    scrollbar-width: none;
+}
+
+/* ESTILO DE BARRA DE SCROLL FINA */
+.dashboard-cards-grid {
+    scrollbar-width: thin; /* Para Firefox */
+    padding-bottom: 10px; /* Un poco más de sitio para la barra */
+}
+
+.dashboard-cards-grid::-webkit-scrollbar {
+    height: 6px; /* Altura de la barra horizontal */
+    display: block; /* Asegura que se muestre */
+}
+
+.dashboard-cards-grid::-webkit-scrollbar-track {
+    background: transparent; /* Fondo transparente */
+}
+
+.dashboard-cards-grid::-webkit-scrollbar-thumb {
+    background-color: #d1d5db; /* Color gris suave */
+    border-radius: 10px;       /* Bordes redondos */
+}
+
+.dashboard-cards-grid::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af; /* Color al pasar el ratón */
+}
+
+/* LA TARJETA INDIVIDUAL (El coche en la pista) */
+.mini-card {
+    /* LA CLAVE ES ESTA LÍNEA: flex: 0 0 auto */
+    /* 0 (No crecer), 0 (No encoger), 260px (Tamaño base fijo) */
+    flex: 0 0 260px;
+    width: 260px;
+    /* Refuerzo de anchura */
+    height: 160px;
+
+    /* Alineación del imán */
+    scroll-snap-align: start;
+
+    /* Estilos visuales */
+    background: linear-gradient(135deg, #1f2937, #111827);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ... (El resto de estilos de .visa, .mastercard, .hover se quedan igual) ... */
+.mini-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.mini-card.visa {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+.mini-card.mastercard {
+    background: linear-gradient(135deg, #2c3e50, #bdc3c7);
+}
+
+.mini-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.mini-card-number {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+.mini-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* =========================================== */
+/* 9. COMPONENTE: ETIQUETAS (TAGS) */
+/* =========================================== */
+.tags-card {
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.add-tag-btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.add-tag-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(33, 122, 74, 0.2);
+}
+
+.tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+    max-height: 300px;
+}
+
+/* Scrollbar Tags */
+.tags-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tags-list::-webkit-scrollbar-track {
+    background: var(--gray-light);
+    border-radius: 3px;
+}
+
+.tags-list::-webkit-scrollbar-thumb {
+    background: rgba(33, 122, 74, 0.5);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.tags-list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+.tag-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background-color: var(--gray-light);
+    border-radius: 12px;
+    border-left: 4px solid var(--tag-color);
+    cursor: grab;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.tag-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tag-item.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.tag-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background-color: rgba(var(--tag-color-rgb, 52, 211, 153), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tag-color);
+    font-size: 1rem;
+}
+
+.tag-info {
+    flex: 1;
+    margin-left: 12px;
+}
+
+.tag-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tag-info p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.tag-amount {
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+}
+
+.delete-tag-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    cursor: default;
+    transition: all 0.3s;
+    background-color: rgba(239, 68, 68, 0.05);
+    margin-top: 10px;
+}
+
+.delete-tag-item:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: #dc2626;
+}
+
+.delete-tag-item.drag-over {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: #dc2626;
+    border-style: solid;
+    animation: pulseDelete 0.5s infinite alternate;
+}
+
+.delete-tag-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background-color: rgba(239, 68, 68, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ef4444;
+    font-size: 1rem;
+}
+
+.delete-tag-text h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.delete-tag-text p {
+    margin: 0;
+    font-size: 12px;
+    color: #ef4444;
+    opacity: 0.8;
+}
+
+.delete-indicator {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    background-color: #f9fafb;
+    border: 2px dashed #e5e7eb;
+    display: none;
+}
+
+.delete-indicator.active {
+    display: block;
+    background-color: #fee2e2;
+    border-color: var(--expense-red);
+    color: var(--expense-red);
+    animation: pulse 1.5s infinite;
+}
+
+/* =========================================== */
+/* 10. COMPONENTE: METAS (GOALS) */
+/* =========================================== */
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Scrollbar Goals */
+.goals-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.goals-list::-webkit-scrollbar-track {
+    background: var(--gray-light);
+    border-radius: 3px;
+}
+
+.goals-list::-webkit-scrollbar-thumb {
+    background: rgba(33, 122, 74, 0.5);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.goals-list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+.goal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(117, 117, 117, 0.2);
+}
+
+.goal-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.goal-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.goal-progress {
+    position: relative;
+    width: 45px;
+    height: 45px;
+}
+
+.progress-circle {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.progress-circle-bg {
+    fill: none;
+    stroke: rgba(117, 117, 117, 0.3);
+    stroke-width: 4;
+}
+
+.progress-circle-fill {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: calc(100 - var(--progress));
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+.goal-info {
+    flex: 1;
+}
+
+.goal-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.goal-date {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.goal-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 100px;
+}
+
+.goal-stat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.goal-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.goal-stat-value {
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+}
+
+.goal-stat-value.ahorrado {
+    color: var(--primary);
+}
+
+.goal-stat-value.meta {
+    color: var(--expense-red);
+}
+
+/* =========================================== */
+/* 11. MODALES (VENTANAS EMERGENTES) */
+/* =========================================== */
+
+/* Modal General (Crear Tags, etc) */
 .tag-modal {
     border: none;
     border-radius: 20px;
@@ -1387,43 +1484,7 @@
     border-radius: 0 0 20px 20px;
 }
 
-.btn-secondary,
-.btn-primary {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    min-width: 80px;
-}
-
-.btn-secondary {
-    background-color: white;
-    color: #6b7280;
-    border: 1px solid #d1d5db;
-}
-
-.btn-secondary:hover {
-    background-color: #f9fafb;
-    border-color: #9ca3af;
-}
-
-.btn-primary {
-    background-color: var(--primary);
-    color: white;
-    border: none;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* =========================================== */
-/* POPUP ДЛЯ ВСІХ METAS FINANCIERAS */
-/* =========================================== */
+/* Modal Específico para Todas las Metas */
 .goals-modal-overlay {
     display: none;
     position: fixed;
@@ -1449,18 +1510,6 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border);
     animation: modalFadeIn 0.3s ease;
-}
-
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .goals-modal-header {
@@ -1682,17 +1731,39 @@
 }
 
 /* =========================================== */
-/* МЕДІА-ЗАПИТИ */
+/* 12. MEDIA QUERIES (RESPONSIVE) */
 /* =========================================== */
 
-/* Медіа-запит для 1200px */
+/* FIX DE ESCRITORIO (Mantiene versión desktop en pantallas grandes) */
+@media (min-width: 993px) {
+    .mobile-nav {
+        display: none !important;
+    }
+
+    .sidebar {
+        display: flex !important;
+    }
+
+    .desktop-main {
+        margin-left: 110px !important;
+        padding: 20px 30px 30px 30px !important;
+        max-width: calc(100% - 110px) !important;
+    }
+
+    .desktop-container {
+        margin-top: 100px !important;
+        padding-bottom: 0 !important;
+    }
+}
+
+/* < 1200px */
 @media (max-width: 1200px) {
     .desktop-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* Медіа-запит для 992px */
+/* < 992px (Tablets) */
 @media (max-width: 992px) {
     .desktop-header {
         left: 10px;
@@ -1736,7 +1807,7 @@
     }
 }
 
-/* Медіа-запит для 768px */
+/* < 768px (Móviles Grandes) */
 @media (max-width: 768px) {
 
     .add-tag-btn,
@@ -1815,7 +1886,7 @@
     }
 }
 
-/* Медіа-запит для 480px (ОБ'ЄДНАНА ВЕРСІЯ) */
+/* < 480px (Móviles Pequeños) */
 @media (max-width: 480px) {
     .card-title {
         font-size: 25px;
@@ -1846,7 +1917,9 @@
         padding: 8px 10px;
     }
 
-    .account-selector {
+    .account-selector,
+    .account-dropdown {
+        width: 100%;
         min-width: 100%;
     }
 
@@ -1854,14 +1927,6 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
-    }
-
-    .account-selector {
-        width: 100%;
-    }
-
-    .account-dropdown {
-        width: 100%;
     }
 
     .bank-name {
@@ -1877,57 +1942,106 @@
     }
 }
 
-
 /* =========================================== */
-/* ANIMACIÓN DE CARGA (SKELETON) */
+/* 13. ESTILOS ESPECÍFICOS TARJETAS (MODAL & GHOST) */
 /* =========================================== */
 
-/* Clase para activar el modo carga */
-.account-info-display.is-loading .detail-value,
-.account-info-display.is-loading .bank-name,
-.account-info-display.is-loading .account-type,
-.account-info-display.is-loading .balance-amount,
-.account-info-display.is-loading .iban-number {
-    color: transparent !important;
-    /* Ocultamos el texto base */
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 4px;
-    user-select: none;
-    pointer-events: none;
+/* Selector Visual de Tipo de Tarjeta */
+.card-type-selector {
+    display: flex;
+    gap: 10px;
 }
 
-/* Ajuste específico para que la "barra" de carga tenga altura */
-.account-info-display.is-loading .bank-name {
-    min-width: 150px;
-    min-height: 24px;
-    display: inline-block;
+.type-option {
+    flex: 1;
+    cursor: pointer;
+    position: relative;
 }
 
-.account-info-display.is-loading .balance-amount {
-    min-width: 120px;
-    min-height: 28px;
-    display: inline-block;
-}
-
-/* Ocultar elementos decorativos durante la carga */
-.account-info-display.is-loading .balance-change,
-.account-info-display.is-loading .bank-logo i {
+.type-option input {
+    position: absolute;
     opacity: 0;
+    cursor: pointer;
 }
 
-.account-info-display.is-loading .bank-logo {
-    background: #e0e0e0;
-    /* Gris plano mientras carga */
+.type-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px;
+    border: 2px solid var(--gray-light);
+    border-radius: 10px;
+    transition: all 0.2s;
+    color: var(--text-muted);
 }
 
-@keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-
-    100% {
-        background-position: 200% 0;
-    }
+.type-content i {
+    font-size: 24px;
 }
+
+.type-content span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Estado Seleccionado */
+.type-option input:checked+.type-content {
+    border-color: var(--primary);
+    background-color: rgba(33, 122, 74, 0.05);
+    color: var(--primary);
+}
+
+/* Estilos específicos para darle color al icono seleccionado */
+.type-option input:checked+.visa-style i {
+    color: #1a1a2e;
+}
+
+.type-option input:checked+.master-style i {
+    color: #eb001b;
+}
+
+
+/* TARJETA FANTASMA (Botón Añadir en Dashboard) */
+.mini-card.ghost-card {
+    background: transparent;
+    border: 2px dashed #d1d5db;
+    color: #9ca3af;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.mini-card.ghost-card:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: rgba(33, 122, 74, 0.02);
+    transform: translateY(-3px);
+}
+
+.ghost-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.ghost-icon {
+    font-size: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.mini-card.ghost-card:hover .ghost-icon {
+    background-color: var(--primary);
+    color: white;
+}
+

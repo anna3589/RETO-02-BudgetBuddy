@@ -238,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (profileAvatarLarge) profileAvatarLarge.textContent = initials;
         if (profileAvatarLargeEdit) profileAvatarLargeEdit.textContent = initials;
     }
+    
 
     // ===========================================
     // 5. INICIALIZACIÓN

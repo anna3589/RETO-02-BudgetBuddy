@@ -244,7 +244,7 @@
 				<div class="page-header">
 					<h1 class="page-title">
 						Pagina principal
-						<div class="date-container">28 Abr, 2024</div>
+						
 					</h1>
 				</div>
 
@@ -299,7 +299,9 @@
 								</div>
 							</div>
 
-							<div style="display: flex; gap: 10px; align-items: center marginº">
+							<div
+								style="display: flex; gap: 10px; align-items: center marginº"
+							>
 								<button
 									id="open-account-modal-btn"
 									class="btn-primary"
@@ -330,12 +332,24 @@
 											</div>
 											<div class="form-group">
 												<label>IBAN</label>
-												<input
-													type="text"
-													id="acc-iban"
-													placeholder="ES..."
-													required
-												/>
+												<div style="display: flex; align-items: stretch; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden;">
+													<select id="acc-iban-country" style="border: none; background: #f9fafb; padding: 8px 5px; font-weight: 600; color: #374151; cursor: pointer; width: 60px; text-align: center; border-right: 1px solid #e5e7eb;">
+														<option value="ES" selected>🇪🇸 ES</option>
+														<option value="FR">FR</option>
+														<option value="DE">DE</option>
+														<option value="IT">IT</option>
+														<option value="PT">PT</option>
+													</select>
+													
+													<input 
+														type="text" 
+														id="acc-iban" 
+														placeholder="0000 0000 00..." 
+														required 
+														style="border: none; flex: 1; padding-left: 10px; border-radius: 0;"
+													>
+												</div>
+												<p style="font-size: 0.75rem; color: #6b7280; margin-top: 4px;">Solo los 22 dígitos restantes.</p>
 											</div>
 											<div class="form-group">
 												<label>Saldo Inicial</label>
@@ -386,110 +400,138 @@
 							</dialog>
 						</div>
 						<!-- Balance total con transacciones -->
-						<div class="card balance-card">
-							<div class="card-header-compact">
-								<h2 class="card-title">Balance total</h2>
-								<div class="date-badge" style="color: var(--border)">
-									Este mes
-								</div>
+						<div class="cards-section-wrapper" style="margin-top: 30px">
+							<div
+								class="card-header-compact"
+								style="padding: 0 5px; margin-bottom: 15px"
+							>
+								<h2 class="card-title" style="font-size: 22px">
+									Tarjetas vinculadas
+								</h2>
+								<a
+									href="/misTarjetas"
+									class="view-all-btn"
+									style="font-size: 14px"
+								>
+									Gestionar <i class="fas fa-arrow-right"></i>
+								</a>
 							</div>
 
-							<div class="balance-main">
-								<div class="balance-amount">30.300€</div>
-								<div class="balance-percent">
-									<i class="fas fa-arrow-up"></i> 3.2
-								</div>
-							</div>
-
-							<div class="balance-actions">
-								<button class="btn btn-deposit">
-									<i class="fas fa-plus"></i> Depósito
-								</button>
-								<button class="btn btn-transfer">
-									<i class="fas fa-exchange-alt"></i> Transferencia
-								</button>
-							</div>
-
-							<div class="balance-details-compact">
-								<div class="balance-item-compact">
-									<div class="balance-label">Saldo principal</div>
-									<div class="balance-value">23.300€</div>
-								</div>
-								<div class="balance-item-compact">
-									<div class="balance-label">Saldo de crédito</div>
-									<div class="balance-value">5.000€</div>
-								</div>
-							</div>
-
-							<div class="progress-container">
-								<div class="progress-header">
-									<span class="progress-label">2.000€ usados del crédito</span>
-									<span class="progress-percentage">42%</span>
-								</div>
-								<div class="progress-bar">
-									<div class="progress-fill"></div>
-								</div>
-							</div>
-
-							<!-- Transacciones recientes -->
-							<div class="transactions-list">
-								<h3 class="transactions-title" style="margin-bottom: 25px">
-									<i class="fas fa-exchange-alt"></i> Transacciones Recientes
-								</h3>
-								<div class="transaction-item">
-									<div class="transaction-left">
-										<div class="transaction-icon red">
-											<i class="fas fa-coffee"></i>
-										</div>
-										<div class="transaction-info">
-											<h4>Starbucks</h4>
-											<div class="transaction-date">12 Mayo, 15:40</div>
-										</div>
-									</div>
-									<div class="transaction-amount negative">-25,90€</div>
-								</div>
-
-								<div class="transaction-item">
-									<div class="transaction-left">
-										<div class="transaction-icon">
-											<i class="fas fa-arrow-down"></i>
-										</div>
-										<div class="transaction-info">
-											<h4>Rembolso Mendibil</h4>
-											<div class="transaction-date">11 Mayo, 14:10</div>
-										</div>
-									</div>
-									<div class="transaction-amount positive">+340,80€</div>
-								</div>
-
-								<div class="transaction-item">
-									<div class="transaction-left">
-										<div class="transaction-icon red">
-											<i class="fas fa-home"></i>
-										</div>
-										<div class="transaction-info">
-											<h4>Pago de la renta</h4>
-											<div class="transaction-date">11 Mayo, 16:00</div>
-										</div>
-									</div>
-									<div class="transaction-amount negative">-1.200,00€</div>
-								</div>
-
-								<div class="transaction-item">
-									<div class="transaction-left">
-										<div class="transaction-icon red">
-											<i class="fas fa-shopping-bag"></i>
-										</div>
-										<div class="transaction-info">
-											<h4>Arenal</h4>
-											<div class="transaction-date">11 Mayo, 13:55</div>
-										</div>
-									</div>
-									<div class="transaction-amount negative">-743,00€</div>
+							<div id="dashboard-cards-container" class="dashboard-cards-grid">
+								<div
+									style="
+										width: 100%;
+										text-align: center;
+										padding: 30px;
+										color: #9ca3af;
+									"
+								>
+									<i class="fas fa-spinner fa-spin"></i> Cargando tarjetas...
 								</div>
 							</div>
 						</div>
 					</section>
+
+					<dialog id="card-modal" class="tag-modal">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3><i class="fas fa-credit-card"></i> Nueva Tarjeta</h3>
+								<button class="close-modal" id="close-card-modal-btn">
+									&times;
+								</button>
+							</div>
+
+							<form id="create-card-form" class="modal-body">
+								<div class="form-group">
+									<label for="card-account-select">Cuenta Vinculada</label>
+									<div style="position: relative">
+										<select
+											id="card-account-select"
+											class="account-dropdown"
+											style="padding: 8px 10px; font-size: 14px"
+										></select>
+										<i
+											class="fas fa-chevron-down"
+											style="
+												position: absolute;
+												right: 10px;
+												top: 50%;
+												transform: translateY(-50%);
+												pointer-events: none;
+												font-size: 12px;
+												color: #757575;
+											"
+										></i>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="card-alias">Alias de la tarjeta</label>
+									<input
+										type="text"
+										id="card-alias"
+										placeholder="Ej: Para Viajes"
+										required
+										maxlength="20"
+									/>
+								</div>
+
+								<div class="form-group">
+									<label>Tipo de Tarjeta</label>
+									<div class="card-type-selector">
+										<label class="type-option">
+											<input
+												type="radio"
+												name="card_type"
+												value="debit"
+												checked
+											/>
+											<div class="type-content visa-style">
+												<i class="fab fa-cc-visa"></i>
+												<span>Visa (Débito)</span>
+											</div>
+										</label>
+										<label class="type-option">
+											<input type="radio" name="card_type" value="credit" />
+											<div class="type-content master-style">
+												<i class="fab fa-cc-mastercard"></i>
+												<span>Mastercard (Crédito)</span>
+											</div>
+										</label>
+									</div>
+								</div>
+
+								<div style="display: flex; gap: 15px">
+									<div class="form-group" style="flex: 1">
+										<label for="card-digits">Últimos 4 dígitos</label>
+										<input
+											type="text"
+											id="card-digits"
+											placeholder="1234"
+											maxlength="4"
+											pattern="\d{4}"
+											required
+											style="letter-spacing: 2px; text-align: center"
+										/>
+									</div>
+
+									<div class="form-group" style="flex: 1">
+										<label for="card-exp">Caducidad</label>
+										<input type="month" id="card-exp" required />
+									</div>
+								</div>
+							</form>
+
+							<div class="modal-footer">
+								<button class="btn-secondary" id="cancel-card-btn">
+									Cancelar
+								</button>
+								<button class="btn-primary" id="save-card-btn">
+									Guardar Tarjeta
+								</button>
+							</div>
+						</div>
+					</dialog>
 
 					<!-- Etiquetas y Metas Financieras -->
 					<section class="desktop-right-column">
@@ -534,42 +576,9 @@
 								</button>
 							</div>
 
-							<div class="goals-list">
-								<div class="goal-item">
-									<div class="goal-left">
-										<div class="goal-progress">
-											<svg class="progress-circle" viewBox="0 0 36 36">
-												<circle
-													class="progress-circle-bg"
-													cx="18"
-													cy="18"
-													r="16"
-												></circle>
-												<circle
-													class="progress-circle-fill"
-													cx="18"
-													cy="18"
-													r="16"
-													style="--progress: 30"
-												></circle>
-											</svg>
-											<div class="progress-text">30%</div>
-										</div>
-										<div class="goal-info">
-											<h4>Comprar iPhone 15</h4>
-											<div class="goal-date">Fecha límite: 8 mayo 2024</div>
-										</div>
-									</div>
-									<div class="goal-stats">
-										<div class="goal-stat-item">
-											<span class="goal-stat-label">Ahorrado</span>
-											<span class="goal-stat-value ahorrado">360€</span>
-										</div>
-										<div class="goal-stat-item">
-											<span class="goal-stat-label">Meta</span>
-											<span class="goal-stat-value meta">1.200€</span>
-										</div>
-									</div>
+							<div class="goals-list" id="goals-container">
+								<div style="text-align: center; padding: 20px; color: #6b7280">
+									<i class="fas fa-spinner fa-spin"></i> Cargando metas...
 								</div>
 							</div>
 						</div>

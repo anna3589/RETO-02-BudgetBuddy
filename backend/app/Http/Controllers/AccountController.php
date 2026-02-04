@@ -22,6 +22,17 @@ class AccountController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
+    public function getCards(Account $account)
+    {
+        // 1. SEGURIDAD: Verificar que la cuenta pertenece al usuario logueado
+        if ($account->user_id !== Auth::id()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        // 2. Devolver las tarjetas asociadas
+        return response()->json($account->cards);
+    }
     public function create()
     {
         //

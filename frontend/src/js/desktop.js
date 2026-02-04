@@ -35,6 +35,11 @@ function formatDate(dateString) {
 // Elemento del DOM
 const userAvatarTop = document.querySelector(".user-avatar-top");
 
+// 1. ESTADO DE CARGA (Spinner)
+userAvatarTop.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--color-gray-500);">
+            <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+        </div>`;
 /**
  * Carga el usuario logueado y actualiza el avatar
  */
@@ -95,6 +100,155 @@ const accountTypeElement = document.querySelector(".account-type");
 const bankLogoElement = document.querySelector(".bank-logo i");
 const ibanElement = document.querySelector(".iban-number");
 const balanceElement = document.querySelector(".balance-amount");
+
+/**
+ * Cargar Metas Financieras (Envelopes)
+ */
+async function loadGoalsFromServer() {
+	const container = document.getElementById("goals-container");
+
+	// 1. ESTADO DE CARGA (Spinner)
+	container.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #6b7280;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+            <p style="margin-top: 10px">Cargando tus metas...</p>
+        </div>`;
+
+	try {
+		const response = await fetch("/api/envelopes", {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			credentials: "same-origin",
+		});
+
+		// A. EL SERVIDOR RESPONDIÓ BIEN (Status 200-299)
+		if (response.ok) {
+			const goals = await response.json();
+
+			// LÓGICA CLAVE: ¿Array vacío o lleno?
+			if (goals.length === 0) {
+				renderEmptyState(); // <--- CASO: NO EXISTEN (200 OK pero vacío)
+			} else {
+				renderGoals(goals); // <--- CASO: EXISTEN Y HAY DATOS
+			}
+		} else {
+			// B. EL SERVIDOR RESPONDIÓ CON ERROR (Status 400, 500, 401...)
+			console.error("Error del servidor:", response.status);
+			renderErrorState(); // <--- CASO: ERROR DE SERVIDOR
+		}
+	} catch (error) {
+		// C. ERROR DE RED (Internet caído, servidor apagado)
+		console.error("Error de red:", error);
+		renderErrorState(); // <--- CASO: ERROR DE RED
+	}
+}
+
+/**
+ * CASO 1: Renderizar cuando SÍ hay metas
+ */
+function renderGoals(goals) {
+	const container = document.getElementById("goals-container");
+	container.innerHTML = "";
+
+	// Tomamos las primeras 3 para la vista previa
+	const previewGoals = goals.slice(0, 3);
+
+	previewGoals.forEach((goal) => {
+		// Cálculos seguros (evitar NaN)
+		const current = parseFloat(goal.allocated_amount || 0);
+		const target = parseFloat(goal.target_amount || 1);
+		let percentage = Math.round((current / target) * 100);
+
+		// Limitar visualmente al 100%
+		const visualPercentage = percentage > 100 ? 100 : percentage;
+
+		const goalItem = document.createElement("div");
+		goalItem.className = "goal-item";
+
+		// Usamos tu estructura HTML exacta
+		// Nota: Inyectamos la variable CSS --progress inline para que funcione el círculo
+		goalItem.innerHTML = `
+            <div class="goal-left">
+                <div class="goal-progress">
+                    <svg class="progress-circle" viewBox="0 0 36 36">
+                        <circle class="progress-circle-bg" cx="18" cy="18" r="16"></circle>
+                        <circle class="progress-circle-fill" cx="18" cy="18" r="16"
+                                style="--progress: ${visualPercentage}; stroke-dasharray: 100 100; stroke-dashoffset: ${
+			100 - visualPercentage
+		};">
+                        </circle>
+                    </svg>
+                    <div class="progress-text">${percentage}%</div>
+                </div>
+                <div class="goal-info">
+                    <h4>${goal.name}</h4>
+                    <div class="goal-date" style="font-size: 0.8rem; color: #9ca3af">
+                        <i class="${
+													goal.icon || "fas fa-bullseye"
+												}"></i> Meta Activa
+                    </div>
+                </div>
+            </div>
+            <div class="goal-stats">
+                <div class="goal-stat-item">
+                    <span class="goal-stat-label">Ahorrado</span>
+                    <span class="goal-stat-value ahorrado">${current.toLocaleString(
+											"es-ES",
+											{ minimumFractionDigits: 0 }
+										)}€</span>
+                </div>
+                <div class="goal-stat-item">
+                    <span class="goal-stat-label">Meta</span>
+                    <span class="goal-stat-value meta">${target.toLocaleString(
+											"es-ES",
+											{ minimumFractionDigits: 0 }
+										)}€</span>
+                </div>
+            </div>
+        `;
+		container.appendChild(goalItem);
+	});
+}
+
+/**
+ * CASO 2: Renderizar cuando NO existen (Botón de crear)
+ */
+function renderEmptyState() {
+	const container = document.getElementById("goals-container");
+	container.innerHTML = `
+        <div style="text-align: center; padding: 30px 10px; color: #6b7280; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <div style="background: #f3f4f6; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-piggy-bank" style="font-size: 24px; color: #9ca3af;"></i>
+            </div>
+            <div>
+                <h4 style="color: var(--text-main); margin-bottom: 5px;">Aún no tienes metas</h4>
+                <p style="font-size: 0.9rem;">Crea un sobre digital para empezar a ahorrar.</p>
+            </div>
+            
+            <button onclick="openCreateGoalModal()" 
+                    style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                <i class="fas fa-plus"></i> Crear mi primer sobre
+            </button>
+        </div>`;
+}
+
+/**
+ * CASO 3: Renderizar cuando hay ERROR (Botón de reintentar)
+ */
+function renderErrorState() {
+	const container = document.getElementById("goals-container");
+	container.innerHTML = `
+        <div style="text-align: center; padding: 30px 10px; color: #ef4444; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <i class="fas fa-exclamation-circle" style="font-size: 24px;"></i>
+            <p>No se pudieron cargar las metas.</p>
+            <button onclick="loadGoalsFromServer()" 
+                    style="background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 5px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                <i class="fas fa-sync"></i> Reintentar
+            </button>
+        </div>`;
+}
 
 /**
  * Cargar cuentas desde el servidor (Laravel API)
@@ -182,8 +336,202 @@ function updateAccountInfo(accountId) {
 	ibanElement.textContent = account.iban;
 	balanceElement.textContent = account.balance;
 
-	// Como hemos borrado fecha, interes y estado del HTML,
-	// borramos esas líneas del JS para que no den error.
+	// Carga las tarjetas asociadas a esta cuenta
+	loadCardsForAccount(accountId);
+}
+// Dibuja la tarjeta de credito
+function renderMockCards(container) {
+	container.innerHTML = ""; // Limpiar spinner
+
+	// Simulamos datos que vendrán de Laravel
+	const mockCards = [
+		{ alias: "Visa Compra", type: "visa", number: "4532", balance: "1.250,50" },
+		{
+			alias: "Mastercard Ahorro",
+			type: "mastercard",
+			number: "8821",
+			balance: "500,00",
+		},
+	];
+
+	mockCards.forEach((card) => {
+		const cardEl = document.createElement("div");
+		// Añadimos clases para el CSS: 'mini-card' y el tipo ('visa' o 'mastercard')
+		cardEl.className = `mini-card ${card.type}`;
+
+		// HTML interno (Estructura Wallet)
+		cardEl.innerHTML = `
+            <div class="mini-card-top">
+                <span style="font-weight: 500; font-size: 0.9rem">${card.alias}</span>
+                <i class="fab fa-cc-${card.type}" style="font-size: 1.5rem"></i>
+            </div>
+            <div class="mini-card-number">
+                **** **** **** ${card.number}
+            </div>
+            <div class="mini-card-bottom">
+                <div>
+                    <div style="font-size: 0.7rem; opacity: 0.8">Saldo</div>
+                    <div style="font-weight: bold">${card.balance}€</div>
+                </div>
+                <div style="font-size: 0.7rem">Exp: 12/28</div>
+            </div>
+        `;
+
+		// Hacemos que sea clickeable para ir al detalle
+		cardEl.addEventListener("click", () => {
+			window.location.href = "/misTarjetas"; // En el futuro pasaremos ?id=X
+		});
+
+		container.appendChild(cardEl);
+	});
+}
+
+/**
+ * Carga las tarjetas asociadas a una cuenta específica
+ */
+/**
+ * Carga las tarjetas asociadas a una cuenta específica
+ */
+async function loadCardsForAccount(accountId) {
+	const container = document.getElementById("dashboard-cards-container");
+	if (!container) return;
+
+	// Spinner
+	container.innerHTML = `
+        <div style="min-width: 260px; height: 160px; display:flex; align-items:center; justify-content:center; background: #f3f4f6; border-radius: 16px; color: #9ca3af;">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>`;
+
+	try {
+		console.log(`Solicitando tarjetas REALES para la cuenta ${accountId}...`);
+
+		// Petición al Backend
+		const response = await fetch(`/api/accounts/${accountId}/cards`, {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			credentials: "same-origin",
+		});
+
+		if (response.ok) {
+			const cards = await response.json();
+			renderCards(container, cards); // <--- Función nueva
+		} else {
+			console.error("Error servidor:", response.status);
+			container.innerHTML =
+				'<div style="padding:20px; color: #ef4444">Error al cargar tarjetas</div>';
+		}
+	} catch (e) {
+		console.error(e);
+		container.innerHTML =
+			'<div style="padding:20px; color: #ef4444">Error de conexión</div>';
+	}
+}
+
+/**
+ * Pinta las tarjetas REALES + la Tarjeta Fantasma
+ */
+function renderCards(container, cards) {
+	container.innerHTML = "";
+
+	// Obtenemos la cuenta actual del select principal para pasársela al modal
+	const currentAccountId = document.getElementById("bankAccountSelect").value;
+
+	// CASO 1: SIN TARJETAS
+	if (cards.length === 0) {
+		container.innerHTML = `
+            <div style="min-width: 260px; height: 160px; display:flex; flex-direction:column; align-items:center; justify-content:center; background: #f9fafb; border: 2px dashed #e5e7eb; border-radius: 16px; color: #9ca3af;">
+                <i class="fas fa-credit-card" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <span style="font-size: 0.9rem;">Sin tarjetas</span>
+                <button onclick="openAddCardModal('${currentAccountId}')" style="margin-top: 10px; background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 0.9rem;">
+                    Añadir tarjeta
+                </button>
+            </div>`;
+		return;
+	}
+
+	// CASO 2: HAY TARJETAS (Pintar lista)
+	cards.forEach((card) => {
+		const cardEl = document.createElement("div");
+
+		let visualType = "visa";
+		if (card.type === "credit") visualType = "mastercard";
+
+		cardEl.className = `mini-card ${visualType}`;
+
+		const balanceFormatted = new Intl.NumberFormat("es-ES", {
+			style: "decimal",
+			minimumFractionDigits: 2,
+		}).format(card.balance || 0);
+
+		let expDateFormatted = "??/??";
+		if (card.expiration_date) {
+			const dateObj = new Date(card.expiration_date);
+			const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+			const year = dateObj.getFullYear().toString().slice(-2);
+			expDateFormatted = `${month}/${year}`;
+		}
+
+		cardEl.innerHTML = `
+            <div class="mini-card-top">
+                <span style="font-weight: 500; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">${
+									card.alias
+								}</span>
+                <i class="fab fa-cc-${visualType}" style="font-size: 1.8rem; opacity: 0.9;"></i>
+            </div>
+            <div class="mini-card-number">
+                **** **** **** ${card.last_four_digits || "0000"}
+            </div>
+            <div class="mini-card-bottom">
+                <div>
+                    <div style="font-size: 0.7rem; opacity: 0.7; margin-bottom:2px;">Saldo</div>
+                    <div style="font-weight: bold; font-size: 1.1rem;">${balanceFormatted}€</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.6rem; opacity: 0.7;">Expira</div>
+                    <div style="font-size: 0.8rem">${expDateFormatted}</div>
+                </div>
+            </div>
+        `;
+
+		cardEl.addEventListener("click", () => {
+			window.location.href = "/misTarjetas";
+		});
+
+		container.appendChild(cardEl);
+	});
+
+	// CASO 3: AÑADIR LA TARJETA FANTASMA AL FINAL (GHOST CARD)
+	const ghostCard = document.createElement("div");
+	ghostCard.className = "mini-card ghost-card";
+	ghostCard.innerHTML = `
+        <div class="ghost-content">
+            <div class="ghost-icon">
+                <i class="fas fa-plus"></i>
+            </div>
+            <span style="font-size: 0.9rem; font-weight: 500;">Nueva Tarjeta</span>
+        </div>
+    `;
+
+	// Al hacer clic, abrimos el modal preseleccionando la cuenta actual
+	ghostCard.addEventListener("click", () => {
+		openAddCardModal(currentAccountId);
+	});
+
+	container.appendChild(ghostCard);
+}
+// Convertir scroll vertical del ratón en horizontal para las tarjetas
+const cardsContainer = document.getElementById("dashboard-cards-container");
+
+if (cardsContainer) {
+	cardsContainer.addEventListener("wheel", (evt) => {
+		// Si el usuario hace scroll vertical
+		if (evt.deltaY !== 0) {
+			evt.preventDefault(); // Evita que baje la página
+			cardsContainer.scrollLeft += evt.deltaY; // Mueve las tarjetas
+		}
+	});
 }
 /**
  * Elegir icono según el nombre del banco
@@ -195,24 +543,6 @@ function getBankIcon(bankName) {
 	if (name.includes("santander")) return "fas fa-fire";
 	if (name.includes("ing")) return "fas fa-lion";
 	return "fas fa-university";
-}
-
-/**
- * Actualizar la tarjeta visual de la cuenta
- */
-function updateAccountInfo(accountId) {
-	const account = accountsData[accountId];
-	if (!account) return;
-
-	// Solo actualizamos lo que existe en el HTML nuevo
-	bankNameElement.textContent = account.bankName;
-	accountTypeElement.textContent = account.accountType;
-	bankLogoElement.className = account.logoIcon;
-	ibanElement.textContent = account.iban;
-	balanceElement.textContent = account.balance;
-
-	// Como hemos borrado fecha, interes y estado del HTML,
-	// borramos esas líneas del JS para que no den error.
 }
 
 // Event Listener para cambio de cuenta
@@ -241,6 +571,132 @@ copyButtons.forEach((button) => {
 			.catch(() => alert("No se pudo copiar el IBAN."));
 	});
 });
+
+// ==========================================
+// GESTIÓN MODAL NUEVA TARJETA (JS)
+// ==========================================
+
+const cardModal = document.getElementById("card-modal");
+const closeCardModalBtn = document.getElementById("close-card-modal-btn");
+const cancelCardBtn = document.getElementById("cancel-card-btn");
+const saveCardBtn = document.getElementById("save-card-btn");
+const cardAccountSelect = document.getElementById("card-account-select");
+
+// Cerrar modal
+if (closeCardModalBtn)
+	closeCardModalBtn.addEventListener("click", () => cardModal.close());
+if (cancelCardBtn)
+	cancelCardBtn.addEventListener("click", () => cardModal.close());
+
+/**
+ * Abre el modal para crear tarjeta.
+ * @param {string|null} preselectedAccountId - ID de la cuenta si venimos del Dashboard
+ */
+function openAddCardModal(preselectedAccountId = null) {
+	// 1. Limpiar el formulario
+	document.getElementById("create-card-form").reset();
+
+	// 2. Rellenar el select de cuentas disponibles
+	if (cardAccountSelect) {
+		cardAccountSelect.innerHTML = "";
+		// Usamos la variable global accountsData que ya cargamos al inicio
+		for (const [id, acc] of Object.entries(accountsData)) {
+			const option = document.createElement("option");
+			option.value = id;
+			option.textContent = acc.bankName; // "Caixa Bank..."
+			cardAccountSelect.appendChild(option);
+		}
+
+		// 3. Pre-seleccionar la cuenta si estamos en el Dashboard
+		if (preselectedAccountId) {
+			cardAccountSelect.value = preselectedAccountId;
+			// Opcional: Bloquear el select para que no cambie de cuenta
+			// cardAccountSelect.disabled = true;
+		} else {
+			cardAccountSelect.disabled = false;
+		}
+	}
+
+	// 4. Mostrar Modal
+	cardModal.showModal();
+}
+
+/**
+ * GUARDAR TARJETA (POST API)
+ */
+if (saveCardBtn) {
+	saveCardBtn.addEventListener("click", async (e) => {
+		e.preventDefault();
+
+		// Recoger datos
+		const accountId = cardAccountSelect.value;
+		const alias = document.getElementById("card-alias").value;
+		const digits = document.getElementById("card-digits").value;
+		const expInput = document.getElementById("card-exp").value; // "2028-12"
+		const typeRadio = document.querySelector('input[name="card_type"]:checked');
+
+		// Validaciones básicas
+		if (!alias || !digits || !expInput || digits.length !== 4) {
+			showNotification(
+				"Por favor, rellena todos los datos correctamente",
+				"error"
+			);
+			return;
+		}
+
+		// Preparar fecha (Laravel suele esperar YYYY-MM-DD)
+		const expDate = expInput + "-01";
+
+		// UI Loading
+		const originalText = saveCardBtn.innerHTML;
+		saveCardBtn.disabled = true;
+		saveCardBtn.innerHTML =
+			'<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+		try {
+			await fetch("/sanctum/csrf-cookie");
+
+			const response = await fetch("/api/cards", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+					"X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+				},
+				credentials: "same-origin",
+				body: JSON.stringify({
+					account_id: accountId,
+					alias: alias,
+					type: typeRadio.value, // 'debit' o 'credit'
+					last_4_digits: digits,
+					expiration_date: expDate,
+					balance: 0, // Balance inicial 0 o lo que quieras
+				}),
+			});
+
+			if (response.ok) {
+				showNotification("Tarjeta añadida correctamente", "success");
+				cardModal.close();
+
+				// Recargar las tarjetas del dashboard si estamos viendo esa cuenta
+				const currentDashboardAccount =
+					document.getElementById("bankAccountSelect").value;
+				if (currentDashboardAccount === accountId) {
+					loadCardsForAccount(accountId);
+				}
+			} else {
+				const data = await response.json();
+				showNotification(data.message || "Error al crear tarjeta", "error");
+			}
+		} catch (error) {
+			console.error(error);
+			showNotification("Error de conexión", "error");
+		} finally {
+			saveCardBtn.disabled = false;
+			saveCardBtn.innerHTML = originalText;
+		}
+	});
+}
 
 // ========== GESTIÓN DE ETIQUETAS (TAGS) ==========
 
@@ -535,6 +991,27 @@ function initAccountElements() {
 		});
 	}
 
+	if (accIbanInput) {
+		accIbanInput.addEventListener("input", function (e) {
+			let target = e.target;
+			// 1. Eliminar todo lo que no sea número y limitar a 22 dígitos
+			let input = target.value.replace(/\D/g, "").substring(0, 22);
+
+			// 2. Añadir espacios visuales cada 4 números
+			let formatted = input.match(/.{1,4}/g)?.join(" ") || "";
+			target.value = formatted;
+
+			// 3. Feedback visual (Verde si completo)
+			if (input.length === 22) {
+				target.style.color = "#10b981"; // Texto verde
+				target.style.fontWeight = "600";
+			} else {
+				target.style.color = ""; // Normal
+				target.style.fontWeight = "";
+			}
+		});
+	}
+
 	// Listeners para cerrar
 	if (closeAccountBtn)
 		closeAccountBtn.addEventListener("click", () => accountModal.close());
@@ -636,17 +1113,15 @@ function showNotification(message, type) {
 document.addEventListener("DOMContentLoaded", function () {
 	console.log("Desktop.js cargado e iniciando...");
 
-	// 1. Cargar Etiquetas
-	loadTagsFromServer();
+	initAccountElements();
 
-	// 2. Cargar Cuentas Bancarias (¡Ahora real!)
 	loadAccountsFromServer();
 
-    // 3. Cargar Perfil (NUEVO)
-    loadUserProfile();
+	loadUserProfile();
 
-	// 3. Inicializar Drag and Drop
+	loadGoalsFromServer();
+
+	loadTagsFromServer();
+
 	setTimeout(initializeDragAndDrop, 500);
-
-	initAccountElements();
 });

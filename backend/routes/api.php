@@ -8,6 +8,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\EnvelopeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\MovementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,8 +49,12 @@ Route::middleware(['web', 'auth'])->group(function () {
     // 3. Cuentas, Tarjetas y Sobres
     Route::get('/accounts', [AccountController::class, 'index']);
     Route::post('/accounts', [AccountController::class, 'store']);
+    Route::get('/accounts/{account}/cards', [AccountController::class, 'getCards']);
 
     Route::post('/cards', [CardController::class, 'store']);
     
     Route::post('/envelopes', [EnvelopeController::class, 'store']);
+    Route::get('/envelopes', [App\Http\Controllers\EnvelopeController::class, 'index']);
+
+    Route::get('/accounts/{account}/movements', [MovementController::class, 'index']);
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Envelope;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EnvelopeController extends Controller
 {
@@ -12,7 +13,13 @@ class EnvelopeController extends Controller
      */
     public function index()
     {
-        //
+        // 1. Obtenemos los IDs de las cuentas del usuario
+        $accountIds = Auth::user()->accounts->pluck('id');
+
+        // 2. Buscamos los sobres asociados a esas cuentas
+        $envelopes = Envelope::whereIn('account_id', $accountIds)->get();
+
+        return response()->json($envelopes);
     }
 
     /**
@@ -38,8 +45,8 @@ class EnvelopeController extends Controller
 
         // Verificar propiedad
         $account = Account::where('id', $validated['account_id'])
-                          ->where('user_id', Auth::id())
-                          ->firstOrFail();
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
         $envelope = Envelope::create($validated);
 
