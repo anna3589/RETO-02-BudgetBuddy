@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\account;
+use App\Models\Account;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -42,13 +42,23 @@ class AccountController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'bank_name' => 'required|string',
-            'current_balance' => 'required|numeric',
-            'color' => 'required|string',
-            'iban' => 'required|string|unique:accounts,iban'
-        ]);
+        {
+            try {
+                // ТИМЧАСОВО: Дозволити без аутентифікації для setup
+                // $user_id = Auth::id(); // Закоментуйте це
+                $user_id = $request->input('user_id') ?? 2; // ТИМЧАСОВО: використовуємо ID 2 (ваш ID)
+                
+                // Або отримуємо з сесії, якщо це web запит
+                if ($request->hasSession() && $request->user()) {
+                    $user_id = $request->user()->id;
+                }
+
+                $validated = $request->validate([
+                    'bank_name' => 'required|string|max:255',
+                    'current_balance' => 'required|numeric',
+                    'color' => 'required|string|max:7',
+                    'iban' => 'required|string|unique:accounts,iban|max:34'
+                ]);
 
         $account = Account::create([
             'user_id' => Auth::id(),
