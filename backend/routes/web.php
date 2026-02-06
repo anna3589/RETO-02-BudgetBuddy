@@ -10,6 +10,11 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Додай це після інших маршрутів
+Route::get('/get-csrf-token', function() {
+    return response()->json(['token' => csrf_token()]);
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // 2. LÓGICA DEL CEREBRO (Dashboard)

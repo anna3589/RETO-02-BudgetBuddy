@@ -12,6 +12,9 @@ class TagController extends Controller
      */
     public function index()
     {
+        // Повертає всі теги (публічні)
+        // Якщо хочеш лише теги користувача, зроби так:
+        // $tags = Auth::user()->tags()->orderBy('created_at', 'desc')->get();
         $tags = Tag::orderBy('created_at', 'desc')->get();
         return response()->json($tags);
     }

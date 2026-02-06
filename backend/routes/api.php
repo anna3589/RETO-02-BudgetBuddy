@@ -59,4 +59,16 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/envelopes', [EnvelopeController::class, 'index']);
 
     Route::get('/accounts/{account}/movements', [MovementController::class, 'index']);
-});
+
+    // У групі middleware(['web', 'auth'])
+    Route::get('/cards', [CardController::class, 'index']); // Отримати всі картки
+    Route::delete('/cards/{card}', [CardController::class, 'destroy']); // Видалити картку
+
+    // ТИЛЬКИ ОДИН РАЗ
+    Route::get('/accounts/{account}/cards', [AccountController::class, 'getCards']);
+
+    // Якщо потрібно два методи для movements:
+    Route::get('/accounts/{account}/movements', [MovementController::class, 'index']); // По рахунку
+    Route::get('/movements', [MovementController::class, 'all']); // Всі movements користувача
+    Route::post('/movements', [MovementController::class, 'store']); // Створити movimiento
+    });
