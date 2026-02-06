@@ -7,8 +7,33 @@ use App\Models\Card;
 use App\Models\Account;
 use Illuminate\Support\Facades\Auth;
 
-class CardController extends Controller
-{
+class CardController extends Controller{
+
+        public function index()
+        {
+            // Отримати всі картки користувача через його рахунки
+            $user = Auth::user();
+            $cards = Card::whereHas('account', function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->with('account')->get();
+            
+            return response()->json($cards);
+        }
+
+        public function destroy(Card $card)
+        {
+            // Перевірити, чи картка належить користувачеві
+            if ($card->account->user_id !== Auth::id()) {
+                return response()->json(['message' => 'No autorizado'], 403);
+            }
+            
+            $card->delete();
+            
+            return response()->json([
+                'message' => 'Tarjeta eliminada correctamente',
+                'success' => true
+            ], 200);
+        }
     public function store(Request $request)
     {
         // 1. Validar los datos que vienen del formulario (setup.js)

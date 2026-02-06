@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     
     $middleware->validateCsrfTokens(except: [
         'api/*', // Додайте цей рядок
+        'get-csrf-token',   // Додай цей маршрут
     ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

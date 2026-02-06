@@ -386,21 +386,21 @@
     grid-template-columns: 1fr 1fr;
     gap: 25px;
     margin-bottom: 30px;
-    align-items: stretch; /* Вирівнюємо висоту колонок */
+    align-items: stretch;
 }
 
 .desktop-left-column {
     display: flex;
     flex-direction: column;
     gap: 25px;
-    height: 100%; /* Займає всю доступну висоту */
+    height: 100%;
 }
 
 .desktop-right-column {
     display: flex;
     flex-direction: column;
     gap: 25px;
-    height: 100%; /* Займає всю доступну висоту */
+    height: 100%;
 }
 
 /* Cards Styles */
@@ -423,7 +423,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    flex-shrink: 0; /* Не стискається */
+    flex-shrink: 0;
 }
 
 .card-title {
@@ -436,171 +436,394 @@
 }
 
 /* =========================================== */
-/* КАРТКИ БАНКІВСЬКІ (CAROUSEL) */
+/* СЕЛЕКТОР КАРТКИ (ВИПАДАЮЧЕ ВІКНО) */
 /* =========================================== */
-/* Navigation for cards */
-
-.card-counter {
-    font-size: 13px;
-    color: var(--text-muted);
-    min-width: 35px;
-    text-align: center;
-}
-
-/* Cards Carousel */
-.cards-carousel {
+.account-selector {
     position: relative;
-    height: 140px;
-    overflow: hidden;
+    min-width: 300px;
 }
 
-.credit-card-compact {
-    position: absolute;
-    top: 0;
-    left: 30%;
-    width: 40%;
-    height: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.3s ease;
-    display: none;
-}
-
-.credit-card-compact.active {
-    opacity: 1;
-    transform: translateX(0);
-    display: block;
-}
-
-.card-black {
-    background: linear-gradient(135deg, #374151 0%, #111827 100%);
-}
-
-.card-blue {
-    background: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);
-}
-
-.card-orange {
-    background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%);
-}
-
-.card-type {
+.account-dropdown {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Roboto', sans-serif;
     font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
+    font-weight: 500;
+    background-color: white;
+    color: var(--text-main);
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.2s;
 }
 
-.card-number {
-    font-size: 16px;
-    letter-spacing: 1.2px;
-    margin-bottom: 8px;
-    font-family: 'Outfit', sans-serif;
+.account-dropdown:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(33, 122, 74, 0.1);
 }
 
-.card-details {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+.dropdown-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-muted);
     font-size: 12px;
-    opacity: 0.9;
 }
 
-/* Statistics de tarjetas */
-.card-usage {
+/* =========================================== */
+/* ГОРИЗОНТАЛЬНИЙ СКРОЛ ДЛЯ КАРТОК */
+/* =========================================== */
+.cards-section-wrapper {
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+#cards-container {
     display: flex;
+    flex-wrap: nowrap;
     gap: 15px;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    height: 100%;
+    padding: 10px 5px 25px 5px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    min-height: 200px;
 }
 
-.usage-item {
-    flex: 1;
+/* Стилі для скролбару */
+#cards-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+#cards-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#cards-container::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+#cards-container::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* =========================================== */
+/* МІНІ КАРТКИ */
+/* =========================================== */
+.mini-card {
+    flex: 0 0 260px;
+    width: 260px;
+    height: 160px;
+    background: linear-gradient(135deg, #1f2937, #111827);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
+    cursor: grab;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+.mini-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.mini-card.visa {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+.mini-card.mastercard {
+    background: linear-gradient(135deg, #2c3e50, #bdc3c7);
+}
+
+.mini-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: scale(0.95) !important;
+}
+
+.mini-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.mini-card-number {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+.mini-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Примарна картка */
+.mini-card.ghost-card {
+    background: transparent;
+    border: 2px dashed #d1d5db;
+    color: #9ca3af;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.mini-card.ghost-card:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: rgba(33, 122, 74, 0.02);
+    transform: translateY(-3px);
+}
+
+.ghost-content {
     text-align: center;
-    padding: 10px;
-    background-color: var(--gray-light);
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
 }
 
-.usage-label {
+.ghost-icon {
+    font-size: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.mini-card.ghost-card:hover .ghost-icon {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* =========================================== */
+/* ЗОНА ДЛЯ ВИДАЛЕННЯ КАРТОК (DRAG & DROP) */
+/* =========================================== */
+.delete-card-zone {
+    flex: 0 0 260px;
+    width: 260px;
+    height: 160px;
+    background-color: var(--gray-light);
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: default;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+    opacity: 0.8;
+}
+
+.delete-card-zone:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: #dc2626;
+    opacity: 1;
+}
+
+.delete-card-zone.drag-over {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: #dc2626;
+    border-style: solid;
+    animation: pulseDelete 0.5s infinite alternate;
+    opacity: 1;
+}
+
+.delete-card-zone.active {
+    opacity: 1;
+}
+
+.delete-card-zone .delete-card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--gray-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-main);
+    transition: all 0.3s;
+}
+
+.delete-card-zone:hover .delete-card-icon {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #dc2626;
+}
+
+.delete-card-zone .delete-card-text h4 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-main);
+    font-weight: 600;
+    text-align: center;
+}
+
+.delete-card-zone .delete-card-text p {
+    margin: 5px 0 0 0;
     font-size: 12px;
     color: var(--text-muted);
-    margin-bottom: 8px;
+    text-align: center;
 }
 
-.usage-amount {
-    font-family: 'Outfit', sans-serif;
-    font-size: 18px;
+/* Анімація для зони видалення */
+@keyframes pulseDelete {
+    from {
+        background-color: rgba(239, 68, 68, 0.15);
+    }
+    to {
+        background-color: rgba(239, 68, 68, 0.25);
+    }
+}
+
+/* СТИЛІ ДЛЯ ПУСТОГО СТАНУ КАРТОК */
+.no-cards-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-muted);
+    height: 200px;
+    width: 100%;
+    min-height: 200px;
+}
+
+.no-cards-message i {
+    font-size: 48px;
+    color: #d1d5db;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.no-cards-message h3 {
+    font-size: 22px;
     font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 10px;
 }
 
-.usage-amount.available {
-    color: var(--primary);
+.no-cards-message p {
+    font-size: 15px;
+    margin-bottom: 25px;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+.no-cards-message .btn-primary {
+    padding: 10px 20px;
+    font-size: 14px;
 }
 
 /* =========================================== */
 /* ТРАНЗАКЦІЇ */
 /* =========================================== */
-/* Filtros para transacciones */
 .transactions-header {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.transactions-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
     flex-wrap: wrap;
     gap: 15px;
 }
 
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
 .transactions-filters {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
 .filter-btn {
-    padding: 6px 12px;
-    background-color: var(--gray-light);
+    padding: 8px 16px;
+    background: var(--gray-light);
     border: 1px solid var(--border);
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
-    color: var(--text-main);
     cursor: pointer;
     transition: all 0.2s;
-    white-space: nowrap;
 }
 
 .filter-btn:hover {
-    background-color: rgba(33, 122, 74, 0.1);
+    background: rgba(33, 122, 74, 0.1);
     border-color: var(--primary);
 }
 
 .filter-btn.active {
-    background-color: var(--primary);
+    background: var(--primary);
     color: white;
     border-color: var(--primary);
 }
 
-/* Tabla de transacciones ЗІ СКРОЛОМ */
 .transactions-table {
-    flex-grow: 1; /* Займає всю доступну висоту */
+    flex: 1;
     overflow-x: auto;
-    overflow-y: auto; /* Вертикальний скрол */
-    -webkit-overflow-scrolling: touch; /* Для плавного скролу на iOS */
+    overflow-y: auto;
+    max-height: 400px;
     margin-top: 15px;
-    max-height: 530px; /* Фіксована максимальна висота */
 }
 
 .transactions-table table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Мінімальна ширина для горизонтального скролу */
+    min-width: 700px;
 }
 
 .transactions-table thead {
@@ -637,226 +860,35 @@
     white-space: nowrap;
 }
 
-.transaction-name {
+/* Стилі для категорій */
+.category-tags {
     display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.transaction-icon-small {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-}
-
-.transaction-icon-small.red {
-    background-color: rgba(244, 72, 27, 0.1);
-    color: var(--expense-red);
-}
-
-.transaction-icon-small.green {
-    background-color: rgba(0, 185, 52, 0.1);
-    color: var(--income-green);
-}
-
-.amount {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.amount.negative {
-    color: var(--expense-red);
-}
-
-.amount.positive {
-    color: var(--income-green);
-}
-
-/* Стилі для скролбару в транзакціях */
-.transactions-table::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.transactions-table::-webkit-scrollbar-track {
-    background: var(--gray-light);
-    border-radius: 3px;
-}
-
-.transactions-table::-webkit-scrollbar-thumb {
-    background: rgba(33, 122, 74, 0.5);
-    border-radius: 3px;
-    transition: background 0.3s;
-}
-
-.transactions-table::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
-}
-
-/* =========================================== */
-/* ДІАГРАМА ВИТРАТ */
-/* =========================================== */
-.chart-period {
-    display: flex;
+    flex-wrap: wrap;
     gap: 5px;
-    background-color: var(--gray-light);
-    padding: 3px;
-    border-radius: 20px;
 }
 
-.period-btn {
-    padding: 5px 12px;
-    background: none;
-    border: none;
-    border-radius: 16px;
-    font-size: 12px;
+.category-tag {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
     font-weight: 500;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s;
+    color: white;
 }
 
-.period-btn.active {
-    background-color: white;
-    color: var(--primary);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.chart-container {
-    margin-top: 15px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.chart-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    flex-grow: 1;
-}
-
-.pie-chart {
-    position: relative;
-    width: 200px;
-    height: 200px;
-}
-
-.pie-chart-circle {
-    width: 100%;
-    height: 100%;
-}
-
-.pie-svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.pie-background {
-    fill: none;
-    stroke: var(--gray-light);
-    stroke-width: 8;
-}
-
-.pie-segment {
-    fill: none;
-    stroke-width: 8;
-    stroke-linecap: round;
-}
-
-.pie-segment.food {
-    stroke: #ef4444;
-}
-
-.pie-segment.shopping {
-    stroke: #fbbf24;
-}
-
-.pie-segment.entertainment {
-    stroke: #a855f7;
-}
-
-.pie-segment.transport {
-    stroke: #60a5fa;
-}
-
-.pie-segment.other {
-    stroke: #34d399;
-}
-
-.chart-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
-
-.chart-total {
-    font-family: 'Outfit', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-main);
-}
-
-.chart-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 4px;
-}
-
-.chart-legend {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex-grow: 1;
-    justify-content: center;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(117, 117, 117, 0.1);
-}
-
-.legend-item:last-child {
-    border-bottom: none;
-}
-
-.legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
-.food-color { background-color: #ef4444; }
-.shopping-color { background-color: #fbbf24; }
-.entertainment-color { background-color: #a855f7; }
-.transport-color { background-color: #60a5fa; }
-.other-color { background-color: #34d399; }
-
-.legend-text {
-    flex: 1;
-    font-size: 13px;
-    color: var(--text-main);
-}
-
-.legend-amount {
-    font-family: 'Outfit', sans-serif;
-    font-size: 13px;
+/* Стилі для сум */
+.amount-income {
+    color: var(--income-green);
     font-weight: 600;
-    color: var(--text-main);
+}
+
+.amount-expense {
+    color: var(--expense-red);
+    font-weight: 600;
+}
+
+.amount-transfer {
+    color: #3b82f6;
+    font-weight: 600;
 }
 
 /* =========================================== */
@@ -867,10 +899,10 @@
     flex-direction: column;
     gap: 12px;
     margin-top: 10px;
-    flex-grow: 1;
-    overflow-y: auto; /* Вертикальний скрол */
-    max-height: 320px; /* Фіксована висота */
-    padding-right: 5px; /* Місце для скролбару */
+    flex: 1;
+    overflow-y: auto;
+    max-height: 320px;
+    padding-right: 5px;
 }
 
 .invoice-item {
@@ -879,7 +911,7 @@
     align-items: center;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(117, 117, 117, 0.1);
-    flex-shrink: 0; /* Не стискається */
+    flex-shrink: 0;
 }
 
 .invoice-item:last-child {
@@ -926,7 +958,6 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text-main);
-    margin-right: 30px;
 }
 
 /* View All Button */
@@ -947,38 +978,231 @@
     text-decoration: underline;
 }
 
-/* Стилі для скролбару в фактурах */
-.invoices-list::-webkit-scrollbar {
-    width: 6px;
+/* =========================================== */
+/* МОДАЛИ (ТАКІ ЖЕ ЯК В DESKTOP) */
+/* =========================================== */
+/* Основний стиль для всіх модалів */
+.tag-modal {
+    border: none;
+    border-radius: 24px;
+    padding: 0;
+    width: 95%;
+    max-width: 480px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    overflow: hidden;
+    background: #ffffff;
+    z-index: 10000;
 }
 
-.invoices-list::-webkit-scrollbar-track {
-    background: var(--gray-light);
-    border-radius: 3px;
+.tag-modal::backdrop {
+    background-color: rgba(31, 41, 55, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
-.invoices-list::-webkit-scrollbar-thumb {
-    background: rgba(33, 122, 74, 0.5);
-    border-radius: 3px;
-    transition: background 0.3s;
+/* Анімація відкриття */
+.tag-modal[open] {
+    animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.invoices-list::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Загальні стилі для контенту модалу */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-modal {
+    background: #f3f4f6;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+}
+
+.close-modal:hover {
+    background-color: #e5e7eb;
+    color: #111827;
+}
+
+.modal-body {
+    padding: 2rem;
+    background-color: #ffffff;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.form-group input,
+.account-dropdown {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #1f2937;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.account-dropdown:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(33, 122, 74, 0.1);
+}
+
+/* Стилі для вибору типу картки */
+.card-type-selector {
+    display: flex;
+    gap: 10px;
+}
+
+.type-option {
+    flex: 1;
+    cursor: pointer;
+    position: relative;
+}
+
+.type-option input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.type-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px;
+    border: 2px solid var(--gray-light);
+    border-radius: 10px;
+    transition: all 0.2s;
+    color: var(--text-muted);
+}
+
+.type-content i {
+    font-size: 24px;
+}
+
+.type-content span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.type-option input:checked + .type-content {
+    border-color: var(--primary);
+    background-color: rgba(33, 122, 74, 0.05);
+    color: var(--primary);
+}
+
+.type-option input:checked + .visa-style i {
+    color: #1a1a2e;
+}
+
+.type-option input:checked + .master-style i {
+    color: #eb001b;
+}
+
+/* Стилі для вибору типу movement */
+.type-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Footer модалу */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 1.5rem 2rem;
+    background-color: #ffffff;
+    border-top: none;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
 }
 
 /* =========================================== */
-/* АДАПТИВНІСТЬ ДЛЯ MIS TARJETAS - ФІКСИ ДЛЯ ТЕЛЕФОНУ */
+/* АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ */
 /* =========================================== */
 @media (max-width: 1200px) {
     .desktop-grid {
         grid-template-columns: 1fr;
-    }
-}
-
-@media (min-width: 993px) {
-    .mobile-nav {
-        display: none !important;
     }
 }
 
@@ -1038,81 +1262,71 @@
         overflow-x: hidden;
     }
     
-    /* ФІКС ДЛЯ КАРТОК - РОБИМО ЇХ МЕНШИМИ */
-    .cards-carousel {
-        height: 120px;
+    /* Виправлення для випадаючого меню */
+    .account-selector {
+        min-width: 250px;
+        width: 100%;
     }
     
-    .credit-card-compact {
-        left: 15%;
-        width: 70%;
-        padding: 12px;
-    }
-    
-    .card-type {
-        font-size: 13px;
-    }
-    
-    .card-number {
-        font-size: 14px;
-    }
-    
-    .card-details {
-        font-size: 11px;
-    }
-    
-    /* ФІКС ДЛЯ СТАТИСТИКИ КАРТОК - РОБИМО ВИЩЕ */
-    .card-usage {
-        margin-top: 20px;
-        padding-top: 20px;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .usage-item {
-        padding: 12px;
-    }
-    
-    .usage-label {
-        font-size: 13px;
-    }
-    
-    .usage-amount {
-        font-size: 16px;
-    }
-    
-    /* ФІКС ДЛЯ ТРАНЗАКЦІЙ - ГОРИЗОНТАЛЬНИЙ СКРОЛ */
-    .transactions-header {
+    .card-header-compact {
         flex-direction: column;
         align-items: flex-start;
+        gap: 15px;
+    }
+    
+    /* Міні-картки на мобільних */
+    .mini-card {
+        flex: 0 0 220px;
+        width: 220px;
+        height: 140px;
+        padding: 15px;
+    }
+    
+    .delete-card-zone {
+        flex: 0 0 220px;
+        width: 220px;
+        height: 140px;
+    }
+    
+    .mini-card-number {
+        font-size: 1rem;
+    }
+    
+    .mini-card-top span {
+        font-size: 0.8rem;
+    }
+    
+    .mini-card-top i {
+        font-size: 1.5rem;
+    }
+    
+    /* Кнопки транзакцій */
+    .transactions-actions {
+        flex-direction: column;
+        align-items: stretch;
         gap: 10px;
+    }
+    
+    #createMovementBtn {
+        width: 100%;
+        justify-content: center;
     }
     
     .transactions-filters {
         width: 100%;
-        justify-content: flex-start;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 8px;
-        -webkit-overflow-scrolling: touch;
+        justify-content: center;
     }
     
-    .filter-btn {
-        flex-shrink: 0;
-        font-size: 11px;
-        padding: 5px 10px;
-    }
-    
-    /* ФІКС ДЛЯ ТАБЛИЦІ - ГОРИЗОНТАЛЬНИЙ СКРОЛ */
+    /* Таблиця транзакцій */
     .transactions-table {
+        max-height: 350px;
         margin: 10px -10px;
         padding: 0 10px;
         width: calc(100% + 20px);
-        max-height: 350px;
     }
     
     .transactions-table table {
-        min-width: 700px; /* Забезпечуємо горизонтальний скрол */
+        min-width: 700px;
     }
     
     .transactions-table th,
@@ -1121,84 +1335,86 @@
         font-size: 12px;
     }
     
-    /* ФІКС ДЛЯ ДІАГРАМИ */
-    .chart-wrapper {
-        gap: 15px;
-    }
-    
-    .pie-chart {
-        width: 180px;
-        height: 180px;
-    }
-    
-    .chart-total {
-        font-size: 20px;
-    }
-    
-    /* ФІКС ДЛЯ ФАКТУР */
-    .invoice-item {
-        padding-bottom: 10px;
-    }
-    
-    .invoice-icon {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .invoice-info h4 {
-        font-size: 13px;
-    }
-    
-    .invoice-time {
-        font-size: 10px;
-    }
-    
-    .card-title {
-        font-size: 22px;
-    }
-    
-    .view-all-btn {
-        font-size: 14px;
-    }
-    
-    .invoices-list {
-        max-height: 280px;
+    .transactions-table th:nth-child(2),
+    .transactions-table td:nth-child(2) {
+        display: none;
     }
 }
 
-/* iPhone 12 та подібні (до 430px) */
-@media (max-width: 480px) {
+/* iPhone та маленькі екрани (до 768px) */
+@media (max-width: 768px) {
     .desktop-header {
         left: 10px;
         right: 10px;
-        top: 10px;
         padding: 0 20px;
-        height: 70px;
+    }
+    
+    .card-title {
+        font-size: 20px;
+    }
+    
+    .transactions-filters {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    /* Міні-картки на маленьких екранах */
+    .mini-card {
+        flex: 0 0 200px;
+        width: 200px;
+        height: 130px;
+        padding: 12px;
+    }
+    
+    .delete-card-zone {
+        flex: 0 0 200px;
+        width: 200px;
+        height: 130px;
+    }
+    
+    /* Модали */
+    .tag-modal {
+        width: 90%;
+        max-width: 400px;
+    }
+    
+    .modal-header {
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-footer {
+        padding: 1.25rem 1.5rem;
+    }
+}
+
+/* Маленькі телефони (до 480px) */
+@media (max-width: 480px) {
+    .desktop-header {
+        padding: 0 15px;
+        height: 60px;
     }
     
     .desktop-brand {
-        height: 100px;
-        margin-left: -3%;
+        margin-left: 0;
     }
     
     .desktop-header-right {
-        width: 100%;
-        margin-right: -4%;
         gap: 10px;
     }
     
     .top-icon {
-        width: 32px;
-        height: 32px;
+        width: 35px;
+        height: 35px;
         font-size: 14px;
-    }
-    
-    .notification-badge {
-        width: 18px;
-        height: 18px;
-        font-size: 10px;
-        top: -3px;
-        right: -3px;
     }
     
     .user-avatar-top {
@@ -1222,92 +1438,57 @@
         font-size: 16px;
     }
     
-    .desktop-main {
-        padding: 80px 10px 30px;
-    }
-    
     .page-title {
-        font-size: 32px;
-        margin-top: -15%;
+        font-size: 24px;
+        margin-top: 0;
     }
     
     .date-container {
-        padding: 5px 12px;
-        font-size: 14px;
-    }
-
-    .page-header{
-        margin-left: 10px;
-    }
-    
-    .desktop-grid {
-        gap: 15px;
-    }
-    
-    .card {
-        width: 350px;
-        margin-left: 10px;
-        padding: 20px;
-    }
-    
-    .card-title {
-        font-size: 25px;
-    }
-    
-    /* ФІКС ДЛЯ КАРТОК НА МОБІЛЬНОМУ */
-    .credit-card-compact{
-        width: 95%;
-        height: 130px;
-        left: 10px;
-    }
-    
-    .cards-carousel {
-        height: 130px;
-    }
-    
-    .card-type {
+        padding: 4px 10px;
         font-size: 12px;
     }
     
-    .card-number {
+    .desktop-main {
+        padding: 80px 15px 30px 15px;
+    }
+    
+    /* Випадаюче меню карток */
+    .account-selector {
+        min-width: 100%;
+    }
+    
+    .account-dropdown {
+        padding: 8px 35px 8px 12px;
         font-size: 13px;
-        letter-spacing: 1px;
     }
     
-    .card-details {
-        font-size: 10px;
+    /* Міні-картки */
+    .mini-card {
+        flex: 0 0 180px;
+        width: 180px;
+        height: 120px;
+        padding: 12px;
     }
     
-    .card-counter {
-        font-size: 11px;
-        min-width: 30px;
+    .delete-card-zone {
+        flex: 0 0 180px;
+        width: 180px;
+        height: 120px;
     }
     
-    /* ФІКС ДЛЯ СТАТИСТИКИ КАРТОК - РОБИМО ЩЕ ВИЩЕ */
-    .card-usage {
-        margin-top: 25px;
-        padding-top: 20px;
-        gap: 8px;
+    .mini-card-number {
+        font-size: 0.9rem;
+        margin-top: 8px;
     }
     
-    .usage-item {
-        padding: 10px 8px;
+    .ghost-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
     }
     
-    .usage-label {
-        font-size: 11px;
-        margin-bottom: 5px;
-    }
-    
-    .usage-amount {
-        font-size: 16px;
-    }
-    
-    /* ФІКС ДЛЯ ТАБЛИЦІ НА МОБІЛЬНОМУ */
+    /* Таблиця транзакцій */
     .transactions-table {
-        margin: 10px -5px;
-        padding: 0 5px;
-        width: calc(100% + 10px);
         max-height: 300px;
     }
     
@@ -1315,99 +1496,82 @@
         min-width: 650px;
     }
     
-    .transactions-table th,
-    .transactions-table td {
-        padding: 8px 6px;
-        font-size: 11px;
+    .transactions-table th:nth-child(2),
+    .transactions-table td:nth-child(2),
+    .transactions-table th:nth-child(5),
+    .transactions-table td:nth-child(5) {
+        display: none;
     }
     
-    .transaction-icon-small {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-    }
-    
-    .transaction-name {
-        gap: 6px;
-    }
-    
-    /* ФІКС ДЛЯ ДІАГРАМИ НА МОБІЛЬНОМУ */
-    .chart-period {
-        padding: 2px;
-    }
-    
-    .period-btn {
-        padding: 4px 10px;
-        font-size: 11px;
-    }
-    
-    .chart-wrapper {
-        gap: 12px;
-    }
-    
-    .pie-chart {
-        width: 150px;
-        height: 150px;
-    }
-    
-    .chart-total {
-        font-size: 18px;
-    }
-    
-    .chart-label {
-        font-size: 11px;
-    }
-    
-    .legend-item {
-        padding: 6px 0;
-    }
-    
-    .legend-text {
-        font-size: 12px;
-    }
-    
-    .legend-amount {
-        font-size: 12px;
-    }
-    
-    /* ФІКС ДЛЯ ФАКТУР НА МОБІЛЬНОМУ */
-    .invoice-item {
-        padding-bottom: 8px;
+    /* Фактури */
+    .invoices-list {
+        max-height: 250px;
     }
     
     .invoice-icon {
-        width: 32px;
-        height: 32px;
+        width: 35px;
+        height: 35px;
         font-size: 14px;
     }
     
     .invoice-info h4 {
-        font-size: 12px;
-    }
-    
-    .invoice-time {
-        font-size: 9px;
-    }
-    
-    .invoice-amount {
         font-size: 13px;
     }
     
-    .view-all-btn {
-        font-size: 12px;
+    .invoice-time {
+        font-size: 10px;
     }
     
-    .invoices-list {
-        max-height: 250px;
+    /* Модали */
+    .tag-modal {
+        width: 95%;
+        max-width: 320px;
+    }
+    
+    .modal-header {
+        padding: 1rem 1.25rem;
+    }
+    
+    .modal-body {
+        padding: 1.25rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.25rem;
+    }
+    
+    .type-selector,
+    .card-type-selector {
+        flex-direction: column;
+    }
+    
+    /* Пустий стан карток */
+    .no-cards-message {
+        padding: 30px 15px;
+        height: 180px;
+    }
+    
+    .no-cards-message i {
+        font-size: 36px;
+        margin-bottom: 15px;
+    }
+    
+    .no-cards-message h3 {
+        font-size: 18px;
+    }
+    
+    .no-cards-message p {
+        font-size: 13px;
+        margin-bottom: 20px;
     }
 }
 
-/* Малі телефони (до 375px - iPhone 12) */
-@media (max-width: 375px) {
+/* Дуже маленькі екрани (до 350px) */
+@media (max-width: 350px) {
     .desktop-header {
         left: 5px;
         right: 5px;
-        padding: 0 12px;
+        padding: 0 10px;
     }
     
     .top-icon {
@@ -1415,96 +1579,79 @@
         height: 30px;
     }
     
-    .user-avatar-top {
-        width: 32px;
-        height: 32px;
+    .notification-badge {
+        width: 16px;
+        height: 16px;
+        font-size: 9px;
+        top: -2px;
+        right: -2px;
     }
     
     .page-title {
         font-size: 22px;
     }
     
-    .card-title {
-        font-size: 18px;
-    }
-    
-    /* ФІКС ДЛЯ КАРТОК НА ДУЖЕ МАЛОМУ ЕКРАНІ */
-    .credit-card-compact {
-        left: 0;
-        width: 100%;
-        height: 100px;
-    }
-    
-    .cards-carousel {
-        height: 100px;
-    }
-    
-    .card-type {
-        font-size: 11px;
-    }
-    
-    .card-number {
+    .date-container {
+        padding: 4px 10px;
         font-size: 12px;
     }
     
-    .card-details {
-        font-size: 9px;
+    /* Міні-картки */
+    .mini-card {
+        flex: 0 0 160px;
+        width: 160px;
+        height: 110px;
+        padding: 10px;
     }
     
-    /* ФІКС ДЛЯ СТАТИСТИКИ КАРТОК - ЩЕ ВИЩЕ */
-    .card-usage {
-        margin-top: 30px;
-        padding-top: 20px;
+    .delete-card-zone {
+        flex: 0 0 160px;
+        width: 160px;
+        height: 110px;
     }
     
-    .usage-item {
-        padding: 12px 6px;
+    .mini-card-top span {
+        font-size: 0.7rem;
     }
     
-    .usage-label {
-        font-size: 10px;
+    .mini-card-number {
+        font-size: 0.8rem;
+        letter-spacing: 1px;
     }
     
-    .usage-amount {
-        font-size: 15px;
-    }
-    
-    /* ФІКС ДЛЯ ТАБЛИЦІ НА ДУЖЕ МАЛОМУ ЕКРАНІ */
+    /* Таблиця */
     .transactions-table table {
         min-width: 600px;
     }
     
     .transactions-table th,
     .transactions-table td {
-        padding: 6px 4px;
-        font-size: 10px;
-    }
-    
-    /* ФІКС ДЛЯ ДІАГРАМИ НА ДУЖЕ МАЛОМУ ЕКРАНІ */
-    .pie-chart {
-        width: 130px;
-        height: 130px;
-    }
-    
-    .chart-total {
-        font-size: 16px;
-    }
-    
-    .transactions-table {
-        max-height: 280px;
-    }
-    
-    .invoices-list {
-        max-height: 220px;
+        padding: 8px 6px;
+        font-size: 11px;
     }
 }
 
-/* Fix для горизонтальної прокрутки на мобільних */
+/* Фікс для горизонтального скролу на мобільних */
 @media (max-width: 992px) {
     .desktop-body {
         overflow-x: hidden;
         width: 100%;
         position: relative;
+    }
+    
+    /* Стилі для горизонтального скролу карток */
+    #cards-container::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    #cards-container::-webkit-scrollbar-track {
+        background: var(--gray-light);
+        border-radius: 2px;
+    }
+    
+    #cards-container::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 2px;
     }
     
     /* Стилі для горизонтального скролу таблиці */
@@ -1521,60 +1668,36 @@
         background: var(--primary);
         border-radius: 2px;
     }
-    
-    /* Стилі для горизонтального скролу фільтрів */
-    .transactions-filters::-webkit-scrollbar {
-        height: 3px;
+}
+
+/* Фікс для iPad у альбомній орієнтації */
+@media (min-width: 768px) and (max-width: 992px) and (orientation: landscape) {
+    .desktop-grid {
+        grid-template-columns: 1fr 1fr;
     }
     
-    .transactions-filters::-webkit-scrollbar-track {
-        background: var(--gray-light);
-        border-radius: 2px;
+    .mobile-nav {
+        display: none;
     }
     
-    .transactions-filters::-webkit-scrollbar-thumb {
-        background: var(--primary);
-        border-radius: 2px;
+    .sidebar {
+        display: flex;
+    }
+    
+    .desktop-main {
+        margin-left: 110px;
+        padding: 20px 30px 30px 30px;
+        max-width: calc(100% - 110px);
     }
 }
 
-/* Фікс для дуже малих екранів */
-@media (max-width: 350px) {
-    .pie-chart {
-        width: 120px;
-        height: 120px;
-    }
-    
-    .chart-total {
-        font-size: 15px;
-    }
-    
-    .chart-label {
-        font-size: 10px;
-    }
-    
-    .legend-text {
-        font-size: 11px;
-    }
-    
-    .legend-amount {
-        font-size: 11px;
-    }
-    
-    .credit-card-compact {
-        height: 95px;
-        padding: 10px;
-    }
-    
-    .cards-carousel {
-        height: 95px;
-    }
-    
+/* Фікс для високих екранів */
+@media (min-height: 800px) and (max-width: 992px) {
     .transactions-table {
-        max-height: 260px;
+        max-height: 450px;
     }
     
     .invoices-list {
-        max-height: 200px;
+        max-height: 380px;
     }
 }
