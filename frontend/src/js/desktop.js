@@ -235,7 +235,7 @@ function renderEmptyState() {
                 <p style="font-size: 0.9rem;">Crea un sobre digital para empezar a ahorrar.</p>
             </div>
             
-            <button onclick="openCreateGoalModal()" 
+            <button onclick="openGoalModal()" 
                     style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
                 <i class="fas fa-plus"></i> Crear mi primer sobre
             </button>

@@ -5,39 +5,36 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use App\Models\Profile; // Importante
 
 class ProfileController extends Controller
 {
-    // 1. OBTENER DATOS (GET)
+    // 1. VER (GET)
     public function show(Request $request)
     {
-        // Cargamos el usuario Y su perfil asociado
+        // Cargamos usuario y perfil para pasarlo a la vista
         $user = $request->user()->load('profile');
-        return response()->json($user);
+        return view('ajustes', compact('user'));
     }
 
-    // 2. ACTUALIZAR DATOS (PUT)
+    // 2. ACTUALIZAR (PUT)
     public function update(Request $request)
     {
         $user = $request->user();
 
-        // Validamos todo junto
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255', // Enviaremos 'first_name' desde JS
-            'last_name'  => 'nullable|string|max:255', // Enviaremos 'last_name' desde JS
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'nullable|string|max:255',
             'email'      => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'phone'      => 'nullable|string|max:20',
         ]);
 
-        // A. Actualizar Tabla USERS (Nombre y Email)
+        // Actualizar Tabla Users
         $user->update([
-            'name'  => $validated['first_name'], // En users.name guardamos el nombre de pila
+            'name'  => $validated['first_name'],
             'email' => $validated['email'],
         ]);
 
-        // B. Actualizar Tabla PROFILES (Apellido y Teléfono)
-        // updateOrCreate busca el perfil por user_id, si no existe lo crea, si existe lo actualiza
+        // Actualizar Tabla Profiles
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -46,19 +43,16 @@ class ProfileController extends Controller
             ]
         );
 
-        // Devolvemos el usuario recargado con los cambios
-        return response()->json([
-            'message' => 'Perfil actualizado', 
-            'user' => $user->load('profile')
-        ]);
+        // REDIRECCIÓN con mensaje de éxito (Flash Message)
+        return redirect()->route('profile.view')->with('success', 'Perfil actualizado correctamente.');
     }
 
-    // 3. LOGOUT (Sin cambios, el tuyo estaba bien, pero asegúrate de los imports)
+    // 3. LOGOUT (POST)
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return response()->json(['message' => 'Sesión cerrada']);
+        return redirect('/login');
     }
 }

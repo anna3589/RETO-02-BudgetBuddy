@@ -15,12 +15,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 2. LÓGICA DEL CEREBRO (Dashboard)
     Route::get('/dashboard', function () {
         $user = Auth::user();
-        
+
         // Si no tiene cuentas -> Al Wizard de configuración
         if ($user->accounts()->count() === 0) {
             return redirect()->route('setup.view');
         }
-        
+
         // Si ya tiene cuentas -> Al Escritorio Principal
         return redirect()->route('desktop.index');
     })->name('dashboard');
@@ -34,17 +34,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return redirect()->route('dashboard');
         }
         // Retorna la vista resources/views/setup.blade.php
-        return view('setup'); 
+        return view('setup');
     })->name('setup.view');
 
     // Ruta DESKTOP (Blade) - DESCOMENTADA Y ARREGLADA
     // Esta es la ruta que te faltaba y por la que fallaba la redirección anterior
     Route::get('/desktop', function () {
         // Retorna la vista resources/views/desktop.blade.php
-        return view('desktop'); 
+        return view('desktop');
     })->name('desktop.index');
 
+    Route::get('/ajustes', [ProfileController::class, 'show'])->name('profile.view');
 
+    // 2. Guardar cambios (PUT)
+    // Usamos el método 'update' del controlador
+    Route::put('/ajustes', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // ¡IMPORTANTE! Faltaba el punto y coma aquí al final
