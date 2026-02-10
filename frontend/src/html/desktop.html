@@ -27,7 +27,6 @@
 			</div>
 
 			<div class="desktop-header-right">
-				
 				<div class="user-profile-top">
 					<div class="user-avatar-top" title="Mi perfil">...</div>
 				</div>
@@ -92,32 +91,36 @@
 					class="nav-item active"
 					data-page="dashboard"
 					title="Panel general"
+					aria-label="Panel general"
 				>
-					<i class="fas fa-home"></i>
+					<i class="fas fa-home" aria-hidden="true"></i>
 				</a>
 				<a
 					href="/estadisticas"
 					class="nav-item"
 					data-page="estadisticas"
 					title="Estadísticas"
+					aria-label="Estadísticas"
 				>
-					<i class="fas fa-chart-line"></i>
+					<i class="fas fa-chart-line" aria-hidden="true"></i>
 				</a>
 				<a
 					href="/misTarjetas"
 					class="nav-item"
 					data-page="cards"
 					title="Mis tarjetas"
+					aria-label="Mis tarjetas"
 				>
-					<i class="fas fa-credit-card"></i>
+					<i class="fas fa-credit-card" aria-hidden="true"></i>
 				</a>
 				<a
 					href="/ajustes"
 					class="nav-item"
 					data-page="profile"
 					title="Mi cuenta"
+					aria-label="Ajustes de cuenta"
 				>
-					<i class="fas fa-cog"></i>
+					<i class="fas fa-cog" aria-hidden="true"></i>
 				</a>
 			</div>
 		</div>
@@ -138,7 +141,11 @@
 							<div class="card-header-compact">
 								<h2 class="card-title">Mis Cuentas</h2>
 								<div class="account-selector">
-									<select id="bankAccountSelect" class="account-dropdown">
+									<select
+										id="bankAccountSelect"
+										aria-label="Selecciona una cuenta bancaria"
+										class="account-dropdown"
+									>
 										<option>Cargando cuentas...</option>
 									</select>
 									<div class="dropdown-arrow">
@@ -174,9 +181,6 @@
 											<i class="fas fa-euro-sign"></i> Saldo disponible
 										</div>
 										<div class="detail-value balance-amount">--- €</div>
-										<div class="balance-change positive">
-											<i class="fas fa-arrow-up"></i> 0.00%
-										</div>
 									</div>
 								</div>
 							</div>
@@ -188,32 +192,50 @@
 									id="open-account-modal-btn"
 									class="btn-primary"
 									title="Añadir nueva cuenta"
+									aria-label="Añadir nueva cuenta"
 								>
 									<i class="fas fa-plus"></i>
 								</button>
 							</div>
 
-							<dialog id="account-modal" class="tag-modal">
+							<!--=== Modal de creación de Nueva Cuenta ===-->
+							<dialog
+								id="account-modal"
+								class="tag-modal"
+								aria-labelledby="account-modal-title"
+								aria-modal="true"
+							>
 								<div class="modal-content">
 									<div class="modal-header">
-										<h3><i class="fas fa-university"></i> Nueva Cuenta</h3>
-										<button class="close-modal" id="close-account-modal-btn">
-											&times;
+										<h3 id="account-modal-title">
+											<i class="fas fa-university" aria-hidden="true"></i> Nueva
+											Cuenta
+										</h3>
+										<button
+											class="close-modal"
+											id="close-account-modal-btn"
+											aria-label="Cerrar ventana modal"
+										>
+											<span aria-hidden="true">&times;</span>
 										</button>
 									</div>
+
 									<div class="modal-body">
 										<form id="create-account-form">
 											<div class="form-group">
-												<label>Nombre del Banco</label>
+												<label for="acc-name">Nombre del Banco</label>
 												<input
 													type="text"
 													id="acc-name"
+													name="account_name"
 													placeholder="Ej: Santander Ahorro"
 													required
+													aria-required="true"
 												/>
 											</div>
+
 											<div class="form-group">
-												<label>IBAN</label>
+												<label for="acc-iban">IBAN</label>
 												<div
 													style="
 														display: flex;
@@ -225,6 +247,8 @@
 												>
 													<select
 														id="acc-iban-country"
+														name="iban_country"
+														aria-label="País del IBAN"
 														style="
 															border: none;
 															background: #f9fafb;
@@ -247,8 +271,10 @@
 													<input
 														type="text"
 														id="acc-iban"
+														name="iban_number"
 														placeholder="0000 0000 00..."
 														required
+														aria-required="true"
 														style="
 															border: none;
 															flex: 1;
@@ -258,52 +284,32 @@
 													/>
 												</div>
 												<p
+													id="iban-help"
 													style="
 														font-size: 0.75rem;
-														color: #6b7280;
+														color: #1f2937;
 														margin-top: 4px;
 													"
 												>
 													Solo los 22 dígitos restantes.
 												</p>
 											</div>
+
 											<div class="form-group">
-												<label>Saldo Inicial</label>
+												<label for="acc-balance">Saldo Inicial</label>
 												<input
 													type="number"
 													id="acc-balance"
+													name="initial_balance"
 													step="0.01"
 													placeholder="0.00"
 													required
+													aria-required="true"
 												/>
-											</div>
-											<div class="form-group">
-												<label>Color</label>
-												<div class="color-picker" id="acc-color-picker">
-													<div
-														class="color-option selected"
-														data-color="#217A4A"
-														style="background: #217a4a"
-													></div>
-													<div
-														class="color-option"
-														data-color="#1d4ed8"
-														style="background: #1d4ed8"
-													></div>
-													<div
-														class="color-option"
-														data-color="#dc2626"
-														style="background: #dc2626"
-													></div>
-													<div
-														class="color-option"
-														data-color="#fbbf24"
-														style="background: #fbbf24"
-													></div>
-												</div>
 											</div>
 										</form>
 									</div>
+
 									<div class="modal-footer">
 										<button class="btn-secondary" id="cancel-account-btn">
 											Cancelar
@@ -393,24 +399,42 @@
 								</div>
 
 								<div class="form-group">
-									<label>Tipo de Tarjeta</label>
-									<div class="card-type-selector">
+									<span
+										id="card-type-label"
+										style="
+											display: block;
+											margin-bottom: 5px;
+											font-weight: bold;
+										"
+										>Tipo de Tarjeta</span
+									>
+									<div
+										class="card-type-selector"
+										role="radiogroup"
+										aria-labelledby="card-type-label"
+									>
 										<label class="type-option">
 											<input
 												type="radio"
 												name="card_type"
 												value="debit"
 												checked
+												aria-label="Visa Débito"
 											/>
 											<div class="type-content visa-style">
-												<i class="fab fa-cc-visa"></i>
+												<i class="fab fa-cc-visa" aria-hidden="true"></i>
 												<span>Visa (Débito)</span>
 											</div>
 										</label>
 										<label class="type-option">
-											<input type="radio" name="card_type" value="credit" />
+											<input
+												type="radio"
+												name="card_type"
+												value="credit"
+												aria-label="Mastercard Crédito"
+											/>
 											<div class="type-content master-style">
-												<i class="fab fa-cc-mastercard"></i>
+												<i class="fab fa-cc-mastercard" aria-hidden="true"></i>
 												<span>Mastercard (Crédito)</span>
 											</div>
 										</label>
@@ -470,7 +494,7 @@
 										<i class="fas fa-trash"></i>
 									</div>
 									<div class="delete-tag-text">
-										<h4>Eliminar etiqueta</h4>
+										<h3>Eliminar etiqueta</h3>
 										<p>Arrastra aquí para eliminar</p>
 									</div>
 								</div>
@@ -494,15 +518,9 @@
 										cursor: pointer;
 										color: var(--primary);
 									"
+									aria-label="Añadir nueva meta financiera"
 								>
 									<i class="fas fa-plus"></i>
-								</button>
-								<button
-									class="view-all-btn"
-									id="viewAllGoals"
-									style="font-size: 14px"
-								>
-									Ver todas <i class="fas fa-arrow-right"></i>
 								</button>
 							</div>
 
@@ -521,8 +539,17 @@
 		<dialog id="tagModal" class="tag-modal">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3><i class="fas fa-tag"></i> Crear Nueva Etiqueta</h3>
-					<button class="close-modal" id="closeModal">&times;</button>
+					<h3>
+						<i class="fas fa-tag" style="color: #4a5568"></i> Crear Nueva
+						Etiqueta
+					</h3>
+					<button
+						class="close-modal"
+						aria-label="Cerrar ventana de nueva etiqueta"
+						id="closeModal"
+					>
+						&times;
+					</button>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
@@ -531,11 +558,21 @@
 							type="text"
 							id="tagName"
 							placeholder="Ej: Gimnasio, Netflix, Gasolina..."
+							aria-required="true"
 						/>
 					</div>
 					<div class="form-group">
-						<label for="tagColor">Color de la etiqueta</label>
-						<div class="color-picker">
+						<span
+							id="color-label"
+							style="display: block; margin-bottom: 5px; font-weight: bold"
+						>
+							Color de la etiqueta
+						</span>
+						<div
+							class="color-picker"
+							role="radiogroup"
+							aria-labelledby="color-label"
+						>
 							<div
 								class="color-option"
 								style="background-color: #34d399"
@@ -569,8 +606,12 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="tagIcon">Icono</label>
-						<div class="icon-picker">
+						<span id="icon-label" for="tagIcon">Icono</span>
+						<div
+							class="icon-picker"
+							role="radiogroup"
+							aria-labelledby="icon-label"
+						>
 							<div class="icon-option" data-icon="dumbbell">
 								<i class="fas fa-dumbbell"></i>
 							</div>
@@ -599,22 +640,36 @@
 			</div>
 		</dialog>
 
-		<dialog id="goal-modal" class="tag-modal">
+		<!-- ====== Modal para añadir metas financieras ====== -->
+		<dialog
+			id="goal-modal"
+			class="tag-modal"
+			aria-labelledby="goal-modal-title"
+			aria-modal="true"
+		>
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 id="goal-modal-title">
-						<i class="fas fa-bullseye"></i> Nueva Meta
+						<i class="fas fa-bullseye" aria-hidden="true"></i> Nueva Meta
 					</h3>
-					<button class="close-modal" id="close-goal-modal-btn">&times;</button>
+					<button
+						class="close-modal"
+						id="close-goal-modal-btn"
+						aria-label="Cerrar ventana modal"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
 				</div>
 
 				<form id="goal-form" class="modal-body">
 					<input type="hidden" id="goal-id" />
+
 					<div class="form-group">
-						<label>Nombre de la Meta</label>
+						<label for="goal-name">Nombre de la Meta</label>
 						<input
 							type="text"
 							id="goal-name"
+							name="goal_name"
 							placeholder="Ej: Viaje a Japón"
 							required
 							maxlength="30"
@@ -623,10 +678,11 @@
 
 					<div style="display: flex; gap: 15px">
 						<div class="form-group" style="flex: 1">
-							<label>Meta (€)</label>
+							<label for="goal-target">Meta (€)</label>
 							<input
 								type="number"
 								id="goal-target"
+								name="goal_target"
 								placeholder="2000"
 								required
 								step="10"
@@ -634,10 +690,11 @@
 						</div>
 
 						<div class="form-group" style="flex: 1">
-							<label>Ahorrado (€)</label>
+							<label for="goal-current">Ahorrado (€)</label>
 							<input
 								type="number"
 								id="goal-current"
+								name="goal_current"
 								placeholder="0"
 								required
 								step="10"
@@ -646,44 +703,112 @@
 					</div>
 
 					<div class="form-group">
-						<label>Icono</label>
-						<div class="icon-picker" id="goal-icon-picker">
-							<div class="icon-option selected" data-icon="plane">
-								<i class="fas fa-plane"></i>
+						<label id="icon-label">Icono</label>
+						<div
+							class="icon-picker"
+							id="goal-icon-picker"
+							role="radiogroup"
+							aria-labelledby="icon-label"
+						>
+							<div
+								class="icon-option selected"
+								data-icon="plane"
+								role="radio"
+								aria-checked="true"
+								tabindex="0"
+								aria-label="Avión"
+							>
+								<i class="fas fa-plane" aria-hidden="true"></i>
 							</div>
-							<div class="icon-option" data-icon="car">
-								<i class="fas fa-car"></i>
+
+							<div
+								class="icon-option"
+								data-icon="car"
+								role="radio"
+								aria-checked="false"
+								tabindex="0"
+								aria-label="Coche"
+							>
+								<i class="fas fa-car" aria-hidden="true"></i>
 							</div>
-							<div class="icon-option" data-icon="home">
-								<i class="fas fa-home"></i>
+
+							<div
+								class="icon-option"
+								data-icon="home"
+								role="radio"
+								aria-checked="false"
+								tabindex="0"
+								aria-label="Casa"
+							>
+								<i class="fas fa-home" aria-hidden="true"></i>
 							</div>
-							<div class="icon-option" data-icon="laptop">
-								<i class="fas fa-laptop"></i>
+
+							<div
+								class="icon-option"
+								data-icon="laptop"
+								role="radio"
+								aria-checked="false"
+								tabindex="0"
+								aria-label="Ordenador"
+							>
+								<i class="fas fa-laptop" aria-hidden="true"></i>
 							</div>
-							<div class="icon-option" data-icon="mobile-alt">
-								<i class="fas fa-mobile-alt"></i>
+
+							<div
+								class="icon-option"
+								data-icon="mobile-alt"
+								role="radio"
+								aria-checked="false"
+								tabindex="0"
+								aria-label="Móvil"
+							>
+								<i class="fas fa-mobile-alt" aria-hidden="true"></i>
 							</div>
-							<div class="icon-option" data-icon="gift">
-								<i class="fas fa-gift"></i>
+
+							<div
+								class="icon-option"
+								data-icon="gift"
+								role="radio"
+								aria-checked="false"
+								tabindex="0"
+								aria-label="Regalo"
+							>
+								<i class="fas fa-gift" aria-hidden="true"></i>
 							</div>
-							<div class="icon-option" data-icon="gamepad">
-								<i class="fas fa-gamepad"></i>
+
+							<div
+								class="icon-option"
+								data-icon="gamepad"
+								role="radio"
+								aria-checked="false"
+								tabindex="0"
+								aria-label="Videojuegos"
+							>
+								<i class="fas fa-gamepad" aria-hidden="true"></i>
 							</div>
-							<div class="icon-option" data-icon="graduation-cap">
-								<i class="fas fa-graduation-cap"></i>
+
+							<div
+								class="icon-option"
+								data-icon="graduation-cap"
+								role="radio"
+								aria-checked="false"
+								tabindex="0"
+								aria-label="Graduación"
+							>
+								<i class="fas fa-graduation-cap" aria-hidden="true"></i>
 							</div>
 						</div>
 					</div>
 				</form>
 
 				<div class="modal-footer" style="justify-content: space-between">
-					<buttonbutton
+					<button
 						class="btn-secondary"
 						id="delete-goal-btn"
 						style="color: #ef4444; border-color: #ef4444; display: none"
-						aria-label="Eliminar meta"
+						aria-label="Eliminar meta actual"
 					>
-						<i class="fas fa-trash"></i>
+						<i class="fas fa-trash" aria-hidden="true"></i>
 					</button>
 
 					<div style="display: flex; gap: 10px">
@@ -693,39 +818,6 @@
 				</div>
 			</div>
 		</dialog>
-		<!-- Popup para todas las Metas Financieras -->
-		<div class="goals-modal-overlay" id="goalsModal">
-			<div class="goals-modal">
-				<div class="goals-modal-header">
-					<h2 class="goals-modal-title">
-						<i class="fas fa-bullseye"></i> Todas las Metas Financieras
-					</h2>
-					<button class="goals-modal-close" id="closeGoalsModal" aria-label="Cerrar metas">
-						<i class="fas fa-times" aria-hidden="true"></i>
-					</button>
-				</div>
-				<div class="goals-modal-content">
-					<div class="goals-modal-stats">
-						<div class="goals-modal-stat-item">
-							<div class="goals-modal-stat-value">8</div>
-							<div class="goals-modal-stat-label">Total metas</div>
-						</div>
-						<div class="goals-modal-stat-item">
-							<div class="goals-modal-stat-value">6.450€</div>
-							<div class="goals-modal-stat-label">Total ahorrado</div>
-						</div>
-						<div class="goals-modal-stat-item">
-							<div class="goals-modal-stat-value">65%</div>
-							<div class="goals-modal-stat-label">Progreso promedio</div>
-						</div>
-					</div>
-
-					<div class="goals-modal-list" id="allGoalsList">
-						<!-- Цілі будуть додаватися через JavaScript -->
-					</div>
-				</div>
-			</div>
-		</div>
 
 		<script src="../js/desktop.js"></script>
 		<script src="../js/notifications.js"></script>

@@ -231,7 +231,7 @@ function renderEmptyState() {
                 <i class="fas fa-piggy-bank" style="font-size: 24px; color: #9ca3af;"></i>
             </div>
             <div>
-                <h4 style="color: var(--text-main); margin-bottom: 5px;">Aún no tienes metas</h4>
+                <h3 style="color: var(--text-main); margin-bottom: 5px;">Aún no tienes metas</h3>
                 <p style="font-size: 0.9rem;">Crea un sobre digital para empezar a ahorrar.</p>
             </div>
             

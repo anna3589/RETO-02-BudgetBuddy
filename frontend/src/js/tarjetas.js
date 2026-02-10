@@ -1,6 +1,6 @@
 // tarjetas.js - Спрощена версія без CSRF
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // ==========================================
     // 1. КОНФІГУРАЦІЯ API
     // ==========================================
@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==========================================
     function formatCurrency(amount) {
         if (amount === undefined || amount === null || isNaN(amount)) amount = 0;
-        return new Intl.NumberFormat('es-ES', { 
-            style: 'currency', 
+        return new Intl.NumberFormat('es-ES', {
+            style: 'currency',
             currency: 'EUR',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
@@ -84,17 +84,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDate() {
         if (!dom.dateContainer) return;
         const now = new Date();
-        dom.dateContainer.textContent = now.toLocaleDateString('es-ES', { 
-            day: 'numeric', 
-            month: 'short', 
-            year: 'numeric' 
+        dom.dateContainer.textContent = now.toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
         });
     }
 
     function showNotification(message, type = 'info') {
         const oldNotifications = document.querySelectorAll('.notification');
         oldNotifications.forEach(n => n.remove());
-        
+
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.innerHTML = `
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <span>${message}</span>
             </div>
         `;
-        
+
         notification.style.cssText = `
             position: fixed;
             top: 120px;
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gap: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         `;
-        
+
         document.body.appendChild(notification);
         setTimeout(() => notification.remove(), 3000);
     }
@@ -134,41 +134,41 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             credentials: 'same-origin'
         };
-        
+
         if (data && (method === 'POST' || method === 'PUT' || method === 'DELETE')) {
             options.body = JSON.stringify(data);
         }
-        
+
         console.log(`API ${method} ${url}`, data);
-        
+
         try {
             const response = await fetch(url, options);
             console.log(`Response ${response.status} from ${url}`);
-            
+
             if (response.status === 401) {
                 showNotification('Sesión expirada. Redirigiendo al login...', 'error');
                 setTimeout(() => window.location.href = '/login', 2000);
                 return null;
             }
-            
+
             if (response.status === 422) {
                 const errors = await response.json();
-                const errorMessages = errors.errors ? 
-                    Object.values(errors.errors).flat().join(', ') : 
+                const errorMessages = errors.errors ?
+                    Object.values(errors.errors).flat().join(', ') :
                     errors.message || 'Error de validación';
                 throw new Error(errorMessages);
             }
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             if (response.status === 204 || method === 'DELETE') {
                 return { success: true };
             }
-            
+
             return await response.json();
-            
+
         } catch (error) {
             console.error('API Error:', error);
             showNotification(`Error: ${error.message}`, 'error');
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderCardDropdown();
                 renderCards();
                 initializeDragAndDrop();
-                
+
                 if (currentCards.length > 0 && !selectedCardId) {
                     selectedCardId = currentCards[0].id;
                     if (dom.cardAccountSelect) {
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (selectedCardId) {
                 url += `?card_id=${selectedCardId}`;
             }
-            
+
             const data = await apiRequest(url);
             if (data) {
                 currentMovements = Array.isArray(data) ? data : [];
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!confirm('¿Estás seguro de eliminar esta tarjeta? Esta acción no se puede deshacer.')) {
                 return false;
             }
-            
+
             const result = await apiRequest(`${API.CARDS.DESTROY}${cardId}`, 'DELETE');
             if (result && result.success) {
                 showNotification('Tarjeta eliminada correctamente', 'success');
@@ -261,12 +261,12 @@ document.addEventListener('DOMContentLoaded', function() {
     async function createMovement(movementData) {
         try {
             console.log('Creating movement:', movementData);
-            
+
             // Для витрат робимо суму негативною
             if (movementData.type === 'gasto') {
                 movementData.amount = -Math.abs(movementData.amount);
             }
-            
+
             const result = await apiRequest(API.MOVEMENTS.STORE, 'POST', movementData);
             if (result) {
                 showNotification('Movimiento creado correctamente', 'success');
@@ -299,9 +299,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==========================================
     function renderCardDropdown() {
         if (!dom.cardAccountSelect) return;
-        
+
         dom.cardAccountSelect.innerHTML = '';
-        
+
         if (currentCards.length === 0) {
             const option = document.createElement('option');
             option.value = '';
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dom.cardAccountSelect.appendChild(option);
             return;
         }
-        
+
         currentCards.forEach(card => {
             const option = document.createElement('option');
             option.value = card.id;
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
             option.textContent = `${card.alias} - **** ${shortDigits}`;
             dom.cardAccountSelect.appendChild(option);
         });
-        
+
         if (currentCards.length > 0 && !selectedCardId) {
             selectedCardId = currentCards[0].id;
             dom.cardAccountSelect.value = selectedCardId;
@@ -326,9 +326,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderCards() {
         if (!dom.cardsContainer) return;
-        
+
         dom.cardsContainer.innerHTML = '';
-        
+
         if (currentCards.length === 0) {
             dom.cardsContainer.innerHTML = `
                 <div class="no-cards-message">
@@ -342,16 +342,16 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             return;
         }
-        
+
         // Рендеримо картки
         currentCards.forEach((card) => {
             const cardEl = document.createElement('div');
             let visualType = card.type === "credit" ? "mastercard" : "visa";
-            
+
             cardEl.className = `mini-card ${visualType}`;
             cardEl.setAttribute('draggable', 'true');
             cardEl.setAttribute('data-card-id', card.id.toString());
-            
+
             // Форматуємо дату
             let expDateFormatted = "??/??";
             if (card.expiration_date) {
@@ -360,12 +360,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
                     const year = dateObj.getFullYear().toString().slice(-2);
                     expDateFormatted = `${month}/${year}`;
-                } catch (e) {}
+                } catch (e) { }
             }
-            
+
             // Баланс
             const balance = card.account?.current_balance || card.account?.balance || 0;
-            
+
             cardEl.innerHTML = `
                 <div class="mini-card-top">
                     <span style="font-weight: 500; font-size: 0.9rem;">${card.alias}</span>
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            
+
             cardEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 selectedCardId = card.id;
@@ -395,10 +395,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 showNotification(`Seleccionada: ${card.alias}`, 'info');
                 loadMovements();
             });
-            
+
             dom.cardsContainer.appendChild(cardEl);
         });
-        
+
         // Примарна картка
         const ghostCard = document.createElement('div');
         ghostCard.className = 'mini-card ghost-card';
@@ -412,10 +412,10 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         ghostCard.addEventListener('click', openCardModal);
         dom.cardsContainer.appendChild(ghostCard);
-        
+
         // Зона видалення
         createDeleteZone();
-        
+
         // Скрол
         initializeHorizontalScroll();
     }
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function createDeleteZone() {
         const oldZone = document.getElementById('deleteCardZone');
         if (oldZone) oldZone.remove();
-        
+
         const deleteZone = document.createElement('div');
         deleteZone.className = 'delete-card-zone';
         deleteZone.id = 'deleteCardZone';
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p>Arrastra aquí para eliminar</p>
             </div>
         `;
-        
+
         if (dom.cardsContainer) {
             dom.cardsContainer.appendChild(deleteZone);
         }
@@ -444,9 +444,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderTagDropdown() {
         if (!dom.movementCategorySelect) return;
-        
+
         dom.movementCategorySelect.innerHTML = '<option value="">Seleccionar etiqueta...</option>';
-        
+
         currentTags.forEach(tag => {
             const option = document.createElement('option');
             option.value = tag.id;
@@ -458,9 +458,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderMovements() {
         if (!dom.transactionsBody) return;
-        
+
         dom.transactionsBody.innerHTML = '';
-        
+
         if (currentMovements.length === 0) {
             dom.transactionsBody.innerHTML = `
                 <tr>
@@ -471,30 +471,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>`;
             return;
         }
-        
+
         currentMovements.forEach(movement => {
             const row = document.createElement('tr');
-            
+
             let tagHTML = '<span class="category-tag" style="background-color: #9ca3af;">Sin categoría</span>';
             if (movement.tags && movement.tags.length > 0) {
-                tagHTML = movement.tags.map(tag => 
+                tagHTML = movement.tags.map(tag =>
                     `<span class="category-tag" style="background-color: ${tag.color || '#9ca3af'};">${tag.name}</span>`
                 ).join('');
             }
-            
+
             let amountClass = 'amount-income';
             const amount = parseFloat(movement.amount) || 0;
-            
+
             if (movement.type === 'gasto' || amount < 0) {
                 amountClass = 'amount-expense';
             } else if (movement.type === 'traspaso') {
                 amountClass = 'amount-transfer';
             }
-            
-            const formattedAmount = amount >= 0 ? 
-                `+€${Math.abs(amount).toFixed(2)}` : 
+
+            const formattedAmount = amount >= 0 ?
+                `+€${Math.abs(amount).toFixed(2)}` :
                 `-€${Math.abs(amount).toFixed(2)}`;
-            
+
             row.innerHTML = `
                 <td>${movement.description || 'Sin descripción'}</td>
                 <td>#${movement.id || 'N/A'}</td>
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td class="${amountClass}">${formattedAmount}</td>
                 <td><div class="category-tags">${tagHTML}</div></td>
             `;
-            
+
             dom.transactionsBody.appendChild(row);
         });
     }
@@ -510,32 +510,32 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeHorizontalScroll() {
         const container = dom.cardsContainer;
         if (!container) return;
-        
+
         container.style.overflowX = 'auto';
         container.style.overflowY = 'hidden';
         container.style.cursor = 'grab';
-        
+
         let isDragging = false;
         let startX;
         let scrollLeft;
-        
+
         container.addEventListener('mousedown', (e) => {
             isDragging = true;
             container.style.cursor = 'grabbing';
             startX = e.pageX - container.offsetLeft;
             scrollLeft = container.scrollLeft;
         });
-        
+
         container.addEventListener('mouseleave', () => {
             isDragging = false;
             container.style.cursor = 'grab';
         });
-        
+
         container.addEventListener('mouseup', () => {
             isDragging = false;
             container.style.cursor = 'grab';
         });
-        
+
         container.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             e.preventDefault();
@@ -543,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const walk = (x - startX) * 2;
             container.scrollLeft = scrollLeft - walk;
         });
-        
+
         container.addEventListener('wheel', (e) => {
             e.preventDefault();
             container.scrollLeft += e.deltaY;
@@ -556,17 +556,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeDragAndDrop() {
         const cardItems = document.querySelectorAll('.mini-card:not(.ghost-card)');
         const deleteZone = document.getElementById('deleteCardZone');
-        
+
         if (!deleteZone) {
             console.warn('Delete zone not found!');
             return;
         }
-        
+
         cardItems.forEach((card) => {
             card.addEventListener('dragstart', handleDragStart);
             card.addEventListener('dragend', handleDragEnd);
         });
-        
+
         deleteZone.addEventListener('dragover', handleDragOver);
         deleteZone.addEventListener('dragleave', handleDragLeave);
         deleteZone.addEventListener('drop', handleDrop);
@@ -576,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
         draggedCardId = this.getAttribute('data-card-id');
         e.dataTransfer.setData('text/plain', draggedCardId);
         this.classList.add('dragging');
-        
+
         const deleteZone = document.getElementById('deleteCardZone');
         if (deleteZone) {
             deleteZone.classList.add('active');
@@ -608,17 +608,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function handleDrop(e) {
         e.preventDefault();
-        
+
         const deleteZone = document.getElementById('deleteCardZone');
         if (deleteZone) {
             deleteZone.classList.remove('drag-over');
         }
-        
+
         if (!draggedCardId) return;
-        
+
         const card = currentCards.find(c => c.id.toString() === draggedCardId);
         if (!card) return;
-        
+
         const success = await deleteCard(draggedCardId);
         if (success) {
             draggedCardId = null;
@@ -630,17 +630,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==========================================
     function openCardModal() {
         loadAccountsForCardModal();
-        
+
         const now = new Date();
         const nextYear = new Date(now.getFullYear() + 4, now.getMonth(), 1);
         const month = (nextYear.getMonth() + 1).toString().padStart(2, '0');
         const year = nextYear.getFullYear();
-        
+
         const expInput = document.getElementById('card-exp');
         if (expInput) {
             expInput.value = `${year}-${month}`;
         }
-        
+
         if (dom.cardModal) {
             dom.cardModal.showModal();
         }
@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const data = await apiRequest(API.ACCOUNTS.INDEX);
             const select = document.getElementById('card-account-select');
-            
+
             if (select && data) {
                 select.innerHTML = '<option value="">Seleccionar cuenta...</option>';
                 data.forEach(account => {
@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function openMovementModal() {
         if (dom.movementCardSelect) {
             dom.movementCardSelect.innerHTML = '';
-            
+
             if (currentCards.length === 0) {
                 dom.movementCardSelect.innerHTML = '<option value="">No hay tarjetas disponibles</option>';
             } else {
@@ -680,21 +680,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = `${card.alias} (**** ${shortDigits})`;
                     dom.movementCardSelect.appendChild(option);
                 });
-                
+
                 if (selectedCardId) {
                     dom.movementCardSelect.value = selectedCardId;
                 }
             }
         }
-        
+
         if (dom.movementCategorySelect) {
             renderTagDropdown();
         }
-        
+
         const today = new Date().toISOString().split('T')[0];
         const dateInput = document.getElementById('movementDate');
         if (dateInput) dateInput.value = today;
-        
+
         if (dom.movementModal) {
             dom.movementModal.showModal();
         }
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 9. ОБРОБНИКИ ПОДІЙ
     // ==========================================
     if (dom.cardAccountSelect) {
-        dom.cardAccountSelect.addEventListener('change', function() {
+        dom.cardAccountSelect.addEventListener('change', function () {
             selectedCardId = this.value;
             loadMovements();
         });
@@ -712,19 +712,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (dom.filterButtons) {
         dom.filterButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 dom.filterButtons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                
+
                 const filter = this.getAttribute('data-filter');
                 let filteredMovements = currentMovements;
-                
+
                 if (filter === 'income') {
                     filteredMovements = currentMovements.filter(m => parseFloat(m.amount) > 0);
                 } else if (filter === 'expense') {
                     filteredMovements = currentMovements.filter(m => parseFloat(m.amount) < 0);
                 }
-                
+
                 const tempBody = document.getElementById('transactions-body');
                 if (tempBody) {
                     tempBody.innerHTML = '';
@@ -732,10 +732,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         const row = document.createElement('tr');
                         const amount = parseFloat(movement.amount) || 0;
                         const amountClass = amount >= 0 ? 'amount-income' : 'amount-expense';
-                        const formattedAmount = amount >= 0 ? 
-                            `+€${Math.abs(amount).toFixed(2)}` : 
+                        const formattedAmount = amount >= 0 ?
+                            `+€${Math.abs(amount).toFixed(2)}` :
                             `-€${Math.abs(amount).toFixed(2)}`;
-                        
+
                         row.innerHTML = `
                             <td>${movement.description || 'Sin descripción'}</td>
                             <td>#${movement.id || 'N/A'}</td>
@@ -746,7 +746,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         tempBody.appendChild(row);
                     });
                 }
-                
+
                 showNotification(`Filtro aplicado: ${this.textContent}`, 'info');
             });
         });
@@ -769,26 +769,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (dom.saveCardBtn) {
-        dom.saveCardBtn.addEventListener('click', async function(e) {
+        dom.saveCardBtn.addEventListener('click', async function (e) {
             e.preventDefault();
-            
+
             const accountId = document.getElementById('card-account-select').value;
             const alias = document.getElementById('card-alias').value;
             const digits = document.getElementById('card-digits').value;
             const expInput = document.getElementById('card-exp').value;
             const typeRadio = document.querySelector('input[name="card_type"]:checked');
-            
+
             if (!accountId || !alias || !digits || !expInput || digits.length !== 4 || !/^\d{4}$/.test(digits)) {
                 showNotification('Por favor, complete todos los campos correctamente', 'error');
                 return;
             }
-            
+
             const expDate = expInput + '-01';
-            
+
             const originalText = dom.saveCardBtn.innerHTML;
             dom.saveCardBtn.disabled = true;
             dom.saveCardBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-            
+
             try {
                 const cardData = {
                     account_id: parseInt(accountId),
@@ -797,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     last_4_digits: digits,
                     expiration_date: expDate
                 };
-                
+
                 const success = await createCard(cardData);
                 if (success) {
                     dom.cardModal.close();
@@ -825,9 +825,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (dom.saveMovementBtn) {
-        dom.saveMovementBtn.addEventListener('click', async function(e) {
+        dom.saveMovementBtn.addEventListener('click', async function (e) {
             e.preventDefault();
-            
+
             const movementData = {
                 card_id: parseInt(dom.movementCardSelect.value),
                 tag_id: dom.movementCategorySelect.value ? parseInt(dom.movementCategorySelect.value) : null,
@@ -836,17 +836,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 date: document.getElementById('movementDate').value,
                 type: document.querySelector('input[name="movement_type"]:checked').value
             };
-            
-            if (!movementData.amount || isNaN(movementData.amount) || 
+
+            if (!movementData.amount || isNaN(movementData.amount) ||
                 !movementData.description || !movementData.card_id) {
                 showNotification('Por favor, complete todos los campos obligatorios', 'error');
                 return;
             }
-            
+
             const originalText = dom.saveMovementBtn.innerHTML;
             dom.saveMovementBtn.disabled = true;
             dom.saveMovementBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-            
+
             try {
                 console.log('Saving movement data:', movementData);
                 const success = await createMovement(movementData);
@@ -862,29 +862,84 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    // Elemento del DOM
+    const userAvatarTop = document.querySelector(".user-avatar-top");
 
+    // 1. ESTADO DE CARGA (Spinner)
+    userAvatarTop.innerHTML = `
+    <div style="text-align: center; padding: 40px; color: var(--color-gray-500);">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+    </div>`;
+    /**
+    * Carga el usuario logueado y actualiza el avatar
+    */
+    async function loadUserProfile() {
+        console.log("Cargando perfil de usuario...");
+
+        try {
+            // Petición estándar a Laravel para obtener el usuario autenticado
+            const response = await fetch("/api/user", {
+                headers: { Accept: "application/json" },
+                credentials: "same-origin",
+            });
+
+            if (response.ok) {
+                const user = await response.json();
+                // Asumimos que tu tabla users tiene una columna 'name'
+                updateAvatarUI(user.name);
+            }
+        } catch (error) {
+            console.error("Error cargando usuario:", error);
+            showNotification("Error cargando perfil de usuario", "error");
+        }
+    }
+
+    /**
+     * Calcula las iniciales y actualiza el círculo del header
+     * Ej: "Juan Pérez" -> "JP"
+     */
+    function updateAvatarUI(fullName) {
+        if (!userAvatarTop || !fullName) return;
+
+        // Dividimos el nombre por espacios
+        const parts = fullName.trim().split(" ");
+
+        // Tomamos la primera letra del primer nombre
+        let initials = parts[0].charAt(0).toUpperCase();
+
+        // Si hay apellido (o segundo nombre), tomamos su inicial también
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1].charAt(0).toUpperCase();
+        }
+
+        userAvatarTop.textContent = initials;
+        // Opcional: poner el nombre completo en el título al pasar el ratón
+        userAvatarTop.title = fullName;
+    }
     // ==========================================
     // 10. ІНІЦІАЛІЗАЦІЯ
     // ==========================================
     async function init() {
         console.log('Initializing tarjetas.js...');
         updateDate();
-        
+
         try {
             await Promise.all([
                 loadCards(),
                 loadTags(),
                 loadMovements()
             ]);
-            
+
             showNotification('Sistema cargado correctamente', 'success');
         } catch (error) {
             console.error('Error during initialization:', error);
             showNotification('Error al cargar los datos', 'error');
         }
-        
+
         setInterval(updateDate, 60000);
     }
+
+
 
     window.openCardModal = openCardModal;
     init();

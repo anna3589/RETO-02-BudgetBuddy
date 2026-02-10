@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+// Dirige a la pagina de accesibilidad a la que no es necesario iniciar sesion para acceder
+Route::get('/accesibilidad', function () {
+    return view('accesibilidad');
+})->name('accesibilidad');
 
 // Додай це після інших маршрутів
 Route::get('/get-csrf-token', function() {
