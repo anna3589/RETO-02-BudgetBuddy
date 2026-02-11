@@ -27,17 +27,17 @@
     .mobile-nav {
         display: none !important;
     }
-    
+
     .sidebar {
         display: flex !important;
     }
-    
+
     .desktop-main {
         margin-left: 110px !important;
         padding: 20px 30px 30px 30px !important;
         max-width: calc(100% - 110px) !important;
     }
-    
+
     .desktop-container {
         margin-top: 100px !important;
         padding-bottom: 0 !important;
@@ -87,7 +87,7 @@
     z-index: 1000;
     border-radius: 50px;
     border: 1px solid var(--border);
-    box-shadow: 
+    box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.08),
         0 1px 0 rgba(255, 255, 255, 0.5) inset,
         0 -1px 0 rgba(0, 0, 0, 0.05) inset;
@@ -102,12 +102,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 100%
-    );
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.4) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.1) 100%);
     border-radius: 50px;
     z-index: -1;
     pointer-events: none;
@@ -118,7 +116,7 @@
     backdrop-filter: blur(50px) saturate(250%) contrast(130%);
     -webkit-backdrop-filter: blur(50px) saturate(250%) contrast(130%);
     border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 
+    box-shadow:
         0 12px 48px rgba(0, 0, 0, 0.12),
         0 2px 0 rgba(255, 255, 255, 0.6) inset,
         0 -2px 0 rgba(0, 0, 0, 0.1) inset;
@@ -701,6 +699,7 @@
     from {
         background-color: rgba(239, 68, 68, 0.15);
     }
+
     to {
         background-color: rgba(239, 68, 68, 0.25);
     }
@@ -1015,6 +1014,7 @@
         opacity: 0;
         transform: translate(-50%, -40%) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
@@ -1150,17 +1150,17 @@
     font-weight: 500;
 }
 
-.type-option input:checked + .type-content {
+.type-option input:checked+.type-content {
     border-color: var(--primary);
     background-color: rgba(33, 122, 74, 0.05);
     color: var(--primary);
 }
 
-.type-option input:checked + .visa-style i {
+.type-option input:checked+.visa-style i {
     color: #1a1a2e;
 }
 
-.type-option input:checked + .master-style i {
+.type-option input:checked+.master-style i {
     color: #eb001b;
 }
 
@@ -1215,30 +1215,30 @@
         padding: 0 20px;
         height: 60px;
     }
-    
+
     .desktop-brand img {
         height: 35px;
     }
-    
+
     .top-icon {
         width: 35px;
         height: 35px;
     }
-    
+
     .user-avatar-top {
         width: 40px;
         height: 40px;
         font-size: 16px;
     }
-    
+
     .sidebar {
         display: none;
     }
-    
+
     .mobile-nav {
         display: flex;
     }
-    
+
     .desktop-main {
         margin-left: 0;
         padding: 90px 15px 30px;
@@ -1246,14 +1246,14 @@
         width: 100%;
         box-sizing: border-box;
     }
-    
+
     .page-title {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
         font-size: 28px;
     }
-    
+
     .desktop-container {
         margin-top: 80px;
         min-height: calc(100vh - 80px);
@@ -1261,19 +1261,19 @@
         width: 100%;
         overflow-x: hidden;
     }
-    
+
     /* Виправлення для випадаючого меню */
     .account-selector {
         min-width: 250px;
         width: 100%;
     }
-    
+
     .card-header-compact {
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
     }
-    
+
     /* Міні-картки на мобільних */
     .mini-card {
         flex: 0 0 220px;
@@ -1281,42 +1281,42 @@
         height: 140px;
         padding: 15px;
     }
-    
+
     .delete-card-zone {
         flex: 0 0 220px;
         width: 220px;
         height: 140px;
     }
-    
+
     .mini-card-number {
         font-size: 1rem;
     }
-    
+
     .mini-card-top span {
         font-size: 0.8rem;
     }
-    
+
     .mini-card-top i {
         font-size: 1.5rem;
     }
-    
+
     /* Кнопки транзакцій */
     .transactions-actions {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
     }
-    
+
     #createMovementBtn {
         width: 100%;
         justify-content: center;
     }
-    
+
     .transactions-filters {
         width: 100%;
         justify-content: center;
     }
-    
+
     /* Таблиця транзакцій */
     .transactions-table {
         max-height: 350px;
@@ -1324,17 +1324,17 @@
         padding: 0 10px;
         width: calc(100% + 20px);
     }
-    
+
     .transactions-table table {
         min-width: 700px;
     }
-    
+
     .transactions-table th,
     .transactions-table td {
         padding: 10px 8px;
         font-size: 12px;
     }
-    
+
     .transactions-table th:nth-child(2),
     .transactions-table td:nth-child(2) {
         display: none;
@@ -1348,21 +1348,21 @@
         right: 10px;
         padding: 0 20px;
     }
-    
+
     .card-title {
         font-size: 20px;
     }
-    
+
     .transactions-filters {
         width: 100%;
         justify-content: center;
     }
-    
+
     .filter-btn {
         padding: 6px 12px;
         font-size: 13px;
     }
-    
+
     /* Міні-картки на маленьких екранах */
     .mini-card {
         flex: 0 0 200px;
@@ -1370,27 +1370,27 @@
         height: 130px;
         padding: 12px;
     }
-    
+
     .delete-card-zone {
         flex: 0 0 200px;
         width: 200px;
         height: 130px;
     }
-    
+
     /* Модали */
     .tag-modal {
         width: 90%;
         max-width: 400px;
     }
-    
+
     .modal-header {
         padding: 1.25rem 1.5rem;
     }
-    
+
     .modal-body {
         padding: 1.5rem;
     }
-    
+
     .modal-footer {
         padding: 1.25rem 1.5rem;
     }
@@ -1402,66 +1402,66 @@
         padding: 0 15px;
         height: 60px;
     }
-    
+
     .desktop-brand {
         margin-left: 0;
     }
-    
+
     .desktop-header-right {
         gap: 10px;
     }
-    
+
     .top-icon {
         width: 35px;
         height: 35px;
         font-size: 14px;
     }
-    
+
     .user-avatar-top {
         width: 35px;
         height: 35px;
         font-size: 14px;
     }
-    
+
     .mobile-nav {
         padding: 8px 10px;
     }
-    
+
     .mobile-nav-item {
         min-width: 50px;
         padding: 6px 8px;
     }
-    
+
     .mobile-nav-item i {
         width: 40px;
         height: 40px;
         font-size: 16px;
     }
-    
+
     .page-title {
         font-size: 24px;
         margin-top: 0;
     }
-    
+
     .date-container {
         padding: 4px 10px;
         font-size: 12px;
     }
-    
+
     .desktop-main {
         padding: 80px 15px 30px 15px;
     }
-    
+
     /* Випадаюче меню карток */
     .account-selector {
         min-width: 100%;
     }
-    
+
     .account-dropdown {
         padding: 8px 35px 8px 12px;
         font-size: 13px;
     }
-    
+
     /* Міні-картки */
     .mini-card {
         flex: 0 0 180px;
@@ -1469,97 +1469,97 @@
         height: 120px;
         padding: 12px;
     }
-    
+
     .delete-card-zone {
         flex: 0 0 180px;
         width: 180px;
         height: 120px;
     }
-    
+
     .mini-card-number {
         font-size: 0.9rem;
         margin-top: 8px;
     }
-    
+
     .ghost-icon {
         width: 40px;
         height: 40px;
         font-size: 20px;
     }
-    
+
     /* Таблиця транзакцій */
     .transactions-table {
         max-height: 300px;
     }
-    
+
     .transactions-table table {
         min-width: 650px;
     }
-    
+
     .transactions-table th:nth-child(2),
     .transactions-table td:nth-child(2),
     .transactions-table th:nth-child(5),
     .transactions-table td:nth-child(5) {
         display: none;
     }
-    
+
     /* Фактури */
     .invoices-list {
         max-height: 250px;
     }
-    
+
     .invoice-icon {
         width: 35px;
         height: 35px;
         font-size: 14px;
     }
-    
+
     .invoice-info h4 {
         font-size: 13px;
     }
-    
+
     .invoice-time {
         font-size: 10px;
     }
-    
+
     /* Модали */
     .tag-modal {
         width: 95%;
         max-width: 320px;
     }
-    
+
     .modal-header {
         padding: 1rem 1.25rem;
     }
-    
+
     .modal-body {
         padding: 1.25rem;
     }
-    
+
     .modal-footer {
         padding: 1rem 1.25rem;
     }
-    
+
     .type-selector,
     .card-type-selector {
         flex-direction: column;
     }
-    
+
     /* Пустий стан карток */
     .no-cards-message {
         padding: 30px 15px;
         height: 180px;
     }
-    
+
     .no-cards-message i {
         font-size: 36px;
         margin-bottom: 15px;
     }
-    
+
     .no-cards-message h3 {
         font-size: 18px;
     }
-    
+
     .no-cards-message p {
         font-size: 13px;
         margin-bottom: 20px;
@@ -1573,12 +1573,12 @@
         right: 5px;
         padding: 0 10px;
     }
-    
+
     .top-icon {
         width: 30px;
         height: 30px;
     }
-    
+
     .notification-badge {
         width: 16px;
         height: 16px;
@@ -1586,16 +1586,16 @@
         top: -2px;
         right: -2px;
     }
-    
+
     .page-title {
         font-size: 22px;
     }
-    
+
     .date-container {
         padding: 4px 10px;
         font-size: 12px;
     }
-    
+
     /* Міні-картки */
     .mini-card {
         flex: 0 0 160px;
@@ -1603,27 +1603,27 @@
         height: 110px;
         padding: 10px;
     }
-    
+
     .delete-card-zone {
         flex: 0 0 160px;
         width: 160px;
         height: 110px;
     }
-    
+
     .mini-card-top span {
         font-size: 0.7rem;
     }
-    
+
     .mini-card-number {
         font-size: 0.8rem;
         letter-spacing: 1px;
     }
-    
+
     /* Таблиця */
     .transactions-table table {
         min-width: 600px;
     }
-    
+
     .transactions-table th,
     .transactions-table td {
         padding: 8px 6px;
@@ -1638,32 +1638,32 @@
         width: 100%;
         position: relative;
     }
-    
+
     /* Стилі для горизонтального скролу карток */
     #cards-container::-webkit-scrollbar {
         height: 4px;
     }
-    
+
     #cards-container::-webkit-scrollbar-track {
         background: var(--gray-light);
         border-radius: 2px;
     }
-    
+
     #cards-container::-webkit-scrollbar-thumb {
         background: var(--primary);
         border-radius: 2px;
     }
-    
+
     /* Стилі для горизонтального скролу таблиці */
     .transactions-table::-webkit-scrollbar {
         height: 4px;
     }
-    
+
     .transactions-table::-webkit-scrollbar-track {
         background: var(--gray-light);
         border-radius: 2px;
     }
-    
+
     .transactions-table::-webkit-scrollbar-thumb {
         background: var(--primary);
         border-radius: 2px;
@@ -1675,15 +1675,15 @@
     .desktop-grid {
         grid-template-columns: 1fr 1fr;
     }
-    
+
     .mobile-nav {
         display: none;
     }
-    
+
     .sidebar {
         display: flex;
     }
-    
+
     .desktop-main {
         margin-left: 110px;
         padding: 20px 30px 30px 30px;
@@ -1696,8 +1696,53 @@
     .transactions-table {
         max-height: 450px;
     }
-    
+
     .invoices-list {
         max-height: 380px;
     }
+}
+
+/* Corrección de contraste para textos muted (Gris accesible) */
+#cards-container,
+.no-cards-message p {
+    color: #4b5563 !important;
+    /* Gray-600 cumple AA */
+}
+
+/* Reset para botón de avatar */
+.user-avatar-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.user-avatar-btn:focus {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Ocultar visualmente etiquetas obligatorias para WAVE */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Mejorar contraste en encabezados de tabla */
+.transactions-table th {
+    color: #1f2937;
+    /* Negro/Gris muy oscuro */
+    background-color: #f9fafb;
+}
+
+/* Accesibilidad en radio buttons de tipo tarjeta */
+.type-option input:focus+.type-content {
+    box-shadow: 0 0 0 3px rgba(33, 122, 74, 0.4);
 }

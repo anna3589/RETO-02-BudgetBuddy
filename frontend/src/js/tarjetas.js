@@ -927,7 +927,8 @@ document.addEventListener('DOMContentLoaded', function () {
             await Promise.all([
                 loadCards(),
                 loadTags(),
-                loadMovements()
+                loadMovements(),
+                loadUserProfile()
             ]);
 
             showNotification('Sistema cargado correctamente', 'success');

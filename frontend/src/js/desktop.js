@@ -517,10 +517,6 @@ function renderCards(container, cards) {
                 **** **** **** ${card.last_four_digits || "0000"}
             </div>
             <div class="mini-card-bottom">
-                <div>
-                    <div style="font-size: 0.7rem; opacity: 0.7; margin-bottom:2px;">Saldo</div>
-                    <div style="font-weight: bold; font-size: 1.1rem;">${balanceFormatted}€</div>
-                </div>
                 <div style="text-align: right;">
                     <div style="font-size: 0.6rem; opacity: 0.7;">Expira</div>
                     <div style="font-size: 0.8rem">${expDateFormatted}</div>
