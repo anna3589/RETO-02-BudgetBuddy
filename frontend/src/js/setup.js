@@ -1,92 +1,168 @@
 /**
- * setup.js
- * Lógica para el Wizard de Configuración Inicial
+ * setup.js - VERSIÓN ADAPTADA A TUS ERRORES DE LOG
  */
 
-// ======================================================
-// 1. FUNCIONES AUXILIARES GLOBALES
-// ======================================================
-
-/**
- * Obtiene el valor de una cookie por su nombre (necesario para CSRF)
- */
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
 }
 
-// ======================================================
-// 2. INICIO DE LA APLICACIÓN
-// ======================================================
-
 document.addEventListener("DOMContentLoaded", async function () {
-    // Variables de estado
     let currentStep = 1;
-    const totalSteps = 4;
+    let currentUserEmail = ""; // Variable para guardar el email si logramos bajarlo
 
-    // ------------------------------------------------------
-    // A. CARGA INICIAL DE DATOS
-    // ------------------------------------------------------
+    // ==========================================
+    // A. CARGA INICIAL (Intentar obtener nombre y email)
+    // ==========================================
     try {
-        const res = await fetch("/api/profile", {
-            headers: { "Accept": "application/json" },
-            credentials: 'same-origin'
+        // Hacemos una llamada segura para intentar ver si la sesión está viva
+        const res = await fetch("/profile", {
+            headers: { "Accept": "application/json" }
         });
-        if (res.ok) {
+
+        // Verificamos si la respuesta es JSON real antes de leerla
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
             const user = await res.json();
-            if (user.name) document.getElementById("setup_firstname").value = user.name;
+            
+            // Guardamos el email porque EL BACKEND LO EXIGE en el paso siguiente
+            if (user.email) currentUserEmail = user.email;
+
+            // Rellenar nombre si existe
+            if (user.name) {
+                // Intentamos separar nombre y apellido si vienen juntos
+                const parts = user.name.split(" ");
+                document.getElementById("setup_firstname").value = parts[0] || "";
+                document.getElementById("setup_lastname").value = parts.slice(1).join(" ") || "";
+            }
+            // Si tu backend usa estructura profile.lastname
+            if (user.profile && user.profile.lastname) {
+                document.getElementById("setup_lastname").value = user.profile.lastname;
+            }
+        } else {
+            console.warn("La API devolvió HTML (posiblemente login o 404). Se continuará sin autocompletar.");
         }
     } catch (e) {
-        console.error("Error cargando usuario inicial", e);
+        console.error("Error silencioso en carga inicial:", e);
     }
 
-    // ------------------------------------------------------
-    // B. LÓGICA VISUAL E INTERACCIÓN (UI)
-    // ------------------------------------------------------
-
-    /**
-     * Función global para navegar entre pasos (usada en el HTML)
-     */
+    // ==========================================
+    // B. NAVEGACIÓN Y GUARDADO
+    // ==========================================
+    
     window.goToStep = async function (step) {
-        // Si intentamos pasar del paso 1 al 2, guardamos el perfil primero
         if (currentStep === 1 && step > 1) {
-            const saved = await saveProfileStep();
-            if (!saved) return; // Si falla, no avanzamos
+            const guardado = await saveProfileStep();
+            if (!guardado) return; 
         }
         showStep(step);
     };
 
-    // Listener para el botón "Siguiente" del primer paso
     const btnStep1 = document.getElementById("btn-step-1");
     if (btnStep1) btnStep1.addEventListener("click", () => window.goToStep(2));
 
-    /**
-     * Muestra el paso indicado y actualiza la barra de progreso
-     */
+    // ==========================================
+    // C. FUNCIÓN DE GUARDADO (Paso 1) - CORREGIDA
+    // ==========================================
+    async function saveProfileStep() {
+        const btn = document.getElementById("btn-step-1");
+        const originalText = btn.innerHTML;
+        
+        const firstName = document.getElementById("setup_firstname").value.trim();
+        const lastName = document.getElementById("setup_lastname").value.trim();
+        const phone = document.getElementById("setup_phone").value.trim();
+
+        if (!firstName || !lastName) {
+            alert("El nombre y los apellidos son obligatorios.");
+            return false;
+        }
+
+        // Si la carga inicial falló, no tenemos email. 
+        // Tu backend lo exige. Si no lo tenemos, preguntamos o usamos el del input si existiera.
+        if (!currentUserEmail) {
+            // Intento desesperado: pedirlo de nuevo al backend antes de guardar
+            try {
+                const check = await fetch("/profile", { headers: { "Accept": "application/json" }});
+                if(check.ok) {
+                    const u = await check.json();
+                    currentUserEmail = u.email;
+                }
+            } catch(e) {}
+            
+            // Si sigue vacío, alertamos (o podrías poner un prompt si quieres forzarlo)
+            if(!currentUserEmail) {
+                console.warn("No se pudo recuperar el email del usuario. El guardado podría fallar si el backend lo requiere.");
+                // Opcional: currentUserEmail = prompt("Por seguridad, confirma tu email:");
+            }
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+        try {
+            await fetch("/sanctum/csrf-cookie");
+
+            const response = await fetch("/profile", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+                },
+                body: JSON.stringify({
+                    // CORRECCIÓN: Usamos snake_case porque tu error 422 lo pedía así ("first_name")
+                    first_name: firstName, 
+                    last_name: lastName,   
+                    phone: phone,
+                    email: currentUserEmail // CORRECCIÓN: Lo enviamos porque tu error decía "email field is required"
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("Error API:", data);
+                if (data.errors) {
+                    // Muestra el primer error que encuentre
+                    const firstMsg = Object.values(data.errors)[0][0];
+                    alert("Error: " + firstMsg);
+                } else {
+                    alert("Error al guardar: " + (data.message || "Desconocido"));
+                }
+                return false;
+            }
+
+            return true; 
+
+        } catch (error) {
+            console.error(error);
+            alert("Error de conexión. Asegúrate de estar logueado.");
+            return false;
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+
+    // ==========================================
+    // D. UTILIDADES UI (Sin cambios)
+    // ==========================================
     function showStep(step) {
-        // Gestionar visibilidad de secciones
         document.querySelectorAll(".step-content").forEach((el) => el.classList.remove("active"));
         const stepEl = document.getElementById(`step-${step}`);
         if (stepEl) stepEl.classList.add("active");
 
-        // Gestionar los puntos (dots) de la cabecera
         document.querySelectorAll(".step-dot").forEach((el) => el.classList.remove("active"));
         for (let i = 1; i <= step; i++) {
             const dot = document.getElementById(`dot-${i}`);
             if (dot) dot.classList.add("active");
         }
-
-        // Actualizar número en el texto
         const stepNum = document.getElementById("step-number");
         if (stepNum) stepNum.innerText = step;
-
         currentStep = step;
     }
 
-    /**
-     * Muestra/Oculta secciones opcionales (Tarjeta y Sobres)
-     */
     window.toggleSection = function (section) {
         const fields = document.getElementById(`${section}-fields`);
         const checkbox = document.getElementById(`has_${section}`);
@@ -96,7 +172,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             fields.style.display = "block";
             checkbox.checked = true;
             toggleDiv.classList.add("active");
-            // Scroll suave hacia la sección abierta
             setTimeout(() => fields.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
         } else {
             fields.style.display = "none";
@@ -105,137 +180,46 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     };
 
-    // Selección de ICONOS (UI)
-    const iconOptions = document.querySelectorAll(".icon-option");
-    iconOptions.forEach((option) => {
+    document.querySelectorAll(".icon-option").forEach((option) => {
         option.addEventListener("click", function () {
-            iconOptions.forEach((opt) => opt.classList.remove("selected"));
+            document.querySelectorAll(".icon-option").forEach((opt) => opt.classList.remove("selected"));
             this.classList.add("selected");
         });
     });
 
-    // Selección de COLORES (UI)
-    const colorOptions = document.querySelectorAll(".color-circle");
-    colorOptions.forEach((option) => {
+    document.querySelectorAll(".color-circle").forEach((option) => {
         option.addEventListener("click", function () {
-            colorOptions.forEach((opt) => opt.classList.remove("selected"));
+            document.querySelectorAll(".color-circle").forEach((opt) => opt.classList.remove("selected"));
             this.classList.add("selected");
             const hiddenInput = document.getElementById("account_color");
             if (hiddenInput) hiddenInput.value = this.dataset.color;
         });
     });
 
-    // ------------------------------------------------------
-    // C. LÓGICA DE INPUTS (FORMATO IBAN)
-    // ------------------------------------------------------
-    
     const ibanInput = document.getElementById('iban_number');
     if (ibanInput) {
-        // Formatear mientras se escribe (espacios cada 4 dígitos)
         ibanInput.addEventListener('input', function (e) {
             let target = e.target;
-            // Eliminar todo lo que no sea número y limitar a 22 dígitos
             let input = target.value.replace(/\D/g, '').substring(0, 22);
-            
-            // Añadir espacios visuales
             let formatted = input.match(/.{1,4}/g)?.join(' ') || '';
             target.value = formatted;
-            
-            // Feedback visual (Verde si completo, normal si no)
-            if (input.length === 22) {
-                target.style.borderColor = "#10b981";
-            } else {
-                target.style.borderColor = "";
-            }
-        });
-
-        // Validar al salir del campo
-        ibanInput.addEventListener('blur', function() {
-            let input = this.value.replace(/\D/g, '');
-            if (input.length > 0 && input.length < 22) {
-                this.style.borderColor = "#ef4444"; // Rojo si está incompleto
-            }
+            target.style.borderColor = input.length === 22 ? "#10b981" : "";
         });
     }
 
-    // ------------------------------------------------------
-    // D. COMUNICACIÓN CON API (GUARDADO)
-    // ------------------------------------------------------
-
-    /**
-     * Guarda el Paso 1 (Perfil de Usuario)
-     */
-    async function saveProfileStep() {
-        const btn = document.getElementById("btn-step-1");
-        const originalText = btn.innerHTML;
-        const firstName = document.getElementById("setup_firstname").value.trim();
-        const lastName = document.getElementById("setup_lastname").value.trim();
-        const phone = document.getElementById("setup_phone").value.trim();
-
-        if (!firstName || !lastName) {
-            alert("Por favor, completa nombre y apellidos.");
-            return false;
-        }
-
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
-
-        try {
-            // 1. Obtener datos actuales (necesitamos el email para no perderlo)
-            const userRes = await fetch("/api/profile", {
-                headers: { "Accept": "application/json" },
-                credentials: 'same-origin'
-            });
-            const user = await userRes.json();
-
-            // 2. Refrescar seguridad
-            await fetch("/sanctum/csrf-cookie");
-
-            // 3. Enviar actualización
-            const response = await fetch("/api/profile", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    first_name: firstName,
-                    last_name: lastName,
-                    email: user.email,
-                    phone: phone,
-                }),
-            });
-
-            if (!response.ok) throw new Error("Error al guardar perfil");
-            return true;
-        } catch (error) {
-            console.error(error);
-            alert("Error: " + error.message);
-            return false;
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
-    }
-
-    // ------------------------------------------------------
-    // E. SUBMIT FINAL (CREACIÓN DE CUENTAS)
-    // ------------------------------------------------------
-    
+    // ==========================================
+    // E. SUBMIT FINAL (Sin cambios lógicos)
+    // ==========================================
     const form = document.getElementById("setup-form");
     if (form) {
         form.addEventListener("submit", async function (e) {
             e.preventDefault();
-
             const btn = document.getElementById("btn-submit");
             const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizando...';
 
             try {
-                // 1. Preparar seguridad
                 await fetch("/sanctum/csrf-cookie");
                 const csrfToken = getCookie("XSRF-TOKEN");
                 const commonHeaders = {
@@ -244,28 +228,23 @@ document.addEventListener("DOMContentLoaded", async function () {
                     "X-XSRF-TOKEN": csrfToken,
                 };
 
-                // 2. Recopilar datos de CUENTA BANCARIA
                 const country = document.getElementById("iban_country").value;
-                // Limpiamos los espacios del IBAN antes de enviar
                 const numberRaw = document.getElementById("iban_number").value.replace(/\s+/g, '');
 
                 if (numberRaw.length !== 22) {
                     throw new Error("El IBAN debe tener 24 caracteres (ES + 22 dígitos).");
                 }
 
-                const accountData = {
-                    bank_name: document.getElementById("bank_name").value,
-                    iban: country + numberRaw,
-                    current_balance: document.getElementById("current_balance").value,
-                    color: document.getElementById("account_color").value,
-                };
-
-                // 3. Crear CUENTA
+                // Crear CUENTA
                 const accRes = await fetch("/api/accounts", {
                     method: "POST",
                     headers: commonHeaders,
-                    credentials: "same-origin",
-                    body: JSON.stringify(accountData),
+                    body: JSON.stringify({
+                        bank_name: document.getElementById("bank_name").value,
+                        iban: country + numberRaw,
+                        current_balance: document.getElementById("current_balance").value,
+                        color: document.getElementById("account_color").value,
+                    }),
                 });
 
                 if (!accRes.ok) {
@@ -276,21 +255,19 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const accResult = await accRes.json();
                 const accountId = accResult.account.id;
 
-                // 4. Crear TARJETA (Opcional)
+                // Crear TARJETA (Opcional)
                 if (document.getElementById("has_card").checked) {
                     const typeRadio = document.querySelector('input[name="card_type"]:checked');
-                    const cardType = typeRadio ? typeRadio.value : "debit";
                     let expDate = document.getElementById("card_expiration").value;
                     if (expDate) expDate += "-01";
 
                     await fetch("/api/cards", {
                         method: "POST",
                         headers: commonHeaders,
-                        credentials: "same-origin",
                         body: JSON.stringify({
                             account_id: accountId,
                             alias: document.getElementById("card_alias").value,
-                            type: cardType,
+                            type: typeRadio ? typeRadio.value : "debit",
                             last_4_digits: document.getElementById("card_digits").value,
                             expiration_date: expDate,
                             balance: 0,
@@ -298,26 +275,22 @@ document.addEventListener("DOMContentLoaded", async function () {
                     });
                 }
 
-                // 5. Crear SOBRE (Opcional)
+                // Crear SOBRE (Opcional)
                 if (document.getElementById("has_envelope").checked) {
                     const selectedIconDiv = document.querySelector(".icon-option.selected");
-                    const iconClass = selectedIconDiv ? selectedIconDiv.getAttribute("data-icon") : "fas fa-piggy-bank";
-
                     await fetch("/api/envelopes", {
                         method: "POST",
                         headers: commonHeaders,
-                        credentials: "same-origin",
                         body: JSON.stringify({
                             account_id: accountId,
                             name: document.getElementById("env_name").value,
                             target_amount: document.getElementById("env_target").value,
                             allocated_amount: document.getElementById("env_allocated").value || 0,
-                            icon: iconClass,
+                            icon: selectedIconDiv ? selectedIconDiv.getAttribute("data-icon") : "fas fa-piggy-bank",
                         }),
                     });
                 }
 
-                // 6. ¡ÉXITO! Redirigir
                 window.location.href = "/dashboard";
 
             } catch (error) {
@@ -329,15 +302,3 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 });
-
-// Función auxiliar para las cookies (MEJORADA)
-function getCookie(name) {
-	let matches = document.cookie.match(
-		new RegExp(
-			"(?:^|; )" +
-				name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
-				"=([^;]*)"
-		)
-	);
-	return matches ? decodeURIComponent(matches[1]) : undefined;
-}

@@ -3,56 +3,67 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
-    // 1. VER (GET)
+    // ==========================================
+    // 1. MOSTRAR DATOS (GET)
+    // ==========================================
     public function show(Request $request)
     {
-        // Cargamos usuario y perfil para pasarlo a la vista
         $user = $request->user()->load('profile');
+
+        // MODO API/SETUP: Si el JS pide datos, devolvemos JSON limpio
+        if ($request->wantsJson()) {
+            return $user;
+        }
+
+        // MODO WEB: Si entras por el navegador, devolvemos la VISTA
         return view('ajustes', compact('user'));
     }
 
-    // 2. ACTUALIZAR (PUT)
+    // ==========================================
+    // 2. GUARDAR DATOS (PUT/POST)
+    // ==========================================
     public function update(Request $request)
     {
         $user = $request->user();
 
+        // Validación común para ambos mundos
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
-            'last_name'  => 'nullable|string|max:255',
-            'email'      => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+            'last_name'  => 'required|string|max:255', // En setup es obligatorio
             'phone'      => 'nullable|string|max:20',
         ]);
 
-        // Actualizar Tabla Users
+        // 1. Guardar en tabla USERS (Nombre de pila)
         $user->update([
-            'name'  => $validated['first_name'],
-            'email' => $validated['email'],
+            'name' => $validated['first_name']
         ]);
 
-        // Actualizar Tabla Profiles
+        // 2. Guardar en tabla PROFILES (Apellidos y teléfono)
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
             [
                 'lastname' => $validated['last_name'],
-                'phone'    => $validated['phone'],
+                'phone'    => $validated['phone'],  
             ]
         );
 
-        // REDIRECCIÓN con mensaje de éxito (Flash Message)
-        return redirect()->route('profile.view')->with('success', 'Perfil actualizado correctamente.');
-    }
+        // --- AQUÍ ESTÁ EL TRUCO ---
+        
+        // MODO API/SETUP: El JS espera un "OK" para pasar al siguiente paso
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Perfil guardado correctamente',
+                'user' => $user->load('profile')
+            ], 200);
+        }
 
-    // 3. LOGOUT (POST)
-    public function logout(Request $request)
-    {
-        Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/login');
+        // MODO WEB: La página de ajustes espera una recarga/redirección
+        return redirect()->route('profile.view')
+            ->with('success', 'Perfil actualizado correctamente.');
     }
 }
