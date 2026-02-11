@@ -46,8 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Usamos '/profile' para todo. 
     // Si entras por navegador -> Verás la vista de ajustes.
     // Si entra el JS -> Recibirá JSON.
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.view');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/ajustes', [ProfileController::class, 'show'])->name('profile.view');
+    Route::put('/ajustes', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 require __DIR__ . '/auth.php';
