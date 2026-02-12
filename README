@@ -1,17 +1,63 @@
---- Estado del proyecto ---
+# BudgetBuddy - Guía de Instalación y Despliegue 🚀
 
-Los archivos en la ruta frontend/src/view/home son susceptibles de ser alterados o eliminados
-    Lo mismo aplica a src/css/dashborad y desktop
+Esta guía detalla los pasos necesarios para levantar el entorno de desarrollo de **BudgetBuddy** utilizando Docker, partiendo desde el repositorio de GitHub.
+
+## 📋 Requisitos previos
+
+Asegúrate de tener instalado lo siguiente antes de comenzar:
+
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) (instalado y ejecutándose).
+* [Git](https://git-scm.com/).
+
+---
+
+## 🛠️ Pasos para el despliegue inicial
+
+### 1. Clonar el repositorio y configurar variables de entorno
+
+Antes de levantar los contenedores, asegúrate de tener el archivo de configuración `.env` listo.
+
+# Entrar en la carpeta del backend
+cd backend
+
+# Copiar el archivo de ejemplo a .env (si no existe)
+cp .env.example .env
+
+## Levantar el contenedor
+docker-compose up -d --build
+
+## Posible error: ERROR [backend internal] load build context
+Si te encuentras con un error de carga de contexto al construir, ejecuta los siguientes comandos (PowerShell):
+
+cd backend
+New-Item .dockerignore -Type File
+Set-Content .dockerignore "/node_modules`r`n/vendor`r`n.env`r`n.git"
+
+## Configuracion del backend laravel
+
+# Instalar dependencias de Composer
+docker-compose exec -it backend composer install
+
+# Generar la clave de encriptación de Laravel (Vital para que arranque)
+docker-compose exec -it backend php artisan key:generate
+
+# Instalar librería de Inertia.js (si no está en composer.json)
+docker-compose exec -it backend composer require inertiajs/inertia-laravel
+
+# Generar el Middleware de Inertia
+docker-compose exec -it backend php artisan inertia:middleware
+
+# Ejecutar migraciones de base de datos (Para crear las tablas)
+docker-compose exec -it backend php artisan migrate
+
+## Configuración del Frontend (Vite)
+Instalamos las dependencias de Node.js y compilamos los archivos estáticos para que la interfaz funcione.
+
+# Instalar paquetes de Node
+docker-compose exec -it backend npm install
+
+# Compilar archivos para producción
+docker-compose exec -it backend npm run build
 
 
-- BASE DE DATOS RAPIDA
-INSERT INTO reviews (usuario, comentario, estrellas, avatar, created_at, updated_at) VALUES 
-('Laura Martínez', 'Llevo usándola un mes y he ahorrado 200€ sin darme cuenta. ¡Top!', 5, 'https://ui-avatars.com/api/?name=Laura+Martinez&background=random', NOW(), NOW()),
 
-('David Broncano', 'La interfaz está guapísima, pero echo de menos poder exportar a PDF.', 4, 'https://ui-avatars.com/api/?name=David+Broncano&background=0D8ABC&color=fff', NOW(), NOW()),
-
-('Ibai Llanos', 'Es una locura de app, chavales. Muy intuitiva.', 5, 'https://ui-avatars.com/api/?name=Ibai+Llanos&background=ffcc00', NOW(), NOW()),
-
-('Marta Díaz', 'Cumple su función, aunque a veces tarda un pelín en cargar.', 3, 'https://ui-avatars.com/api/?name=Marta+Diaz&background=random', NOW(), NOW()),
-
-('Sergio Ramos', 'Clean sheet en mis finanzas. Perfecta.', 5, 'https://ui-avatars.com/api/?name=Sergio+Ramos&background=ef4444&color=fff', NOW(), NOW());
