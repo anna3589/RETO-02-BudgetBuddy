@@ -80,56 +80,76 @@ class MovementController extends Controller
         Log::info('Request data:', $request->all());
         
         try {
+            // 1. Валідація / Validación
             $validated = $request->validate([
                 'card_id' => 'required|exists:cards,id',
                 'amount' => 'required|numeric',
                 'description' => 'required|string|max:255',
                 'date' => 'required|date',
                 'type' => 'required|in:gasto,ingreso,traspaso',
-                'tag_id' => 'nullable|exists:tags,id'
+                'tag_id' => 'nullable|exists:tags,id',
+                'envelope_id' => 'nullable|exists:envelopes,id' // 🇺🇦 ДОДАНО ПІДТРИМКУ КОНВЕРТІВ / 🇪🇸 AÑADIDO SOPORTE PARA SOBRES
             ]);
             
             Log::info('Validation passed:', $validated);
             
-            // 1. Отримати картку
+            // 2. Отримати картку та рахунок / Obtener tarjeta y cuenta
             $card = Card::findOrFail($validated['card_id']);
+            $account = $card->account; // Отримуємо рахунок напряму з картки
             
-            // 2. Перевірити, чи картка належить користувачеві
-            if ($card->account->user_id !== Auth::id()) {
+            // 3. Перевірити, чи картка належить користувачеві / Comprobar si la tarjeta es del usuario
+            if ($account->user_id !== Auth::id()) {
                 Log::warning('Unauthorized movement creation attempt');
                 return response()->json([
                     'message' => 'No autorizado para realizar esta acción'
                 ], 403);
             }
             
-            // 3. Розрахунок суми
+            // 4. Розрахунок суми (якщо це gasto, робимо від'ємним) / Cálculo de la cantidad
             $amount = $validated['amount'];
             if ($validated['type'] === 'gasto') {
                 $amount = -abs($amount);
             }
             
-            // 4. Створити movement в БД
+            // 5. Створити movement в БД / Crear movement en BD
             $movement = Movement::create([
-                'account_id' => $card->account_id,
+                'account_id' => $account->id,
                 'card_id' => $validated['card_id'],
+                'envelope_id' => $validated['envelope_id'] ?? null, // 🇺🇦 Зберігаємо конверт, якщо він є
                 'amount' => $amount,
                 'description' => $validated['description'],
                 'date' => $validated['date'],
                 'type' => $validated['type']
             ]);
+
+            // ==========================================
+            // 🇺🇦 6. МАГІЯ: ОНОВЛЕННЯ БАЛАНСУ РАХУНКУ
+            // 🇪🇸 6. MAGIA: ACTUALIZACIÓN DEL SALDO DE LA CUENTA
+            // ==========================================
             
-            // 5. Додати тег, якщо є
+            // Перевіряємо, чи існує поле current_balance (якщо в базі воно називається balance, зміни на balance)
+            if ($validated['type'] === 'ingreso') {
+                $account->current_balance += abs($amount); // Додаємо доходи
+            } else if ($validated['type'] === 'gasto') {
+                $account->current_balance -= abs($amount); // Віднімаємо витрати
+            }
+            
+            $account->save(); // ЗБЕРІГАЄМО ОНОВЛЕНИЙ БАЛАНС!
+            Log::info('Account balance updated to: ' . $account->current_balance);
+            // ==========================================
+            
+            // 7. Додати тег, якщо є / Añadir tag si existe
             if (!empty($validated['tag_id'])) {
                 $movement->tags()->attach($validated['tag_id']);
             }
             
-            // 6. Завантажити зв'язки
-            $movement->load('tags', 'account', 'card');
+            // 8. Завантажити зв'язки / Cargar relaciones
+            $movement->load('tags', 'account', 'card', 'envelope');
             
             Log::info('Movement created successfully:', $movement->toArray());
             
             return response()->json([
-                'message' => '✅ Movimiento creado correctamente',
+                'message' => '✅ Movimiento creado y balance actualizado correctamente',
                 'movement' => $movement
             ], 201);
             
