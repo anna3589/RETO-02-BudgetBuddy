@@ -1,0 +1,58 @@
+name: BudgetBuddy CI (Integración Continua)
+
+# Se ejecutará cada vez que hagáis un push o pull request a la rama main o develop
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Clona vuestro repositorio en la máquina virtual de GitHub
+    - name: 📥 Descargar código (Checkout)
+      uses: actions/checkout@v3
+
+    # 2. Prepara el entorno PHP para Laravel
+    - name: 🐘 Configurar PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2' # Versión ideal para Laravel 10
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json
+        coverage: none
+
+    # 3. Instala las dependencias del backend
+    - name: 📦 Instalar dependencias de Composer
+      working-directory: ./backend
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    # 4. Prepara el archivo .env para que Laravel no explote
+    - name: ⚙️ Configurar archivo .env
+      working-directory: ./backend
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+
+    # 5. Prepara el entorno Node.js para el Frontend/Vite
+    - name: 🟢 Configurar Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    # 6. Instala las dependencias del frontend y compila
+    - name: 🏗️ Construir Frontend (Vite)
+      working-directory: ./backend
+      run: |
+        npm ci
+        npm run build
+
+    # Opcional: Si habéis hecho tests en Laravel, descomenta esto
+    # - name: 🧪 Ejecutar Tests de Laravel (PHPUnit)
+    #   working-directory: ./backend
+    #   env:
+    #     DB_CONNECTION: sqlite
+    #     DB_DATABASE: database/database.sqlite
+    #   run: php artisan test
