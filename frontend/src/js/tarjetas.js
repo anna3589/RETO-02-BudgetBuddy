@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         ACCOUNTS: {
             INDEX: '/api/accounts',
+        },
+        ENVELOPES: {
+            INDEX: '/api/envelopes'
         }
     };
 
@@ -236,6 +239,39 @@ document.addEventListener('DOMContentLoaded', function () {
             currentMovements = [];
             renderMovements();
         }
+    }
+
+    // Змінна для збереження конвертів / Variable para guardar los sobres
+    let currentEnvelopes = [];
+
+    // Завантаження конвертів з сервера / Cargar sobres del servidor
+    async function loadEnvelopes() {
+        try {
+            const data = await apiRequest(API.ENVELOPES.INDEX);
+            if (data) {
+                currentEnvelopes = Array.isArray(data) ? data : [];
+                console.log(`Loaded ${currentEnvelopes.length} envelopes`);
+                renderEnvelopeDropdown(); // Оновлюємо випадаючий список / Actualizamos el desplegable
+            }
+        } catch (error) {
+            console.error('Error loading envelopes:', error);
+            currentEnvelopes = [];
+        }
+    }
+
+    // Відображення списку конвертів у модальному вікні / Mostrar lista de sobres en el modal
+    function renderEnvelopeDropdown() {
+        const envelopeSelect = document.getElementById('movementEnvelope');
+        if (!envelopeSelect) return;
+
+        envelopeSelect.innerHTML = '<option value="">Sin sobre</option>'; // Опція за замовчуванням / Opción por defecto
+
+        currentEnvelopes.forEach(env => {
+            const option = document.createElement('option');
+            option.value = env.id;
+            option.textContent = env.name;
+            envelopeSelect.appendChild(option);
+        });
     }
 
     async function deleteCard(cardId) {
@@ -828,9 +864,12 @@ document.addEventListener('DOMContentLoaded', function () {
         dom.saveMovementBtn.addEventListener('click', async function (e) {
             e.preventDefault();
 
+            const envelopeValue = document.getElementById('movementEnvelope').value;
+
             const movementData = {
                 card_id: parseInt(dom.movementCardSelect.value),
                 tag_id: dom.movementCategorySelect.value ? parseInt(dom.movementCategorySelect.value) : null,
+                envelope_id: envelopeValue ? parseInt(envelopeValue) : null,
                 amount: Math.abs(parseFloat(document.getElementById('movementAmount').value)),
                 description: document.getElementById('movementDescription').value,
                 date: document.getElementById('movementDate').value,
@@ -928,7 +967,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 loadCards(),
                 loadTags(),
                 loadMovements(),
-                loadUserProfile()
+                loadUserProfile(),
+                loadEnvelopes()
             ]);
 
             showNotification('Sistema cargado correctamente', 'success');

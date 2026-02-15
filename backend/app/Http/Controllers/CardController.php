@@ -37,11 +37,10 @@ class CardController extends Controller{
     public function store(Request $request)
     {
         try {
-            // 1. Валідація
             $validated = $request->validate([
                 'account_id' => 'required|exists:accounts,id',
                 'alias' => 'required|string|max:50',
-                'last_four_digits' => 'required|string|size:4', // ← ЗМІНА: last_four_digits
+                'last_4_digits' => 'required|string|size:4', 
                 'expiration_date' => 'required|date',           // YYYY-MM-DD
                 'type' => 'required|in:credit,debit',
             ]);
@@ -61,7 +60,7 @@ class CardController extends Controller{
             $card = Card::create([
                 'account_id' => $account->id,
                 'alias' => $validated['alias'],
-                'last_4_digits' => $validated['last_four_digits'], // ← Перейменування
+                'last_4_digits' => $validated['last_4_digits'], // ← Перейменування
                 'expiration_date' => $validated['expiration_date'],
                 'type' => $validated['type']
             ]);

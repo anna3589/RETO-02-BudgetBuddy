@@ -10,14 +10,13 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css'])
     </head>
     <body class="font-sans text-gray-900 antialiased bg-gray-100">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
             <div class="mb-6">
                 <a href="/" class="flex flex-col items-center">
-                    <img src="{{ asset('logo.png') }}" alt="BudgetBuddy Logo">
-                    <span class="text-2xl font-bold text-gray-800 mt-2">BudgetBuddy</span>
+                    <span class="text-4xl font-bold text-gray-800 mt-2">BudgetBuddy</span>
                 </a>
             </div>
 

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // ==========================================
     try {
         // Hacemos una llamada segura para intentar ver si la sesión está viva
-        const res = await fetch("/profile", {
+        const res = await fetch("/ajustes", {
             headers: { "Accept": "application/json" }
         });
 
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             await fetch("/sanctum/csrf-cookie");
 
-            const response = await fetch("/profile", {
+            const response = await fetch("/ajustes", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
