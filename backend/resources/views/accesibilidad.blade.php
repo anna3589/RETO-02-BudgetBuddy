@@ -183,7 +183,7 @@
             </ul>
         </section>
 
-        <a href="/desktop" class="btn-back">
+        <a href="/" class="btn-back">
             <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Volver al Escritorio
         </a>
     </main>

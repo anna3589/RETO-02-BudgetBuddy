@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const contentType = res.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
             const user = await res.json();
-            
+
             // Guardamos el email porque EL BACKEND LO EXIGE en el paso siguiente
             if (user.email) currentUserEmail = user.email;
 
@@ -50,11 +50,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     // ==========================================
     // B. NAVEGACIÓN Y GUARDADO
     // ==========================================
-    
+
     window.goToStep = async function (step) {
         if (currentStep === 1 && step > 1) {
             const guardado = await saveProfileStep();
-            if (!guardado) return; 
+            if (!guardado) return;
         }
         showStep(step);
     };
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     async function saveProfileStep() {
         const btn = document.getElementById("btn-step-1");
         const originalText = btn.innerHTML;
-        
+
         const firstName = document.getElementById("setup_firstname").value.trim();
         const lastName = document.getElementById("setup_lastname").value.trim();
         const phone = document.getElementById("setup_phone").value.trim();
@@ -83,15 +83,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (!currentUserEmail) {
             // Intento desesperado: pedirlo de nuevo al backend antes de guardar
             try {
-                const check = await fetch("/profile", { headers: { "Accept": "application/json" }});
-                if(check.ok) {
+                const check = await fetch("/profile", { headers: { "Accept": "application/json" } });
+                if (check.ok) {
                     const u = await check.json();
                     currentUserEmail = u.email;
                 }
-            } catch(e) {}
-            
+            } catch (e) { }
+
             // Si sigue vacío, alertamos (o podrías poner un prompt si quieres forzarlo)
-            if(!currentUserEmail) {
+            if (!currentUserEmail) {
                 console.warn("No se pudo recuperar el email del usuario. El guardado podría fallar si el backend lo requiere.");
                 // Opcional: currentUserEmail = prompt("Por seguridad, confirma tu email:");
             }
@@ -112,8 +112,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 },
                 body: JSON.stringify({
                     // CORRECCIÓN: Usamos snake_case porque tu error 422 lo pedía así ("first_name")
-                    first_name: firstName, 
-                    last_name: lastName,   
+                    first_name: firstName,
+                    last_name: lastName,
                     phone: phone,
                     email: currentUserEmail // CORRECCIÓN: Lo enviamos porque tu error decía "email field is required"
                 }),
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 return false;
             }
 
-            return true; 
+            return true;
 
         } catch (error) {
             console.error(error);
@@ -251,16 +251,32 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const errorData = await accRes.json();
                     throw new Error(errorData.message || "Error al crear cuenta");
                 }
-                
+
                 const accResult = await accRes.json();
                 const accountId = accResult.account.id;
 
                 // Crear TARJETA (Opcional)
                 if (document.getElementById("has_card").checked) {
                     const typeRadio = document.querySelector('input[name="card_type"]:checked');
-                    let expDate = document.getElementById("card_expiration").value;
-                    if (expDate) expDate += "-01";
+                    const expInput = document.getElementById("card_expiration").value;
+                    let expDate = "";
 
+                    // Caso A: Formato nativo del calendario (Chrome) -> YYYY-MM
+                    if (/^\d{4}-\d{2}$/.test(expInput)) {
+                        expDate = expInput + "-01";
+                    }
+                    // Caso B: El usuario lo escribió a mano (Firefox) -> MM/YYYY o MM/YY
+                    else if (/^(0[1-9]|1[0-2])\/(\d{2}|\d{4})$/.test(expInput)) {
+                        let parts = expInput.split('/');
+                        let month = parts[0];
+                        let year = parts[1].length === 2 ? "20" + parts[1] : parts[1]; // Si pone 28, lo convertimos a 2028
+                        expDate = `${year}-${month}-01`;
+                    }
+                    // Caso C: El usuario escribió cualquier otra cosa mal (Ej: "hola", "2028/12")
+                    else {
+                        showNotification("Formato de caducidad inválido. Usa AAAA-MM o MM/AAAA", "error");
+                        return; // ¡Frenamos el código aquí para no provocar el error 500!
+                    }
                     await fetch("/api/cards", {
                         method: "POST",
                         headers: commonHeaders,

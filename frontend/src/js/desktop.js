@@ -175,9 +175,8 @@ function renderGoals(goals) {
                     <svg class="progress-circle" viewBox="0 0 36 36">
                         <circle class="progress-circle-bg" cx="18" cy="18" r="16"></circle>
                         <circle class="progress-circle-fill" cx="18" cy="18" r="16"
-                                style="--progress: ${visualPercentage}; stroke-dasharray: 100 100; stroke-dashoffset: ${
-																	100 - visualPercentage
-																};">
+                                style="--progress: ${visualPercentage}; stroke-dasharray: 100 100; stroke-dashoffset: ${100 - visualPercentage
+			};">
                         </circle>
                     </svg>
                     <div class="progress-text">${percentage}%</div>
@@ -185,9 +184,8 @@ function renderGoals(goals) {
                 <div class="goal-info">
                     <h4>${goal.name}</h4>
                     <div class="goal-date" style="font-size: 0.8rem; color: #9ca3af">
-                        <i class="${
-													goal.icon || "fas fa-bullseye"
-												}"></i> Meta Activa
+                        <i class="${goal.icon || "fas fa-bullseye"
+			}"></i> Meta Activa
                     </div>
                 </div>
             </div>
@@ -195,16 +193,16 @@ function renderGoals(goals) {
                 <div class="goal-stat-item">
                     <span class="goal-stat-label">Ahorrado</span>
                     <span class="goal-stat-value ahorrado">${current.toLocaleString(
-											"es-ES",
-											{ minimumFractionDigits: 0 },
-										)}€</span>
+				"es-ES",
+				{ minimumFractionDigits: 0 },
+			)}€</span>
                 </div>
                 <div class="goal-stat-item">
                     <span class="goal-stat-label">Meta</span>
                     <span class="goal-stat-value meta">${target.toLocaleString(
-											"es-ES",
-											{ minimumFractionDigits: 0 },
-										)}€</span>
+				"es-ES",
+				{ minimumFractionDigits: 0 },
+			)}€</span>
                 </div>
             </div>
         `;
@@ -419,9 +417,7 @@ function renderMockCards(container) {
 	});
 }
 
-/**
- * Carga las tarjetas asociadas a una cuenta específica
- */
+
 /**
  * Carga las tarjetas asociadas a una cuenta específica
  */
@@ -508,13 +504,12 @@ function renderCards(container, cards) {
 
 		cardEl.innerHTML = `
             <div class="mini-card-top">
-                <span style="font-weight: 500; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">${
-									card.alias
-								}</span>
+                <span style="font-weight: 500; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">${card.alias
+			}</span>
                 <i class="fab fa-cc-${visualType}" style="font-size: 1.8rem; opacity: 0.9;"></i>
             </div>
             <div class="mini-card-number">
-                **** **** **** ${card.last_four_digits || "0000"}
+                **** **** **** ${card.last_4_digits || "0000"}
             </div>
             <div class="mini-card-bottom">
                 <div style="text-align: right;">
@@ -672,10 +667,25 @@ if (saveCardBtn) {
 			);
 			return;
 		}
+		let expDate = "";
 
-		// Preparar fecha (Laravel suele esperar YYYY-MM-DD)
-		const expDate = expInput + "-01";
-
+		// Caso A: Formato nativo del calendario (Chrome) -> YYYY-MM
+		if (/^\d{4}-\d{2}$/.test(expInput)) {
+			expDate = expInput + "-01";
+		}
+		// Caso B: El usuario lo escribió a mano (Firefox) -> MM/YYYY o MM/YY
+		else if (/^(0[1-9]|1[0-2])\/(\d{2}|\d{4})$/.test(expInput)) {
+			let parts = expInput.split('/');
+			let month = parts[0];
+			let year = parts[1].length === 2 ? "20" + parts[1] : parts[1]; // Si pone 28, lo convertimos a 2028
+			expDate = `${year}-${month}-01`;
+		}
+		// Caso C: El usuario escribió cualquier otra cosa mal (Ej: "hola", "2028/12")
+		else {
+			showNotification("Formato de caducidad inválido. Usa AAAA-MM o MM/AAAA", "error");
+			return; // ¡Frenamos el código aquí para no provocar el error 500!
+		}
+		// ==========================================
 		// UI Loading
 		const originalText = saveCardBtn.innerHTML;
 		saveCardBtn.disabled = true;
@@ -776,17 +786,16 @@ function renderTags(tags) {
 
 		tagElement.innerHTML = `
             <div class="tag-icon" style="background-color: rgba(${hexToRgb(
-							tag.color,
-						)}, 0.1); color: ${tag.color};">
+			tag.color,
+		)}, 0.1); color: ${tag.color};">
                 <i class="fas fa-${tag.icon || "tag"}"></i>
             </div>
             <div class="tag-info">
                 <h3>${tag.name}</h3>
-                <p>${
-									tag.created_at
-										? "Creada: " + formatDate(tag.created_at)
-										: "Etiqueta"
-								}</p>
+                <p>${tag.created_at
+				? "Creada: " + formatDate(tag.created_at)
+				: "Etiqueta"
+			}</p>
             </div>
         `;
 		tagsList.insertBefore(tagElement, deleteTagArea);
@@ -1054,11 +1063,11 @@ if (saveGoalBtn) {
 				loadGoalsFromServer(); // Recargar lista visual
 				loadAccountsFromServer(); // Actualizar saldo disponible
 			} else {
-				goalModal.close();	
+				goalModal.close();
 				showNotification("Error al guardar", "error");
 			}
 		} catch (error) {
-			goalModal.close();		
+			goalModal.close();
 			console.error(error);
 			showNotification("Error de conexión", "error");
 		} finally {
@@ -1331,9 +1340,8 @@ function showNotification(message, type) {
 	const notification = document.createElement("div");
 	notification.className = `notification ${type}`;
 	notification.innerHTML = `<div class="notification-content"><span>${message}</span></div>`;
-	notification.style.cssText = `position: fixed; top: 100px; right: 20px; background: ${
-		type === "error" ? "#ef4444" : "#10b981"
-	}; color: white; padding: 12px; border-radius: 8px; z-index: 9999;`;
+	notification.style.cssText = `position: fixed; top: 100px; right: 20px; background: ${type === "error" ? "#ef4444" : "#10b981"
+		}; color: white; padding: 12px; border-radius: 8px; z-index: 9999;`;
 	document.body.appendChild(notification);
 	setTimeout(() => notification.remove(), 3000);
 }

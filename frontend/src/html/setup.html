@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
@@ -179,24 +179,40 @@
 							</div>
 						</div>
 
-                        <div class="form-group">
-                            <label for="iban_number">IBAN</label>
-                            <div class="input-wrapper iban-composite" style="display: flex; align-items: stretch">
-                                <select id="iban_country" class="country-select" style="min-width: 100px; width: auto;">
-                                    <option value="ES" selected>🇪🇸 ES</option>
-                                    <option value="FR">🇫🇷 FR</option>
-                                    <option value="DE">🇩🇪 DE</option>
-                                    <option value="IT">🇮🇹 IT</option>
-                                    <option value="PT">🇵🇹 PT</option>
-                                    <option value="GB">🇬🇧 GB</option>
-                                </select>
-                                <input type="text" id="iban_number" placeholder="0000 0000 00..." 
-                                    style="padding-inline-start: 10px !important; border-inline-start: none; border-start-start-radius: 0; border-end-start-radius: 0;" />
-                            </div>
-                            <p style="font-size: 0.8rem; color: #6b7280; margin-top: 5px">
-                                Selecciona el país y escribe los dígitos.
-                            </p>
-                        </div>
+						<div class="form-group">
+							<label for="iban_number">IBAN</label>
+							<div
+								class="input-wrapper iban-composite"
+								style="display: flex; align-items: stretch"
+							>
+								<select
+									id="iban_country"
+									class="country-select"
+									style="min-width: 100px; width: auto"
+								>
+									<option value="ES" selected>🇪🇸 ES</option>
+									<option value="FR">🇫🇷 FR</option>
+									<option value="DE">🇩🇪 DE</option>
+									<option value="IT">🇮🇹 IT</option>
+									<option value="PT">🇵🇹 PT</option>
+									<option value="GB">🇬🇧 GB</option>
+								</select>
+								<input
+									type="text"
+									id="iban_number"
+									placeholder="0000 0000 00..."
+									style="
+										padding-inline-start: 10px !important;
+										border-inline-start: none;
+										border-start-start-radius: 0;
+										border-end-start-radius: 0;
+									"
+								/>
+							</div>
+							<p style="font-size: 0.8rem; color: #6b7280; margin-top: 5px">
+								Selecciona el país y escribe los dígitos.
+							</p>
+						</div>
 
 						<div class="form-group">
 							<label>Saldo Actual (€)</label>
@@ -339,8 +355,18 @@
 									/>
 								</div>
 								<div class="form-group" style="flex: 1">
-									<label>Caduca</label>
-									<input type="month" id="card_expiration" />
+									<label for="card-exp">Caducidad</label>
+									<input type="month" id="card_expiration" required />
+									<span
+										style="
+											font-size: 0.7rem;
+											color: #6b7280;
+											margin-top: 4px;
+											display: block;
+										"
+									>
+										Ej: 12/2028 o usa el calendario
+									</span>
 								</div>
 							</div>
 						</div>

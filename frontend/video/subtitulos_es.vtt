@@ -1,0 +1,361 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.100
+[Música de fondo]
+
+2
+00:00:01.800 --> 00:00:05.100
+Muy buenas a todos, a todas. Bienvenidos, bienvenidas...
+
+3
+00:00:05.100 --> 00:00:09.100
+a la introducción a la aplicación de BudgetBuddy del grupo tres.
+
+4
+00:00:09.100 --> 00:00:15.000
+Vemos que de primeras, sí, es una aplicación de gestión de finanzas personales.
+
+5
+00:00:15.000 --> 00:00:18.000
+Bajamos y vemos algunas de sus características.
+
+6
+00:00:18.000 --> 00:00:23.000
+Es ideal para estudiantes, tiene una categorización muy clara que veremos más adelante.
+
+7
+00:00:23.000 --> 00:00:29.000
+Veremos que es muy visual también a la hora de hacer los movimientos que queramos hacer en la aplicación.
+
+8
+00:00:29.000 --> 00:00:34.000
+Y tiene una pequeña introducción al mundo de las inversiones, finanzas, ETFs.
+
+9
+00:00:34.000 --> 00:00:41.000
+El flujo de la aplicación, en principio, sería que, por primera vez entras y configuras tu perfil, ajustado a lo que necesites.
+
+10
+00:00:41.000 --> 00:00:47.000
+A lo largo del mes vas a registrar tus gastos, tus movimientos o lo que veas necesario.
+
+11
+00:00:47.000 --> 00:00:52.000
+Y al final del mes se analiza y se ajusta en base a lo que queremos conseguir.
+
+12
+00:00:52.000 --> 00:00:58.000
+Nuestras metas, ahorros. Lo veremos más adelante, es bastante sencillo de hacer.
+
+13
+00:00:58.000 --> 00:01:04.000
+Vemos más características: un pequeño formulario...
+
+14
+00:01:04.000 --> 00:01:18.000
+Y vemos también la sección de comentarios, donde los usuarios, pues pueden puntuar la aplicación en base a lo que vean conveniente, con un sistema de puntuación de estrellas, donde cinco es el máximo y el mínimo es una estrella.
+
+15
+00:01:18.000 --> 00:01:23.000
+También vemos el compromiso de accesibilidad de la aplicación.
+
+16
+00:01:23.000 --> 00:01:28.000
+Que se puede leer aquí de forma tranquila cuando se entra a la landing page.
+
+17
+00:01:28.000 --> 00:01:31.000
+Vamos a empezar con un nuevo usuario. Ficticio, obviamente.
+
+18
+00:01:31.000 --> 00:01:35.000
+Se va a llamar... Rodrigo, por ejemplo.
+
+19
+00:01:35.000 --> 00:01:42.000
+Vale, su email es rodrigo@gmail.com.
+
+20
+00:01:42.000 --> 00:01:45.000
+Es importante que tenga esto bien hecho.
+
+21
+00:01:45.000 --> 00:01:50.000
+La contraseña debe ser, por ejemplo, de ocho dígitos. Vamos a poner algo sencillo.
+
+22
+00:01:55.000 --> 00:02:00.000
+Vale, de primeras lo que veremos será una puesta a punto de nuestro perfil.
+
+23
+00:02:00.000 --> 00:02:05.000
+Aquí corregiremos algo si lo hemos puesto mal. Por ejemplo, aquí lo hemos puesto en mayúsculas.
+
+24
+00:02:05.000 --> 00:02:15.000
+Ponemos un apellido, por ejemplo: Alcaba. Y el número de teléfono en caso de que queramos ponerlo. Pondré uno, pero es opcional.
+
+25
+00:02:15.000 --> 00:02:19.000
+Siguiente. Evidentemente, necesitaremos una cuenta de banco con la que empezaremos a trabajar.
+
+26
+00:02:19.000 --> 00:02:27.000
+Pondré la de Santan... Santander, por ejemplo. Vale, elegimos el país, en el caso de que no sea español.
+
+27
+00:02:27.000 --> 00:02:34.000
+Pondremos un IBAN válido, y la aplicación ya automáticamente no nos dejará escribir...
+
+28
+00:02:34.000 --> 00:02:42.000
+y nos pondrá todo formateado en de cuatro dígitos en cuatro para que sea más legible.
+
+29
+00:02:42.000 --> 00:02:46.000
+Y empezaremos con un saldo de, por ejemplo, trece mil euros.
+
+30
+00:02:46.000 --> 00:02:50.000
+Vale, le damos a siguiente. ¿Queremos añadir una tarjeta? La añadimos.
+
+31
+00:02:50.000 --> 00:02:55.000
+De primeras va a ser una Visa. Vale, es de crédito.
+
+32
+00:02:55.000 --> 00:03:00.000
+Los últimos cuatro dígitos serán... estos, da igual.
+
+33
+00:03:00.000 --> 00:03:08.000
+Y pondremos la fecha de cuándo caduca. En mi caso... dos mil veintinueve pongamos, en julio.
+
+34
+00:03:08.000 --> 00:03:13.000
+Siguiente. Crearemos un sobre. ¿Podemos crearlo o no? Vamos a hacerlo más adelante.
+
+35
+00:03:13.000 --> 00:03:19.000
+Porque, si no lo hacemos aquí, no pasa nada porque se puede hacer más adelante. Lo veremos. Le damos a finalizar.
+
+36
+00:03:19.000 --> 00:03:25.000
+De primeras, ¿qué vemos? Vemos nuestra cuenta de banco, vemos la tarjeta que le hemos vinculado...
+
+37
+00:03:25.000 --> 00:03:31.000
+Y aquí vemos un par de etiquetas. Vale.
+
+38
+00:03:31.000 --> 00:03:39.000
+De primeras vamos a ver que aquí tenemos el selector de cuentas. Si queremos añadir otra la podemos añadir aquí.
+
+39
+00:03:39.000 --> 00:03:45.000
+Esta va a ser BBVA. Vamos a añadir un IBAN válido...
+
+40
+00:03:45.000 --> 00:03:52.000
+Y el saldo inicial de, por ejemplo... ochocientos noventa y nueve euros. Vale.
+
+41
+00:03:52.000 --> 00:04:02.000
+Le vamos a dar a guardar. Y vemos que tenemos aquí otra nueva cuenta de BBVA de ochocientos noventa y nueve.
+
+42
+00:04:02.000 --> 00:04:05.000
+Que no tiene ninguna tarjeta asociada, es importante saberlo.
+
+43
+00:04:05.000 --> 00:04:10.000
+Vamos a la de Santander, por ejemplo. ¿Qué son las etiquetas?
+
+44
+00:04:10.000 --> 00:04:16.000
+El sistema de etiquetas sirve para categorizar los movimientos que hagamos.
+
+45
+00:04:16.000 --> 00:04:22.000
+Por ejemplo, si tenemos gastos para ropa... pues aquí ponemos que esto es para ropa.
+
+46
+00:04:22.000 --> 00:04:29.000
+Ponemos un color para que de forma visual veamos y distingamos las distintas etiquetas.
+
+47
+00:04:29.000 --> 00:04:36.000
+Creamos la etiqueta y la tenemos aquí. Hemos implementado un drag and drop para eliminar, arrastrar y eliminar las etiquetas rápidamente.
+
+48
+00:04:36.000 --> 00:04:40.000
+Lo mismo veremos con las tarjetas. Eliminamos esta de gasolina, por ejemplo...
+
+49
+00:04:40.000 --> 00:04:44.000
+Y nos sale aquí: etiqueta eliminada. Perfecto.
+
+50
+00:04:44.000 --> 00:04:48.000
+¿Qué son las metas financieras? Vale.
+
+51
+00:04:48.000 --> 00:04:54.000
+Son, es un sistema de sobres en los que puedes reservar un monto de dinero para alguna meta que tengas.
+
+52
+00:04:54.000 --> 00:05:03.000
+Pongamos... comprar... comprar un nuevo coche.
+
+53
+00:05:03.000 --> 00:05:13.000
+Vale, en la meta es... por ejemplo... dieciocho mil euros. Vale.
+
+54
+00:05:13.000 --> 00:05:22.000
+Y si tenemos ya algo apartado para eso, ponemos aquí, por ejemplo, que tenemos quinientos euros ya ahorrados para el coche.
+
+55
+00:05:22.000 --> 00:05:30.000
+Le añadimos algún icono para diferenciarlo y guardamos la meta. Vale.
+
+56
+00:05:30.000 --> 00:05:38.000
+Aquí se está cargando otra vez porque nos ha retirado lo que hemos ya reservado para el... para la nueva meta.
+
+57
+00:05:38.000 --> 00:05:46.000
+Tenemos un tres por ciento. Así que nos falta res... eh, completar el restante para tener la meta ya completa.
+
+58
+00:05:46.000 --> 00:05:54.000
+¿Qué más? Podemos añadir una nueva tarjeta directamente aquí asociada a nuestra cuenta o si queremos añadir a la otra lo podemos hacer desde aquí también.
+
+59
+00:05:54.000 --> 00:06:03.000
+Esta va a ser... de ahorro o... diario o le podemos poner el alias que queramos.
+
+60
+00:06:03.000 --> 00:06:12.000
+Va a ser una MasterCard, vamos a poner los últimos dígitos... Y nuevamente elegimos la fecha de caducidad.
+
+61
+00:06:12.000 --> 00:06:17.000
+En este caso, el veintinueve en abril. Vamos a guardar.
+
+62
+00:06:17.000 --> 00:06:23.000
+Y vemos que se actualizan ya aquí las tarjetas que tenemos. Tienen los últimos dígitos y cuándo expira.
+
+63
+00:06:23.000 --> 00:06:33.000
+Vamos a ver cómo podemos gestionar las tarjetas. Aquí podemos elegir las distintas que tengamos.
+
+64
+00:06:33.000 --> 00:06:40.000
+Tenemos un drag and drop para eliminar las tarjetas. O podemos añadirlas aquí como hicimos anteriormente.
+
+65
+00:06:40.000 --> 00:06:47.000
+Aquí podemos elegir la cuenta nuevamente. El alias... básicamente como hemos visto antes.
+
+66
+00:06:47.000 --> 00:06:56.000
+Los movimientos, queremos realizar un nuevo movimiento, registrar, mejor dicho, un nuevo movimiento. Este va a ser un gasto.
+
+67
+00:06:56.000 --> 00:07:07.000
+Hemos gastado ciento veinte euros en la compra del mes, por ejemplo. Compra del mes. Vale. Lo hemos hecho hoy.
+
+68
+00:07:07.000 --> 00:07:15.000
+Se pone automáticamente, pero en caso de que queramos añadir otra fecha, pues lo ponemos. Vale, y proviene de la tarjeta de Diario, por ejemplo.
+
+69
+00:07:15.000 --> 00:07:23.000
+Aquí, esto es importante porque hemos definido las etiquetas anteriores. De hecho no tenemos la etiqueta de ropa. Vamos a poner...
+
+70
+00:07:23.000 --> 00:07:31.000
+Compra de ropa para que tenga sentido con la etiqueta que hemos elegido. Y podemos sacar dinero de un sobre.
+
+71
+00:07:31.000 --> 00:07:39.000
+Pero esto no corresponde a la meta que hemos establecido, por lo que vamos a guardar el movimiento así tal cual.
+
+72
+00:07:39.000 --> 00:07:49.000
+Vale, tenemos un pequeño feedback de que lo hemos hecho bien, y vemos aquí la lista de los movimientos que hemos hecho.
+
+73
+00:07:49.000 --> 00:07:56.000
+Con las tabs de lo que han sido ingresos y los pagos que han salido de la cuenta.
+
+74
+00:07:56.000 --> 00:08:02.000
+Aquí sería lo que entra a la cuenta, pero como no tenemos, nos sale en esta tab, que es nativa de JavaScript.
+
+75
+00:08:02.000 --> 00:08:07.000
+Volvemos a inicio. ¿Qué hemos visto en la landing page?
+
+76
+00:08:07.000 --> 00:08:14.000
+Que teníamos una pequeña guía de educación financiera, de ETFs. Vale, pues a lo que me refería con esto era, en esta sección de aquí, de estadísticas.
+
+77
+00:08:14.000 --> 00:08:21.000
+Vale, que son Estadísticas de Mercado. Esto es una API externa que nos dice el precio actual...
+
+78
+00:08:21.000 --> 00:08:28.000
+de la bolsa del SP500, por ejemplo, el MSCI World y del Ibex 35, que son las tres ETFs principales...
+
+79
+00:08:28.000 --> 00:08:35.000
+las típicas a las que suele... con las que suele empezar todo el mundo.
+
+80
+00:08:35.000 --> 00:08:41.000
+Tenemos una guía visual de cómo va, cómo va mejorando...
+
+81
+00:08:41.000 --> 00:08:49.000
+Vemos las características de cada ETF para que tengamos una visión general de...
+
+82
+00:08:49.000 --> 00:08:58.000
+cuál elegir o cuál se ajusta más a nuestra... a nuestro perfil.
+
+83
+00:08:58.000 --> 00:09:07.000
+Y también tenemos una pequeña advertencia de que esto realmente se recomienda un asesoramiento profesional para hacer uso de estas...
+
+84
+00:09:07.000 --> 00:09:12.000
+de estas funcionalidades. Vale. Por último, tenemos el perfil.
+
+85
+00:09:12.000 --> 00:09:21.000
+[Cargando el perfil]
+
+86
+00:09:21.000 --> 00:09:28.000
+Vale, tenemos aquí nuestra cuenta. Podemos cambiar la contraseña, podemos editar nuestro perfil...
+
+87
+00:09:28.000 --> 00:09:35.000
+Por ejemplo, igual me he equivocado en el apellido, es Alcava con uve, por lo que sea.
+
+88
+00:09:35.000 --> 00:09:41.000
+Pues le damos a guardar cambios y se debería registrar en la cuenta, se deberían ver reflejados en la cuenta.
+
+89
+00:09:41.000 --> 00:09:49.000
+Y esto es BudgetBuddy, la aplicación de gestión de finanzas personales...
+
+90
+00:09:49.000 --> 00:09:59.000
+que nos ayudará de forma visual a gestionarnos y a aprender a cómo... cómo tener un uso responsable de nuestra economía.
