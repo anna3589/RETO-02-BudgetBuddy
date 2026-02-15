@@ -1,17 +1,158 @@
---- Estado del proyecto ---
+```markdown
+# 💸 BudgetBuddy - Guía de Instalación y Despliegue
 
-Los archivos en la ruta frontend/src/view/home son susceptibles de ser alterados o eliminados
-    Lo mismo aplica a src/css/dashborad y desktop
+Esta guía detalla los pasos necesarios para levantar el entorno de desarrollo de **BudgetBuddy** utilizando Docker, partiendo desde el repositorio de GitHub.
+
+## 📋 Requisitos previos
+
+Antes de comenzar, asegúrate de tener instalado lo siguiente en tu máquina:
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y ejecutándose.
+* [Git](https://git-scm.com/) instalado.
+
+---
+
+## 🚀 Pasos para el despliegue inicial
+
+### 1. Clonar el repositorio y configurar variables de entorno
+Antes de levantar los contenedores, asegúrate de tener el archivo de configuración `.env` listo.
+
+```bash
+# Entrar a la carpeta del backend
+cd backend
+
+# Copiar el archivo de ejemplo a .env
+cp .env.example .env
+
+# Volver a la raíz del proyecto
+cd ..
+
+```
+
+### 2. Levantar la infraestructura (Docker)
+
+Este comando descarga las imágenes necesarias y construye los contenedores. Dependiendo de tu sistema operativo, el comando puede variar ligeramente:
+
+**En Windows:**
+
+```bash
+docker-compose up -d --build
+
+```
+
+**En Ubuntu / Mac:**
+
+```bash
+docker compose up -d --build
+
+```
+
+> **⚠️ Posible error:** `=> ERROR [backend internal] load build context`
+> Si te aparece este error durante la construcción en Windows, ejecuta los siguientes comandos para ignorar carpetas pesadas:
+> ```powershell
+> cd backend 
+> New-Item .dockerignore -Type File 
+> Set-Content .dockerignore "/node_modules`r`n/vendor`r`n.env`r`n.git"
+> cd ..
+> 
+> ```
+> 
+> 
+
+### 3. Configuración del Backend (Laravel)
+
+Instalamos las dependencias de PHP y configuramos la base del framework y de Inertia.js.
+
+```bash
+# Instalar dependencias de PHP
+docker compose exec backend composer install
+
+# Generar la clave de encriptación de Laravel (Vital para que arranque)
+docker compose exec backend php artisan key:generate
+
+# Instalar librería de Inertia.js (si no está en composer.json)
+docker compose exec backend composer require inertiajs/inertia-laravel
+
+# Generar el Middleware de Inertia
+docker compose exec backend php artisan inertia:middleware
+
+# Ejecutar migraciones para crear las tablas en la base de datos
+docker compose exec backend php artisan migrate
+
+```
+
+### 4. Cargar datos de prueba (Seeders) 🌱
+
+Para que la aplicación no esté vacía al iniciar, inyectamos los datos iniciales o de prueba (usuarios, cuentas, etiquetas, etc.) usando los seeders:
+
+```bash
+# Ejecutar los seeders en la base de datos
+docker compose exec backend php artisan db:seed
+
+```
+
+*💡 **Tip:** Si en algún momento necesitas borrar toda la base de datos y volver a crearla con los datos de prueba desde cero, puedes usar el comando nuclear: `docker compose exec backend php artisan migrate:fresh --seed*`
+
+### 5. Configuración del Frontend (Vue/React + Vite)
+
+Instalamos las dependencias de Node.js y compilamos los archivos estáticos para que la interfaz gráfica funcione.
+
+```bash
+# Instalar paquetes de Node
+docker compose exec backend npm install
+
+# Compilar archivos para producción
+docker compose exec backend npm run build
+
+```
+
+---
+
+## 🛠️ Comandos útiles para el día a día
+
+Si necesitas interactuar con el entorno una vez que ya está configurado:
+
+* **Detener contenedores:** ```bash
+docker compose down
+```
+
+```
 
 
-- BASE DE DATOS RAPIDA
-INSERT INTO reviews (usuario, comentario, estrellas, avatar, created_at, updated_at) VALUES 
-('Laura Martínez', 'Llevo usándola un mes y he ahorrado 200€ sin darme cuenta. ¡Top!', 5, 'https://ui-avatars.com/api/?name=Laura+Martinez&background=random', NOW(), NOW()),
+* **Ver logs en tiempo real:** ```bash
+docker compose logs -f
+```
 
-('David Broncano', 'La interfaz está guapísima, pero echo de menos poder exportar a PDF.', 4, 'https://ui-avatars.com/api/?name=David+Broncano&background=0D8ABC&color=fff', NOW(), NOW()),
+```
 
-('Ibai Llanos', 'Es una locura de app, chavales. Muy intuitiva.', 5, 'https://ui-avatars.com/api/?name=Ibai+Llanos&background=ffcc00', NOW(), NOW()),
 
-('Marta Díaz', 'Cumple su función, aunque a veces tarda un pelín en cargar.', 3, 'https://ui-avatars.com/api/?name=Marta+Diaz&background=random', NOW(), NOW()),
+* **Entrar a la consola del contenedor (Backend):** ```bash
+docker exec -it budgetbuddy-backend bash
+```
 
-('Sergio Ramos', 'Clean sheet en mis finanzas. Perfecta.', 5, 'https://ui-avatars.com/api/?name=Sergio+Ramos&background=ef4444&color=fff', NOW(), NOW());
+
+```
+
+
+
+---
+
+## 🆘 Solución de problemas comunes
+
+**Problemas de permisos (Linux/Mac)** Si Laravel muestra errores de permisos al intentar escribir en las carpetas de almacenamiento (`storage` o `bootstrap/cache`), ejecuta esto para darle permisos al servidor web:
+
+```bash
+docker exec -it budgetbuddy-backend chown -R www-data:www-data storage bootstrap/cache
+docker exec -it budgetbuddy-backend chmod -R 775 storage bootstrap/cache
+
+```
+
+```
+
+### ¿Qué mejoré respecto a tu versión original?
+1. **Formato Markdown estándar**: Usé negritas, emojis y bloques de código separados por lenguaje (`bash`, `powershell`) para que en GitHub se resalte la sintaxis con colores.
+2. **Unifiqué comandos**: Cambié algunos `docker-compose exec -it backend ...` por `docker compose exec backend ...` para mantener consistencia, que es el formato más moderno, pero dejé la nota de Windows para evitar problemas.
+3. **Agregué el paso 4 (Seeders)**: Lo coloqué en el flujo lógico, justo después de que las tablas se crean con `migrate` y antes de compilar el frontend. 
+
+¡Ya lo tienes listo para subir al repositorio! 🚀
+
+```
