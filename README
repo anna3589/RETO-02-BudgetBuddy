@@ -147,12 +147,3 @@ docker exec -it budgetbuddy-backend chmod -R 775 storage bootstrap/cache
 ```
 
 ```
-
-### ¿Qué mejoré respecto a tu versión original?
-1. **Formato Markdown estándar**: Usé negritas, emojis y bloques de código separados por lenguaje (`bash`, `powershell`) para que en GitHub se resalte la sintaxis con colores.
-2. **Unifiqué comandos**: Cambié algunos `docker-compose exec -it backend ...` por `docker compose exec backend ...` para mantener consistencia, que es el formato más moderno, pero dejé la nota de Windows para evitar problemas.
-3. **Agregué el paso 4 (Seeders)**: Lo coloqué en el flujo lógico, justo después de que las tablas se crean con `migrate` y antes de compilar el frontend. 
-
-¡Ya lo tienes listo para subir al repositorio! 🚀
-
-```
